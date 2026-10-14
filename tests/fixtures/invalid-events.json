@@ -1,0 +1,149 @@
+[
+  {
+    "name": "missing-field",
+    "event": {
+      "interactionId": "int-a",
+      "eventType": "interaction.started",
+      "occurredAt": "2026-10-15T14:30:00Z",
+      "modelVersion": "model-2.1",
+      "applicationVersion": "app-1.4",
+      "data": {}
+    },
+    "expectedStatus": 422
+  },
+  {
+    "name": "unsupported-type",
+    "event": {
+      "eventId": "evt-a-01",
+      "interactionId": "int-a",
+      "eventType": "output_generated",
+      "occurredAt": "2026-10-15T14:30:00Z",
+      "modelVersion": "model-2.1",
+      "applicationVersion": "app-1.4",
+      "data": {}
+    },
+    "expectedStatus": 422
+  },
+  {
+    "name": "non-utc",
+    "event": {
+      "eventId": "evt-a-01",
+      "interactionId": "int-a",
+      "eventType": "interaction.started",
+      "occurredAt": "2026-10-15T14:30:00+01:00",
+      "modelVersion": "model-2.1",
+      "applicationVersion": "app-1.4",
+      "data": {}
+    },
+    "expectedStatus": 422
+  },
+  {
+    "name": "invalid-date",
+    "event": {
+      "eventId": "evt-a-01",
+      "interactionId": "int-a",
+      "eventType": "interaction.started",
+      "occurredAt": "2026-02-30T14:30:00Z",
+      "modelVersion": "model-2.1",
+      "applicationVersion": "app-1.4",
+      "data": {}
+    },
+    "expectedStatus": 422
+  },
+  {
+    "name": "empty-id",
+    "event": {
+      "eventId": "",
+      "interactionId": "int-a",
+      "eventType": "interaction.started",
+      "occurredAt": "2026-10-15T14:30:00Z",
+      "modelVersion": "model-2.1",
+      "applicationVersion": "app-1.4",
+      "data": {}
+    },
+    "expectedStatus": 422
+  },
+  {
+    "name": "long-id",
+    "event": {
+      "eventId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "interactionId": "int-a",
+      "eventType": "interaction.started",
+      "occurredAt": "2026-10-15T14:30:00Z",
+      "modelVersion": "model-2.1",
+      "applicationVersion": "app-1.4",
+      "data": {}
+    },
+    "expectedStatus": 422
+  },
+  {
+    "name": "extra-field",
+    "event": {
+      "eventId": "evt-a-01",
+      "interactionId": "int-a",
+      "eventType": "interaction.started",
+      "occurredAt": "2026-10-15T14:30:00Z",
+      "modelVersion": "model-2.1",
+      "applicationVersion": "app-1.4",
+      "data": {},
+      "unexpected": true
+    },
+    "expectedStatus": 422
+  },
+  {
+    "name": "data-not-object",
+    "event": {
+      "eventId": "evt-a-01",
+      "interactionId": "int-a",
+      "eventType": "interaction.started",
+      "occurredAt": "2026-10-15T14:30:00Z",
+      "modelVersion": "model-2.1",
+      "applicationVersion": "app-1.4",
+      "data": []
+    },
+    "expectedStatus": 422
+  },
+  {
+    "name": "missing-review-fields",
+    "event": {
+      "eventId": "evt-a-01",
+      "interactionId": "int-a",
+      "eventType": "review.completed",
+      "occurredAt": "2026-10-15T14:30:00Z",
+      "modelVersion": "model-2.1",
+      "applicationVersion": "app-1.4",
+      "data": {}
+    },
+    "expectedStatus": 422
+  },
+  {
+    "name": "missing-correction-fields",
+    "event": {
+      "eventId": "evt-a-01",
+      "interactionId": "int-a",
+      "eventType": "record.corrected",
+      "occurredAt": "2026-10-15T14:30:00Z",
+      "modelVersion": "model-2.1",
+      "applicationVersion": "app-1.4",
+      "data": {}
+    },
+    "expectedStatus": 422
+  },
+  {
+    "name": "invalid-review-action",
+    "event": {
+      "eventId": "evt-a-01",
+      "interactionId": "int-a",
+      "eventType": "review.completed",
+      "occurredAt": "2026-10-15T14:30:00Z",
+      "modelVersion": "model-2.1",
+      "applicationVersion": "app-1.4",
+      "data": {
+        "reviewerId": "r",
+        "action": "approve",
+        "reason": "test"
+      }
+    },
+    "expectedStatus": 422
+  }
+]

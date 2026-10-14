@@ -1,0 +1,504 @@
+{
+  "description": "Ordered steps; symbolic auth labels, never credential values. Error messages not exact-matched. Run only on isolated test data.",
+  "steps": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "auth": "none",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "status": "healthy",
+        "api": "available",
+        "storage": "available"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/test/reset",
+      "auth": "reset",
+      "expectedStatus": 200,
+      "body": {
+        "confirm": true
+      },
+      "expectedBody": {
+        "reset": true,
+        "remainingEvents": 0,
+        "remainingInteractions": 0
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 201,
+      "body": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      },
+      "expectedBody": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 201,
+      "body": {
+        "eventId": "evt-b-01",
+        "interactionId": "int-b",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      },
+      "expectedBody": {
+        "eventId": "evt-b-01",
+        "interactionId": "int-b",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 201,
+      "body": {
+        "eventId": "evt-a-03",
+        "interactionId": "int-a",
+        "eventType": "interaction.completed",
+        "occurredAt": "2026-10-15T14:32:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      },
+      "expectedBody": {
+        "eventId": "evt-a-03",
+        "interactionId": "int-a",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 201,
+      "body": {
+        "eventId": "evt-a-02",
+        "interactionId": "int-a",
+        "eventType": "model.output_generated",
+        "occurredAt": "2026-10-15T14:31:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {
+          "outputReference": "synthetic-output-17"
+        }
+      },
+      "expectedBody": {
+        "eventId": "evt-a-02",
+        "interactionId": "int-a",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/int-a",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "int-a",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "evt-a-01",
+            "interactionId": "int-a",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-15T14:30:00Z",
+            "modelVersion": "model-2.1",
+            "applicationVersion": "app-1.4",
+            "data": {}
+          },
+          {
+            "eventId": "evt-a-02",
+            "interactionId": "int-a",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-15T14:31:00Z",
+            "modelVersion": "model-2.1",
+            "applicationVersion": "app-1.4",
+            "data": {
+              "outputReference": "synthetic-output-17"
+            }
+          },
+          {
+            "eventId": "evt-a-03",
+            "interactionId": "int-a",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-15T14:32:00Z",
+            "modelVersion": "model-2.1",
+            "applicationVersion": "app-1.4",
+            "data": {}
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/int-b",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "int-b",
+        "status": "in_progress",
+        "events": [
+          {
+            "eventId": "evt-b-01",
+            "interactionId": "int-b",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-15T14:30:00Z",
+            "modelVersion": "model-2.1",
+            "applicationVersion": "app-1.4",
+            "data": {}
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 200,
+      "body": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      },
+      "expectedBody": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "stored": true,
+        "duplicate": true
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 409,
+      "body": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "different",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 400,
+      "rawBody": "{\"eventId\":"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 422,
+      "body": {
+        "interactionId": "int-a",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 422,
+      "body": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "eventType": "output_generated",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 422,
+      "body": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-15T14:30:00+01:00",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 422,
+      "body": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-02-30T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 422,
+      "body": {
+        "eventId": "",
+        "interactionId": "int-a",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 422,
+      "body": {
+        "eventId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "interactionId": "int-a",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 422,
+      "body": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {},
+        "unexpected": true
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 422,
+      "body": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 422,
+      "body": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "eventType": "review.completed",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 422,
+      "body": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {}
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "expectedStatus": 422,
+      "body": {
+        "eventId": "evt-a-01",
+        "interactionId": "int-a",
+        "eventType": "review.completed",
+        "occurredAt": "2026-10-15T14:30:00Z",
+        "modelVersion": "model-2.1",
+        "applicationVersion": "app-1.4",
+        "data": {
+          "reviewerId": "r",
+          "action": "approve",
+          "reason": "test"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/int-a",
+      "auth": "none",
+      "expectedStatus": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/int-a",
+      "auth": "invalid",
+      "expectedStatus": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/test/reset",
+      "auth": "api",
+      "expectedStatus": 403,
+      "body": {
+        "confirm": true
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/test/reset",
+      "auth": "reset",
+      "expectedStatus": 400,
+      "body": {
+        "confirm": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/not-found",
+      "auth": "api",
+      "expectedStatus": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/int-a",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "int-a",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "evt-a-01",
+            "interactionId": "int-a",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-15T14:30:00Z",
+            "modelVersion": "model-2.1",
+            "applicationVersion": "app-1.4",
+            "data": {}
+          },
+          {
+            "eventId": "evt-a-02",
+            "interactionId": "int-a",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-15T14:31:00Z",
+            "modelVersion": "model-2.1",
+            "applicationVersion": "app-1.4",
+            "data": {
+              "outputReference": "synthetic-output-17"
+            }
+          },
+          {
+            "eventId": "evt-a-03",
+            "interactionId": "int-a",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-15T14:32:00Z",
+            "modelVersion": "model-2.1",
+            "applicationVersion": "app-1.4",
+            "data": {}
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/test/reset",
+      "auth": "reset",
+      "expectedStatus": 200,
+      "body": {
+        "confirm": true
+      },
+      "expectedBody": {
+        "reset": true,
+        "remainingEvents": 0,
+        "remainingInteractions": 0
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/int-a",
+      "auth": "api",
+      "expectedStatus": 404
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/test/reset",
+      "auth": "reset",
+      "expectedStatus": 200,
+      "body": {
+        "confirm": true
+      },
+      "expectedBody": {
+        "reset": true,
+        "remainingEvents": 0,
+        "remainingInteractions": 0
+      }
+    }
+  ]
+}
