@@ -12,7 +12,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     services:
       postgres:
         image: postgres:16-bookworm
@@ -70,6 +70,16 @@ jobs:
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true' EXIT
           python tools/run_phase3_api_tests.py --base-url http://127.0.0.1:8000 --allow-test-reset --wait-seconds 20 --report reports/api.json
+      - name: Build deployment image
+        run: docker build --tag traceai:ci .
+      - name: Test deployment container
+        shell: bash
+        run: |
+          container_id=$(docker run --detach --network host \
+            --env TRACEAI_DATABASE_URL --env TRACEAI_API_TOKEN --env TRACEAI_RESET_TOKEN \
+            --env TRACEAI_TEST_RESET_ENABLED --env PORT=8000 traceai:ci)
+          trap 'docker rm --force "$container_id" > /dev/null 2>&1 || true' EXIT
+          python tools/run_phase3_api_tests.py --base-url http://127.0.0.1:8000 --allow-test-reset --wait-seconds 30 --report reports/container-api.json
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4

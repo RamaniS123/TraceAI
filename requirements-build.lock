@@ -1,0 +1,3 @@
+# Build tools used only to build the local project without an unpinned build environment.
+setuptools==80.9.0
+wheel==0.45.1

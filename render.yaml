@@ -1,0 +1,28 @@
+# Isolated synthetic classroom/test deployment. Review Render's current free-tier limits.
+services:
+  - type: web
+    name: traceai
+    runtime: docker
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    numInstances: 1
+    envVars:
+      - key: TRACEAI_DATABASE_URL
+        fromDatabase:
+          name: traceai-db
+          property: connectionString
+      - key: TRACEAI_API_TOKEN
+        generateValue: true
+      - key: TRACEAI_RESET_TOKEN
+        generateValue: true
+      - key: TRACEAI_TEST_RESET_ENABLED
+        value: "true"
+databases:
+  - name: traceai-db
+    plan: free
+    databaseName: traceai
+    user: traceai
+    postgresMajorVersion: "16"
+    ipAllowList: []

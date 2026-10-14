@@ -1,0 +1,14 @@
+**
+!Dockerfile
+!pyproject.toml
+!requirements-runtime.lock
+!src/
+!src/**
+!alembic.ini
+!migrations/
+!migrations/**
+!deploy/
+!deploy/start.sh
+**/__pycache__/
+**/*.pyc
+!requirements-build.lock

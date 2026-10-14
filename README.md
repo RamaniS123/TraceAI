@@ -13,6 +13,7 @@ certify legal compliance.
 - [Independent API test runner](tools/run_phase3_api_tests.py)
 - [GitHub Actions workflow](.github/workflows/ci.yml)
 - [Testing commands, coverage, and reports](docs/testing.md)
+- [Render deployment and remaining launch step](docs/deployment.md)
 
 These artifacts follow Sections 5–6 of the Phase 2 submission. Provisional
 choices are documented for pod review.
@@ -38,9 +39,15 @@ response shapes, and exact byte-boundary files. Dependencies are for artifact
 validation only; the application dependencies are defined in `pyproject.toml` and pinned in
 `requirements-dev.lock`.
 
-## Next chunks
+## Deployment status
 
-5. Deployment and deployed-service tests.
+Chunk 5's Docker image and Render Blueprint are prepared and tested locally.
+The Render launch and public HTTPS evaluation are pending account connection.
+Follow [deployment instructions](docs/deployment.md); no public base URL exists yet.
+
+## Remaining work
+
+5. Launch the prepared Render Blueprint and test the public service.
 6. Operating instructions and Phase 3 demonstration checklist.
 
 Use synthetic data only. Keep credentials in environment secrets and never

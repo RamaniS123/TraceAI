@@ -16,12 +16,13 @@ class Settings(BaseSettings):
     @classmethod
     def require_postgresql(cls, value: SecretStr) -> SecretStr:
         try:
-            valid = make_url(value.get_secret_value()).drivername == "postgresql+psycopg"
+            url = make_url(value.get_secret_value())
+            valid = url.drivername in ("postgres", "postgresql", "postgresql+psycopg")
         except Exception:
             valid = False
         if not valid:
             raise ValueError("A postgresql+psycopg database URL is required")
-        return value
+        return SecretStr(url.set(drivername="postgresql+psycopg").render_as_string(hide_password=False))
 
     @model_validator(mode="after")
     def distinct_tokens(self):

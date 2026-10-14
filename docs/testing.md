@@ -10,13 +10,14 @@ API and reset tokens are generated for that job and masked in its logs.
 
 The job installs the pinned dependencies, checks package compatibility, validates
 the contract/fixtures, applies migrations twice, checks ORM/schema agreement,
-runs pytest, starts Uvicorn, and runs the independent HTTP evaluator. It preserves
+runs pytest, starts Uvicorn, and runs the independent HTTP evaluator. It also builds and
+evaluates the Docker deployment image. It preserves
 the evaluator's exit status and stops the server on completion. JUnit and JSON
 results are uploaded as the `phase-3-test-results` artifact even on test failure.
 Reports exclude raw response bodies, request authorization headers, and tokens.
 
-There are currently 48 pytest cases: 34 application/database integration cases
-and 14 runner validation/failure cases. The independent evaluator has 42 checks.
+There are currently 51 pytest cases: 34 application/database integration cases,
+14 runner validation/failure cases, and three hosted database configuration cases. The independent evaluator has 42 checks.
 A passing pytest count is distinct from a passing deployed-service evaluation.
 
 ## Run the independent evaluator against either team
@@ -108,4 +109,5 @@ containing only `requirements-api-tests.txt`.
 This is local evidence. The GitHub API denied workflow-status access from the
 cloud workspace; a hosted Actions result must be checked separately in GitHub.
 No public deployment or evaluation of the other team's service has occurred yet.
+The Render launch is described in [deployment instructions](deployment.md).
 The existing HTTPX/Starlette TestClient deprecation warning remains non-failing.

@@ -164,5 +164,5 @@ API tests exercise destructive reset and refuse database names not ending in
 `_test`. Do not enable these tests on any important or shared dataset.
 
 The standalone API evaluator and GitHub Actions workflow are now included; see
-[testing instructions](testing.md). Public deployment is chunk 5; local passing
-tests do not establish deployment.
+[testing instructions](testing.md). The chunk 5 Docker/Render configuration is prepared; account connection, launch,
+and public evaluation remain pending. See [deployment instructions](deployment.md).
