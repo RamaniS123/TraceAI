@@ -83,3 +83,36 @@ openapi-spec-validator installed. This checks contract structure, schema parity,
 valid/invalid fixtures, expected response shapes, and byte boundaries. It does
 not start an application or establish that HTTP behavior works. The actual API,
 database, HTTP tests, CI and deployment belong to subsequent chunks.
+
+## Chunk 3 implementation notes
+
+The four operations are implemented; the authored contract is unchanged. A bundled
+copy at `src/traceai/openapi.json` is included in distributions so `/docs` and
+`/openapi.json` expose the authored contract outside the source checkout.
+`tools/validate_contract.py` enforces exact parity between the two copies.
+
+Additional local operational choices:
+
+- `TRACEAI_TEST_RESET_ENABLED` defaults to false. A valid reset token receives 403
+  unless this flag is true. Enable it only for an explicitly isolated classroom or
+  development dataset. This adds an opt-in guard without changing the HTTP schema.
+- Missing token configuration fails closed: health remains available, but no
+  protected request is authorized by an absent or empty credential. Configured
+  tokens must be nonempty and distinct. Full deployment configuration is still
+  required before public use.
+- Repeated JSON object keys, non-finite numbers, invalid UTF-8, and malformed JSON
+  receive 400 MALFORMED_JSON. Media types other than application/json and compressed
+  event bodies receive 422 INVALID_EVENT. Invalid or oversized reset content uses
+  400, consistent with reset's documented statuses.
+- JSON numbers are parsed and stored without conversion through binary floats.
+  Duplicate comparison distinguishes booleans from numbers and compares object
+  contents independently of key order. Sub-microsecond timestamps use original
+  text for exact ordering and equality, while PostgreSQL also stores an indexed
+  microsecond-resolution timestamp.
+- PostgreSQL JSONB cannot represent every syntactically valid JSON value (notably
+  escaped U+0000 and numbers outside PostgreSQL numeric limits). Storage-level
+  invalid data receives 422 without a partial write. This is a known prototype
+  limitation for pod review; the shared event schema has not been narrowed.
+
+Later-phase warning generation, report generation, linked-correction processing,
+full security analysis, and capacity/performance validation remain unimplemented.

@@ -4,7 +4,7 @@ TraceAI records synthetic AI-interaction events through a shared HTTP API.
 It supports event history and audit evidence; it does not generate AI outputs or
 certify legal compliance.
 
-## Current progress: Phase 3, chunks 1–2
+## Current progress: Phase 3, chunks 1–3
 
 - [Proposed OpenAPI 3.1 contract](contracts/openapi.json)
 - [Standalone event JSON Schema](contracts/event.schema.json)
@@ -12,9 +12,12 @@ certify legal compliance.
 - [Synthetic fixtures and ordered API scenario](tests/fixtures)
 
 These artifacts follow Sections 5–6 of the Phase 2 submission. Provisional
-choices are documented for pod review. The FastAPI foundation, PostgreSQL model, Alembic migration, and public health
-endpoint are implemented. Business endpoints and authentication enforcement
-are scheduled for chunk 3. See [development instructions](docs/development.md)
+choices are documented for pod review.
+
+The four Phase 3 endpoints are implemented with PostgreSQL storage, bearer
+authentication, event validation, duplicate/conflict handling, and opt-in test
+reset. Timelines are sorted; warning analysis and reports remain Phase 4 work.
+See [development instructions](docs/development.md)
 for installation, database startup, migrations, and integration tests.
 
 ## Validate the contract artifacts
@@ -29,10 +32,11 @@ python -m venv /tmp/traceai-contract-venv
 
 This checks OpenAPI structure, JSON Schema consistency, fixtures, expected
 response shapes, and exact byte-boundary files. Dependencies are for artifact
-validation only; the application dependency set will be defined in chunk 2.
+validation only; the application dependencies are defined in `pyproject.toml` and pinned in
+`requirements-dev.lock`.
 
 ## Next chunks
-3. Endpoints, authentication and validation.
+
 4. HTTP tests and GitHub Actions.
 5. Deployment and deployed-service tests.
 6. Operating instructions and Phase 3 demonstration checklist.

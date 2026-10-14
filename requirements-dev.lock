@@ -38,6 +38,7 @@ referencing==0.36.2
 requests==2.34.2
 rfc3339-validator==0.1.4
 rpds-py==2026.9.1
+simplejson==3.20.2
 six==1.17.0
 SQLAlchemy==2.0.54
 starlette==1.8.0

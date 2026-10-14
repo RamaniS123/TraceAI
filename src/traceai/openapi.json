@@ -1,0 +1,591 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TraceAI Phase 3 API",
+    "version": "0.1.0",
+    "description": "Provisional Phase 3 profile of Phase 2 submission v1.1, Sections 5\u20136. Assumptions in docs/phase-3-contract.md require pod review. Audit reports and warning analysis are deferred."
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v1/events": {
+      "post": {
+        "operationId": "submitEvent",
+        "responses": {
+          "201": {
+            "description": "New event stored",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventReceipt"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Identical event already stored",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Event ID conflicts with stored content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request body exceeds 65536 bytes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Event validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "UTF-8 JSON; at most 65536 raw body bytes, inclusive.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interactions/{interactionId}": {
+      "get": {
+        "operationId": "getInteraction",
+        "responses": {
+          "200": {
+            "description": "Events ordered by occurredAt instant, then eventId; warnings empty in Phase 3",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionView"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown interaction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "interactionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/test/reset": {
+      "post": {
+        "operationId": "resetTestData",
+        "responses": {
+          "200": {
+            "description": "Isolated test dataset cleared",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed JSON or invalid reset confirmation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid token lacks reset permission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "API and storage available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "API available but required storage unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Opaque configured token. Reset token has ordinary and reset access; ordinary API token cannot reset."
+      }
+    },
+    "schemas": {
+      "EventInput": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "interactionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "interaction.started",
+              "model.output_generated",
+              "review.completed",
+              "interaction.completed",
+              "interaction.stopped",
+              "record.corrected"
+            ]
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|\\+00:00)$"
+          },
+          "modelVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "applicationVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "eventId",
+          "interactionId",
+          "eventType",
+          "occurredAt",
+          "modelVersion",
+          "applicationVersion",
+          "data"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "eventType": {
+                  "const": "review.completed"
+                }
+              },
+              "required": [
+                "eventType"
+              ]
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "reviewerId": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string",
+                      "enum": [
+                        "accept",
+                        "override",
+                        "reject",
+                        "escalate"
+                      ]
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    }
+                  },
+                  "required": [
+                    "reviewerId",
+                    "action",
+                    "reason"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "eventType": {
+                  "const": "record.corrected"
+                }
+              },
+              "required": [
+                "eventType"
+              ]
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "correctsEventId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    }
+                  },
+                  "required": [
+                    "correctsEventId",
+                    "reason"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "EventReceipt": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "interactionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "stored": {
+            "const": true,
+            "type": "boolean"
+          },
+          "duplicate": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "eventId",
+          "interactionId",
+          "stored",
+          "duplicate"
+        ],
+        "additionalProperties": false
+      },
+      "InteractionView": {
+        "type": "object",
+        "properties": {
+          "interactionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "in_progress",
+              "completed",
+              "stopped"
+            ]
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventInput"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "maxItems": 0,
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "interactionId",
+          "status",
+          "events",
+          "warnings"
+        ],
+        "additionalProperties": false
+      },
+      "ResetRequest": {
+        "type": "object",
+        "properties": {
+          "confirm": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "confirm"
+        ],
+        "additionalProperties": false
+      },
+      "ResetResponse": {
+        "type": "object",
+        "properties": {
+          "reset": {
+            "type": "boolean",
+            "const": true
+          },
+          "remainingEvents": {
+            "type": "integer",
+            "const": 0
+          },
+          "remainingInteractions": {
+            "type": "integer",
+            "const": 0
+          }
+        },
+        "required": [
+          "reset",
+          "remainingEvents",
+          "remainingInteractions"
+        ],
+        "additionalProperties": false
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "healthy",
+              "unhealthy"
+            ]
+          },
+          "api": {
+            "type": "string",
+            "enum": [
+              "available",
+              "unavailable"
+            ]
+          },
+          "storage": {
+            "type": "string",
+            "enum": [
+              "available",
+              "unavailable"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "api",
+          "storage"
+        ],
+        "additionalProperties": false
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "issue": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "issue"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

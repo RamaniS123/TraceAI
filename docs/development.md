@@ -18,8 +18,8 @@ token placeholders with locally generated random secrets. Database password and
 both connection URLs must agree; URL-encode reserved characters in passwords.
 Use two distinct API and reset tokens. `.env` is ignored; never commit it or
 print its contents in logs. Shell environment values override `.env` settings.
-Only `TRACEAI_DATABASE_URL` is required to start this foundation. Tokens are
-reserved configuration for chunk 3 and do not protect any endpoint yet.
+Only `TRACEAI_DATABASE_URL` is required to start this foundation. Tokens authorize protected endpoints. Reset also requires an explicit
+`TRACEAI_TEST_RESET_ENABLED=true` setting for the isolated test dataset.
 
 The onboarding workspace already has a private `.env` with generated local
 credentials, an installed `.venv`, and migrated development/test databases.
@@ -60,10 +60,9 @@ unmigrated, or mismatched database yields HTTP 503 and the same safe shape with
 status unhealthy and storage unavailable. This does not yet test write access
 or implement complete Phase 4 storage-failure analysis.
 
-Only health and FastAPI's generated documentation are available in this chunk.
-The authored contract in `contracts/openapi.json` describes the intended Phase 3
-API; the application's generated OpenAPI does not implement that full contract yet.
-Submission, retrieval, reset and bearer enforcement arrive in chunk 3.
+All four Phase 3 operations are available. `/docs` and `/openapi.json` serve the
+authored contract in `contracts/openapi.json`; warning analysis and reports are
+deferred as documented in the Phase 3 profile.
 
 ## Database design
 
@@ -75,11 +74,11 @@ C collation provides deterministic ID ordering. Interaction identity is derived
 from events; a second interaction table is unnecessary for this increment.
 
 Database constraints enforce ID/version lengths, allowed event types, and object
-payloads. Event-specific validation belongs at the API boundary in chunk 3.
-The database does not currently enforce append-only access: API write paths must
-avoid modifying accepted records. Reset is the future explicit test-only exception.
+payloads. Event-specific validation is performed at the API boundary.
+The database does not currently enforce append-only access: The submission API only inserts records and never updates accepted events.
+Reset is the explicit test-only deletion exception.
 PostgreSQL stores timestamp instants at microsecond precision; the original text
-is retained for responses and handling higher-precision input in chunk 3.
+is retained for responses and exact higher-precision timestamp ordering.
 
 ## Integration tests
 
@@ -110,15 +109,59 @@ A zero-test or skipped run does not establish readiness. Tests use random IDs
 and clean up their records; use only an isolated test database. Never point
 integration tests at production or a shared dataset.
 
-## Verified in this chunk
+## Verified foundation and API
 
 - PostgreSQL container readiness and repeatable development database migration.
 - Upgrade/downgrade/upgrade cycle on the separate disposable test database.
 - Alembic metadata check detects no pending model changes.
-- Nine integration checks pass against real PostgreSQL.
+- All 34 integration checks pass against real PostgreSQL, including the shared
+  31-step HTTP scenario and request-size boundaries.
 - Uvicorn starts and a real HTTP health request succeeds.
 - Existing contract-artifact validation still passes.
 
 The installed FastAPI/Starlette version emits one deprecation warning for the
 HTTPX-backed TestClient; tests still execute and pass. CI and complete HTTP
 conformance coverage are scheduled for chunk 4.
+
+## Chunk 3: working API
+
+The four Phase 3 endpoints are now implemented and `/docs` serves the authored
+contract. Restart Uvicorn after updating the checkout if not using `--reload`.
+
+- Set `TRACEAI_API_TOKEN` and a distinct `TRACEAI_RESET_TOKEN` securely.
+- Ordinary operations accept either token; reset requires the reset token.
+- Enable `TRACEAI_TEST_RESET_ENABLED=true` only for an isolated test dataset.
+  The default is false, which makes reset return 403 even for its valid token.
+- Health is public. Missing token configuration grants no protected access.
+- The same database migration remains current; chunk 3 requires no migration.
+
+For a manual request, read your local secrets without printing them:
+
+```sh
+.venv/bin/python - <<'PY'
+import json
+from pathlib import Path
+from dotenv import dotenv_values
+import httpx
+values = dotenv_values('.env')
+headers = {'Authorization': 'Bearer ' + values['TRACEAI_API_TOKEN']}
+event = json.loads(Path('tests/fixtures/valid-events.json').read_text())[0]
+response = httpx.post('http://127.0.0.1:8000/api/v1/events', headers=headers, json=event)
+print(response.status_code, response.json())
+response = httpx.get('http://127.0.0.1:8000/api/v1/interactions/int-a', headers=headers)
+print(response.status_code, response.json())
+PY
+```
+
+The first submission returns 201, an exact repeat returns 200 with duplicate true,
+and different content reusing its event ID returns 409. Retrieval preserves the
+original timestamp text and returns ordered records and empty warnings.
+
+`pytest -q` now includes the full 31-step shared scenario against real PostgreSQL,
+body-size boundaries over a streamed request, authentication and reset controls,
+concurrent identical submissions, numeric/timestamp precision, and storage errors.
+API tests exercise destructive reset and refuse database names not ending in
+`_test`. Do not enable these tests on any important or shared dataset.
+
+Chunk 4 still adds the standalone deployed-service test runner and GitHub Actions.
+Public deployment is chunk 5; local passing tests do not establish deployment.

@@ -15,6 +15,7 @@ def load(path):
 def main():
     contract = load('contracts/openapi.json')
     validate_spec(contract)
+    assert contract == load('src/traceai/openapi.json'), 'Bundled API contract differs from authored contract'
     schema = load('contracts/event.schema.json')
     Draft202012Validator.check_schema(schema)
     assert {k: v for k, v in schema.items() if k != '$schema'} == contract['components']['schemas']['EventInput']

@@ -1,15 +1,16 @@
 """Environment-based configuration; never render secret settings in responses."""
-from pydantic import SecretStr, field_validator
+from pydantic import SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import make_url
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="TRACEAI_", env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_prefix="TRACEAI_", env_file=".env", extra="ignore", hide_input_in_errors=True)
 
     database_url: SecretStr
     api_token: SecretStr | None = None
     reset_token: SecretStr | None = None
+    test_reset_enabled: bool = False
 
     @field_validator("database_url")
     @classmethod
@@ -21,3 +22,13 @@ class Settings(BaseSettings):
         if not valid:
             raise ValueError("A postgresql+psycopg database URL is required")
         return value
+
+    @model_validator(mode="after")
+    def distinct_tokens(self):
+        if self.api_token is not None and not self.api_token.get_secret_value():
+            raise ValueError("API token must not be empty")
+        if self.reset_token is not None and not self.reset_token.get_secret_value():
+            raise ValueError("Reset token must not be empty")
+        if self.api_token is not None and self.reset_token is not None and self.api_token == self.reset_token:
+            raise ValueError("API and reset tokens must be distinct")
+        return self
