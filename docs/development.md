@@ -1,4 +1,4 @@
-# Local development: chunk 2 foundation
+# Local development
 
 Run commands from the repository root. Requires Python 3.11+ and Docker Compose
 v2. The checked-in dependency lock was validated on Python 3.12/Linux. The
@@ -120,8 +120,8 @@ integration tests at production or a shared dataset.
 - Existing contract-artifact validation still passes.
 
 The installed FastAPI/Starlette version emits one deprecation warning for the
-HTTPX-backed TestClient; tests still execute and pass. CI and complete HTTP
-conformance coverage are scheduled for chunk 4.
+HTTPX-backed TestClient; tests still execute and pass. CI and the independent
+HTTP evaluator are described in [testing instructions](testing.md).
 
 ## Chunk 3: working API
 
@@ -163,5 +163,6 @@ concurrent identical submissions, numeric/timestamp precision, and storage error
 API tests exercise destructive reset and refuse database names not ending in
 `_test`. Do not enable these tests on any important or shared dataset.
 
-Chunk 4 still adds the standalone deployed-service test runner and GitHub Actions.
-Public deployment is chunk 5; local passing tests do not establish deployment.
+The standalone API evaluator and GitHub Actions workflow are now included; see
+[testing instructions](testing.md). Public deployment is chunk 5; local passing
+tests do not establish deployment.

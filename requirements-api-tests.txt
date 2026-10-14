@@ -1,0 +1,5 @@
+# Black-box runner only: no application or PostgreSQL dependencies required.
+httpx==0.28.1
+jsonschema==4.26.0
+rfc3339-validator==0.1.4
+python-dotenv==1.2.4

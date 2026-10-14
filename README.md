@@ -4,12 +4,15 @@ TraceAI records synthetic AI-interaction events through a shared HTTP API.
 It supports event history and audit evidence; it does not generate AI outputs or
 certify legal compliance.
 
-## Current progress: Phase 3, chunks 1–3
+## Current progress: Phase 3, chunks 1–4
 
 - [Proposed OpenAPI 3.1 contract](contracts/openapi.json)
 - [Standalone event JSON Schema](contracts/event.schema.json)
 - [Scope, assumptions, and fixture instructions](docs/phase-3-contract.md)
 - [Synthetic fixtures and ordered API scenario](tests/fixtures)
+- [Independent API test runner](tools/run_phase3_api_tests.py)
+- [GitHub Actions workflow](.github/workflows/ci.yml)
+- [Testing commands, coverage, and reports](docs/testing.md)
 
 These artifacts follow Sections 5–6 of the Phase 2 submission. Provisional
 choices are documented for pod review.
@@ -37,7 +40,6 @@ validation only; the application dependencies are defined in `pyproject.toml` an
 
 ## Next chunks
 
-4. HTTP tests and GitHub Actions.
 5. Deployment and deployed-service tests.
 6. Operating instructions and Phase 3 demonstration checklist.
 
