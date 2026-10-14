@@ -28,4 +28,10 @@ traceai = ["openapi.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["integration: requires a migrated isolated PostgreSQL test database"]
+markers = [
+  "integration: requires a migrated isolated PostgreSQL test database",
+  "blackbox: HTTP-only tests against TRACEAI_BASE_URL (ours or another team's deployment)",
+  "phase3: tests for Phase 3 requirements",
+  "phase4: tests for features planned in Phase 4 (may fail until implemented)",
+  "no_reset: skip the automatic reset before this test",
+]
