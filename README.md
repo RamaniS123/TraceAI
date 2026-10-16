@@ -6,6 +6,7 @@ certify legal compliance.
 
 ## Current progress: Phase 3, chunks 1–4
 
+- [Frontend demonstration instructions](docs/frontend.md)
 - [Proposed OpenAPI 3.1 contract](contracts/openapi.json)
 - [Standalone event JSON Schema](contracts/event.schema.json)
 - [Scope, assumptions, and fixture instructions](docs/phase-3-contract.md)
@@ -17,6 +18,9 @@ certify legal compliance.
 
 These artifacts follow Sections 5–6 of the Phase 2 submission. Provisional
 choices are documented for pod review.
+
+The homepage now provides an event submission form, interaction viewer, and
+service health status. [Start with a browser demonstration](docs/frontend.md).
 
 The four Phase 3 endpoints are implemented with PostgreSQL storage, bearer
 authentication, event validation, duplicate/conflict handling, and opt-in test
@@ -41,13 +45,15 @@ validation only; the application dependencies are defined in `pyproject.toml` an
 
 ## Deployment status
 
-Chunk 5's Docker image and Render Blueprint are prepared and tested locally.
-The Render launch and public HTTPS evaluation are pending account connection.
-Follow [deployment instructions](docs/deployment.md); no public base URL exists yet.
+The account owner has launched the service at https://traceai-zm1t.onrender.com.
+A browser health check confirmed API/database availability. Full authenticated
+public evaluation remains pending; local and container tests have passed.
+The frontend appears at the main address after Render deploys this update.
+See [deployment instructions](docs/deployment.md).
 
 ## Remaining work
 
-5. Launch the prepared Render Blueprint and test the public service.
+5. Complete authenticated testing against the public Render service.
 6. Operating instructions and Phase 3 demonstration checklist.
 
 Use synthetic data only. Keep credentials in environment secrets and never

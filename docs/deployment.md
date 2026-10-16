@@ -2,10 +2,12 @@
 
 ## Status
 
-Deployment configuration is prepared and the container has been validated
-locally. No Render service/database has been created by this workspace: no
-Render account binding or API credential is available. Public health and API
-testing remain pending until the account owner launches the Blueprint.
+The account owner launched the Blueprint at https://traceai-zm1t.onrender.com.
+A browser screenshot confirmed healthy API and PostgreSQL access. Authenticated
+public API testing remains pending; workspace requests have encountered network
+restrictions, and the hosted credentials are not available to the test runner.
+The frontend is served at `/` after Render deploys the frontend commit.
+Local API, browser, and container validation have passed.
 
 ## Launch on Render
 

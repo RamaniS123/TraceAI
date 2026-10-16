@@ -1,0 +1,58 @@
+const { chromium } = require('playwright');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+(async () => {
+ if (!process.env.TRACEAI_UI_BASE_URL || !process.env.TRACEAI_UI_API_TOKEN) throw new Error('Set TRACEAI_UI_BASE_URL and TRACEAI_UI_API_TOKEN for an isolated synthetic test service.');
+ const screenshots = path.resolve('reports/browser');
+ fs.mkdirSync(screenshots, {recursive:true});
+ const browser = await chromium.launch({headless:true, executablePath:process.env.TRACEAI_CHROMIUM_PATH || undefined});
+ try {
+  const page = await browser.newPage({viewport:{width:1440,height:1100}});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(process.env.TRACEAI_UI_BASE_URL);
+  await page.getByText('Service healthy',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'Fill example',exact:true}).click();
+  const interaction = await page.locator('#interaction-id').inputValue();
+  await page.getByRole('button',{name:'Store event'}).click();
+  await page.getByText('Connect your API token in step 1 first.',{exact:true}).waitFor();
+  await page.getByLabel('API token',{exact:true}).fill(process.env.TRACEAI_UI_API_TOKEN);
+  await page.getByRole('button',{name:'Use token',exact:true}).click();
+  assert.equal(await page.locator('#api-token').inputValue(),'');
+  await page.getByLabel('Event data',{exact:false}).fill(JSON.stringify({note:'<img src=x onerror="window.uiInjected=true">'}));
+  await page.getByRole('button',{name:'Store event'}).click();
+  await page.waitForFunction(()=>document.querySelector('#submit-status').textContent.startsWith('Stored event'));
+  await page.getByRole('button',{name:'Find events',exact:true}).click();
+  await page.getByText('Retrieved from the connected database.',{exact:true}).waitFor();
+  assert.equal(await page.locator('#result-id').textContent(),interaction);
+  assert.equal(await page.locator('.event-card').count(),1);
+  await page.getByText('View event details',{exact:true}).click();
+  assert.ok((await page.locator('.event-card pre').textContent()).includes('<img'));
+  assert.equal(await page.locator('.event-card img').count(),0);
+  assert.equal(await page.evaluate(()=>window.uiInjected),undefined);
+  assert.equal(await page.evaluate(()=>localStorage.length+sessionStorage.length),0);
+  await page.screenshot({path:path.join(screenshots,'desktop.png'),fullPage:true});
+  // An exact repeat is shown as a duplicate, never a second copy.
+  await page.getByRole('button',{name:'Store event'}).click();
+  await page.waitForFunction(()=>document.querySelector('#submit-status').textContent.includes('No duplicate was created'));
+  await page.getByRole('button',{name:'Disconnect',exact:true}).click();
+  assert.equal(await page.locator('#interaction-result').isVisible(),false);
+  assert.equal(await page.locator('.event-card').count(),0);
+  await page.getByLabel('API token',{exact:true}).fill('synthetic-invalid-token');
+  await page.getByRole('button',{name:'Use token',exact:true}).click();
+  await page.getByRole('button',{name:'Find events',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelector('#lookup-status').textContent.includes('token was rejected'));
+  await page.getByLabel('API token',{exact:true}).fill(process.env.TRACEAI_UI_API_TOKEN);
+  await page.getByRole('button',{name:'Use token',exact:true}).click();
+  await page.getByLabel('Interaction ID',{exact:true}).last().fill('does-not-exist');
+  await page.getByRole('button',{name:'Find events',exact:true}).click();
+  await page.getByText('No records were found for that interaction ID.',{exact:true}).waitFor();
+  await page.reload();
+  await page.getByText('No token connected',{exact:true}).waitFor();
+  await page.setViewportSize({width:390,height:844});
+  await page.screenshot({path:path.join(screenshots,'mobile.png'),fullPage:true});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true);
+  assert.deepEqual(errors,[]);
+  console.log('PASS: browser submission/retrieval, duplicate, auth, not-found, safe rendering, token clearing, and mobile layout');
+ } finally {await browser.close();}
+})().catch(error=>{console.error(error);process.exit(1)});

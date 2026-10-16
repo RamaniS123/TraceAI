@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>TraceAI · Interaction records</title>
+  <link rel="stylesheet" href="/assets/app.css">
+  <script src="/assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/" aria-label="TraceAI home"><span class="brand-mark">T</span>TraceAI</a><nav aria-label="Resources"><a href="/docs">API documentation <span aria-hidden="true">↗</span></a></nav></header>
+  <main>
+    <section class="intro"><p class="eyebrow">EVENT RECORDS / PHASE 3</p><h1>Follow the interaction.<br><span>Keep the record.</span></h1><p class="lede">Record what happened during an AI interaction, then retrieve its event history. TraceAI stores the events you submit; it does not generate or evaluate AI outputs.</p></section>
+    <section class="service-bar" aria-label="Service health"><div><span id="health-dot" class="dot"></span><strong id="health-label">Checking service…</strong><span id="health-detail">Connecting to the API and database</span></div><button id="refresh-health" class="text-button" type="button">Refresh health</button></section>
+    <section class="connection panel" aria-labelledby="connection-title"><div><p class="eyebrow">01 / CONNECT</p><h2 id="connection-title">Connect to your records</h2><p>Use the API token from your Render service’s environment settings. The token stays in this page’s memory and is cleared when you disconnect or reload.</p></div><form id="connection-form" autocomplete="off"><label for="api-token">API token</label><div class="inline"><input id="api-token" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your API token" required><button type="submit">Use token</button></div><div class="connection-state"><span id="connection-status" role="status">No token connected</span><button id="disconnect" class="text-button" type="button" hidden>Disconnect</button></div></form></section>
+    <div class="workspace">
+      <section class="panel" aria-labelledby="submit-title"><div class="section-heading"><div><p class="eyebrow">02 / RECORD</p><h2 id="submit-title">Submit an event</h2></div><button id="fill-example" class="secondary" type="button">Fill example</button></div><p class="muted">Use synthetic data. Each event needs a unique ID; related events share an interaction ID.</p>
+        <form id="event-form">
+          <div class="fields"><div><label for="event-id">Event ID</label><input id="event-id" required maxlength="64" placeholder="evt-001"></div><div><label for="interaction-id">Interaction ID</label><input id="interaction-id" required maxlength="64" placeholder="demo-001"></div></div>
+          <label for="event-type">Event type</label><select id="event-type"><option value="interaction.started">Interaction started</option><option value="model.output_generated">Model output generated</option><option value="review.completed">Human review completed</option><option value="interaction.completed">Interaction completed</option><option value="interaction.stopped">Interaction stopped</option><option value="record.corrected">Record corrected</option></select>
+          <label for="occurred-at">Occurred at <span class="label-note">UTC timestamp</span></label><input id="occurred-at" required placeholder="2026-10-16T14:00:00Z" aria-describedby="time-help"><small id="time-help">Use RFC 3339 UTC, for example 2026-10-16T14:00:00Z.</small>
+          <div class="fields"><div><label for="model-version">Model version</label><input id="model-version" required maxlength="64" placeholder="model-1"></div><div><label for="application-version">Application version</label><input id="application-version" required maxlength="64" placeholder="app-1"></div></div>
+          <label for="event-data">Event data <span class="label-note">JSON object</span></label><textarea id="event-data" rows="5" required spellcheck="false" aria-describedby="data-help">{}</textarea><small id="data-help">Optional details go inside this object. An empty object is valid for an interaction-started event.</small>
+          <button id="submit-event" class="wide" type="submit">Store event <span aria-hidden="true">→</span></button><p id="submit-status" class="feedback" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+      <section class="panel viewer" aria-labelledby="viewer-title"><p class="eyebrow">03 / EXPLORE</p><h2 id="viewer-title">Interaction history</h2><p class="muted">Find the events stored for one interaction. Separate interaction IDs keep their records apart.</p><form id="lookup-form"><label for="lookup-id">Interaction ID</label><div class="inline"><input id="lookup-id" required maxlength="64" placeholder="demo-001"><button id="lookup-button" type="submit">Find events</button></div></form><p id="lookup-status" class="feedback" role="status" aria-live="polite"></p>
+        <div id="empty-state" class="empty-state"><span class="empty-icon" aria-hidden="true">≡</span><h3>Your event history appears here</h3><p>Fill an example, connect your token, and store an event. Then find its interaction to read the saved record.</p></div>
+        <div id="interaction-result" hidden><div class="result-heading"><div><p class="eyebrow">INTERACTION</p><h3 id="result-id"></h3></div><span id="result-status" class="badge"></span></div><p id="event-count" class="muted"></p><div id="event-list" class="event-list"></div><p class="phase-note">Events are ordered by their timestamps. Missing-event warnings and audit reports are planned for Phase 4.</p></div>
+      </section>
+    </div>
+    <section class="how-it-works" aria-label="How TraceAI works"><h2>What happens to an event?</h2><div><article><span>1</span><h3>Validate</h3><p>The API checks the token, required fields, and event format.</p></article><article><span>2</span><h3>Store</h3><p>Accepted events are saved in the connected PostgreSQL database.</p></article><article><span>3</span><h3>Retrieve</h3><p>Search an interaction ID to see its recorded history.</p></article></div></section>
+  </main><footer><span>TraceAI · Semester prototype</span><span>Synthetic data only · Supports record keeping, not compliance certification.</span></footer>
+</body>
+</html>

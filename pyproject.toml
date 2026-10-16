@@ -24,7 +24,7 @@ dev = ["pytest>=8,<10", "httpx>=0.28,<1", "jsonschema==4.26.0", "openapi-spec-va
 where = ["src"]
 
 [tool.setuptools.package-data]
-traceai = ["openapi.json"]
+traceai = ["openapi.json", "static/*.html", "static/*.css", "static/*.js"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

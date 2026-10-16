@@ -4,7 +4,8 @@ from importlib.resources import files
 import json
 
 from fastapi import Depends, FastAPI, Request
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import HTMLResponse, JSONResponse, Response
+from fastapi.staticfiles import StaticFiles
 from starlette.concurrency import run_in_threadpool
 from starlette.exceptions import HTTPException
 from sqlalchemy import text
@@ -35,6 +36,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         engine.dispose()
 
     app = FastAPI(title="TraceAI", version="0.1.0", lifespan=lifespan)
+    assets = files("traceai").joinpath("static")
+    app.mount("/assets", StaticFiles(directory=str(assets)), name="assets")
+
+    @app.get("/", response_class=HTMLResponse, include_in_schema=False)
+    def homepage():
+        return HTMLResponse(assets.joinpath("index.html").read_text(), headers={
+            "Cache-Control": "no-store",
+            "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
+            "X-Content-Type-Options": "nosniff",
+            "Referrer-Policy": "no-referrer",
+        })
+
     app.state.engine = engine
     app.state.settings = settings
     app.state.sessions = session_factory(engine)

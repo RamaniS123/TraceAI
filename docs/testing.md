@@ -16,8 +16,8 @@ the evaluator's exit status and stops the server on completion. JUnit and JSON
 results are uploaded as the `phase-3-test-results` artifact even on test failure.
 Reports exclude raw response bodies, request authorization headers, and tokens.
 
-There are currently 51 pytest cases: 34 application/database integration cases,
-14 runner validation/failure cases, and three hosted database configuration cases. The independent evaluator has 42 checks.
+There are currently 52 pytest cases: 34 application/database integration cases,
+14 runner validation/failure cases, three hosted database configuration cases, and one public frontend case. The independent evaluator has 42 checks.
 A passing pytest count is distinct from a passing deployed-service evaluation.
 
 ## Run the independent evaluator against either team
