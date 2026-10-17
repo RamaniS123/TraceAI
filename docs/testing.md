@@ -98,6 +98,23 @@ messages. A configuration failure replaces an old report with a failed result
 when the report path is writable. Unwritable reports cause exit 2; always inspect
 the exit code and run ID rather than trusting an old result file.
 
+## Requirement and operation status from a report
+
+`tools/phase_status.py` turns an evaluator report into the phase report's
+requirement entries (Q1.1) and operation table (Q3.1). Requirement names,
+acceptance-criterion mappings and known gaps live in `docs/requirements.json`;
+pass/fail evidence comes only from the report. It needs no extra dependencies:
+
+```sh
+python tools/phase_status.py reports/render-api.json --label "Team 106 on Render" --output reports/render-status.txt
+```
+
+A requirement is complete only when every mapped check passed and no gap is
+recorded; failed or unrun checks make it partial and are named. Operations not
+in the Phase 3 contract are listed as not implemented. Update `docs/requirements.json`
+when scope changes; `tests/test_phase_status.py` fails if it names a check the
+evaluator no longer has.
+
 ## Validation performed for chunk 4
 
 The workflow passed actionlint 1.7.7. Its commands were exercised locally from a
