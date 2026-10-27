@@ -19,6 +19,7 @@ from traceai.errors import APIError
 from traceai.events import get_interaction, reset_events, store_event
 from traceai.requests import parse_body
 from traceai.schemas import EventInput, ResetRequest
+from traceai.testing_interface import init_state, system_router, tester_router
 
 
 def json_response(body, status=200):
@@ -51,6 +52,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.engine = engine
     app.state.settings = settings
     app.state.sessions = session_factory(engine)
+    # Course cross-team testing interface: the system's /test endpoints at the root and
+    # the deployed tester under /tester (see docs/testing-interface.md).
+    init_state(app)
+    app.include_router(system_router)
+    app.include_router(tester_router, prefix="/tester")
     # Serve the reviewed contract in /docs, including conditional payload rules.
     # tools/validate_contract.py checks this wheel-bundled copy for exact parity.
     app.openapi = lambda: json.loads(files("traceai").joinpath("openapi.json").read_text())

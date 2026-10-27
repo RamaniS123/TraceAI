@@ -31,6 +31,10 @@ RUN python -m pip install --no-build-isolation --no-deps . \
 COPY alembic.ini ./
 COPY migrations ./migrations
 COPY deploy ./deploy
+# The deployed tester (/tester) runs the same evaluator and shared fixtures as CI.
+COPY tools/run_phase3_api_tests.py tools/phase_status.py ./tools/
+COPY tests/fixtures ./tests/fixtures
+COPY docs/requirements.json ./docs/
 RUN useradd --create-home --uid 10001 traceai \
     && chmod -R a+rX /app \
     && chmod +x deploy/start.sh

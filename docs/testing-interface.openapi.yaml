@@ -1,0 +1,102 @@
+openapi: 3.1.1
+info:
+  title: TraceAI testing interface (tester and system /test endpoints)
+  version: 1.0.0
+  description: >-
+    Course cross-team testing interface. The pod project API is described in
+    contracts/openapi.json. Error bodies on these endpoints are {message, source}.
+servers:
+  - url: https://traceai-zm1t.onrender.com/tester
+    description: Tester base URL
+  - url: https://traceai-zm1t.onrender.com
+    description: System base URL (system /test/setup and /test/report)
+components:
+  securitySchemes:
+    resetToken: {type: http, scheme: bearer, description: System setup requires the reset token.}
+  schemas:
+    Problem:
+      type: object
+      required: [message, source]
+      properties:
+        message: {type: string, minLength: 1}
+        source: {enum: [tester, system, communication, unknown]}
+    Measure:
+      type: object
+      required: [covered, total, basis]
+      properties:
+        covered: {type: [integer, 'null'], minimum: 0}
+        total: {type: [integer, 'null'], minimum: 0}
+        basis: {type: string, minLength: 1}
+    Result:
+      type: object
+      required: [test_id, outcome, message]
+      properties:
+        test_id: {type: string, minLength: 1}
+        outcome: {enum: [pass, fail, error, skip]}
+        source: {enum: [tester, system, communication, unknown]}
+        message: {type: string, minLength: 1}
+    SuiteReport:
+      type: object
+      required: [session_id, target_url, results, coverage]
+      properties:
+        session_id: {type: string, minLength: 1}
+        target_url: {type: string}
+        results: {type: array, items: {$ref: '#/components/schemas/Result'}}
+        coverage:
+          type: object
+          required: [code, component, system]
+          properties:
+            code: {$ref: '#/components/schemas/Measure'}
+            component: {$ref: '#/components/schemas/Measure'}
+            system: {$ref: '#/components/schemas/Measure'}
+paths:
+  /test/setup:
+    post:
+      summary: "Tester: create a session and wait for system setup (system: reset the test dataset for a session)"
+      description: >-
+        On the tester base URL the body is {target_url}. On the system base URL the
+        body is {session_id, setup} and the reset bearer token is required.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - {type: object, required: [target_url], properties: {target_url: {type: string}}}
+                - {type: object, required: [session_id], properties: {session_id: {type: string, minLength: 1}, setup: {type: object}}}
+      responses:
+        '201':
+          description: Ready; the session ID is returned
+          content:
+            application/json:
+              schema: {type: object, required: [session_id], properties: {session_id: {type: string, minLength: 1}}}
+        default:
+          description: 400 invalid, 401 missing token (system), 403 disabled, 409 existing ID, 500 failure; target errors are forwarded by the tester
+          content: {application/json: {schema: {$ref: '#/components/schemas/Problem'}}}
+  /test/run:
+    post:
+      summary: "Tester only: run the suite once and return the complete report"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object, required: [session_id], properties: {session_id: {type: string, minLength: 1}}}
+      responses:
+        '200':
+          description: Complete suite report
+          content: {application/json: {schema: {$ref: '#/components/schemas/SuiteReport'}}}
+        default:
+          description: 400 invalid, 404 unknown session, 409 already run, 500 tester aborted (stored report available)
+          content: {application/json: {schema: {$ref: '#/components/schemas/Problem'}}}
+  /test/report:
+    get:
+      summary: "Tester: stored suite report. System: code coverage for the session"
+      parameters:
+        - {name: session_id, in: query, required: true, schema: {type: string, minLength: 1}}
+      responses:
+        '200':
+          description: Tester returns a SuiteReport; system returns {session_id, coverage: {code}}
+          content: {application/json: {schema: {type: object}}}
+        default:
+          description: 400 missing session_id, 404 unknown session, 409 not finished / still preparing
+          content: {application/json: {schema: {$ref: '#/components/schemas/Problem'}}}
