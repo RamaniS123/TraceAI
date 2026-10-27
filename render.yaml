@@ -19,6 +19,9 @@ services:
         generateValue: true
       - key: TRACEAI_TEST_RESET_ENABLED
         value: "true"
+      # The deployed tester sends this deployment's own tokens only to this origin.
+      - key: TRACEAI_PUBLIC_URL
+        value: https://traceai-zm1t.onrender.com
 databases:
   - name: traceai-db
     plan: free

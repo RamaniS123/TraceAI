@@ -12,3 +12,12 @@
 **/__pycache__/
 **/*.pyc
 !requirements-build.lock
+# Tester assets: evaluator, shared fixtures and requirement mapping.
+!tools/
+!tools/run_phase3_api_tests.py
+!tools/phase_status.py
+!tests/
+!tests/fixtures/
+!tests/fixtures/**
+!docs/
+!docs/requirements.json

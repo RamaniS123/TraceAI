@@ -15,6 +15,10 @@ dependencies = [
   "psycopg[binary]>=3.2,<4",
   "alembic>=1.14,<2",
   "simplejson>=3.20,<4",
+  # Deployed tester (src/traceai/testing_interface.py) reuses the HTTP evaluator.
+  "httpx>=0.28,<1",
+  "jsonschema>=4.26,<5",
+  "rfc3339-validator>=0.1.4,<1",
 ]
 
 [project.optional-dependencies]
