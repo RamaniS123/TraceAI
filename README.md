@@ -6,6 +6,7 @@ certify legal compliance.
 
 ## Current progress: Phase 3, chunks 1–4
 
+- [Pod specification for cross-team testing](docs/pod-specification.md)
 - [Frontend demonstration instructions](docs/frontend.md)
 - [Proposed OpenAPI 3.1 contract](contracts/openapi.json)
 - [Standalone event JSON Schema](contracts/event.schema.json)
