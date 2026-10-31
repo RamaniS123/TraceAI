@@ -76,3 +76,12 @@ def test_unrun_checks_are_never_counted_as_conforming(tmp_path, capsys):
 def test_unreadable_report_exits_with_configuration_error(tmp_path, capsys):
     assert status.main([str(tmp_path / 'missing.json')]) == 2
     assert 'Could not read input' in capsys.readouterr().err
+
+
+def test_timeline_profile_is_only_counted_when_its_checks_are_in_the_run():
+    criterion = DATA['acceptanceCriteria']['AC-03']
+    assert status.criterion_checks(criterion, CHECKS) == []
+    extended = status.evaluator_checks(include_timeline=True)
+    names = status.criterion_checks(criterion, extended)
+    assert names and all(name.startswith('phase4-timeline-') for name in names)
+    assert status.problems(DATA, extended) == []

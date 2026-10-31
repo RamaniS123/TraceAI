@@ -8,6 +8,7 @@ from sqlalchemy.dialects.postgresql import insert
 from traceai.errors import APIError
 from traceai.models import Event
 from traceai.schemas import timestamp_key
+from traceai.timeline import build_interaction
 
 
 def public_event(row):
@@ -53,14 +54,7 @@ def get_interaction(engine, interaction_id):
         rows = connection.execute(select(Event.__table__).where(Event.interaction_id == interaction_id)).mappings().all()
     if not rows:
         raise APIError(404, "INTERACTION_NOT_FOUND", "Interaction was not found.")
-    events = sorted((public_event(row) for row in rows), key=lambda event: (timestamp_key(event["occurredAt"]), event["eventId"]))
-    status = "in_progress"
-    for event in events:
-        if event["eventType"] == "interaction.completed":
-            status = "completed"
-        elif event["eventType"] == "interaction.stopped":
-            status = "stopped"
-    return {"interactionId": interaction_id, "status": status, "events": events, "warnings": []}
+    return build_interaction(interaction_id, (public_event(row) for row in rows))
 
 
 def reset_events(engine):

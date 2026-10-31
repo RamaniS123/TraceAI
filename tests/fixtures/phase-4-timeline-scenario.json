@@ -1,0 +1,741 @@
+{
+  "description": "Phase 4 chunk 1 provisional lifecycle. Fixed expected outputs; includes destructive reset and only synthetic data.",
+  "steps": [
+    {
+      "method": "POST",
+      "path": "/api/v1/test/reset",
+      "auth": "reset",
+      "body": {
+        "confirm": true
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "reset": true,
+        "remainingEvents": 0,
+        "remainingInteractions": 0
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-done",
+        "interactionId": "p4-late",
+        "eventType": "interaction.completed",
+        "occurredAt": "2026-10-30T10:00:03Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-done",
+        "interactionId": "p4-late",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-late",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-late",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "p4-done",
+            "interactionId": "p4-late",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T10:00:03Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "MISSING_EVENT",
+            "message": "Finalized interaction is missing interaction.started.",
+            "eventType": "interaction.started"
+          },
+          {
+            "code": "MISSING_EVENT",
+            "message": "Finalized interaction is missing model.output_generated.",
+            "eventType": "model.output_generated"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-other-output",
+        "interactionId": "p4-other",
+        "eventType": "model.output_generated",
+        "occurredAt": "2026-10-30T10:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-other-output",
+        "interactionId": "p4-other",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-other",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-other",
+        "status": "in_progress",
+        "events": [
+          {
+            "eventId": "p4-other-output",
+            "interactionId": "p4-other",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T10:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-late",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-late",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "p4-done",
+            "interactionId": "p4-late",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T10:00:03Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "MISSING_EVENT",
+            "message": "Finalized interaction is missing interaction.started.",
+            "eventType": "interaction.started"
+          },
+          {
+            "code": "MISSING_EVENT",
+            "message": "Finalized interaction is missing model.output_generated.",
+            "eventType": "model.output_generated"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-start",
+        "interactionId": "p4-late",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-30T10:00:00Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-start",
+        "interactionId": "p4-late",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-late",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-late",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "p4-start",
+            "interactionId": "p4-late",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T10:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-done",
+            "interactionId": "p4-late",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T10:00:03Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "MISSING_EVENT",
+            "message": "Finalized interaction is missing model.output_generated.",
+            "eventType": "model.output_generated"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-output",
+        "interactionId": "p4-late",
+        "eventType": "model.output_generated",
+        "occurredAt": "2026-10-30T10:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-output",
+        "interactionId": "p4-late",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-late",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-late",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "p4-start",
+            "interactionId": "p4-late",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T10:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-output",
+            "interactionId": "p4-late",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T10:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-done",
+            "interactionId": "p4-late",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T10:00:03Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-late",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-late",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "p4-start",
+            "interactionId": "p4-late",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T10:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-output",
+            "interactionId": "p4-late",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T10:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-done",
+            "interactionId": "p4-late",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T10:00:03Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-output",
+        "interactionId": "p4-late",
+        "eventType": "model.output_generated",
+        "occurredAt": "2026-10-30T10:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "eventId": "p4-output",
+        "interactionId": "p4-late",
+        "stored": true,
+        "duplicate": true
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-late",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-late",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "p4-start",
+            "interactionId": "p4-late",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T10:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-output",
+            "interactionId": "p4-late",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T10:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-done",
+            "interactionId": "p4-late",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T10:00:03Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-bad-start",
+        "interactionId": "p4-order",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-30T10:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-bad-start",
+        "interactionId": "p4-order",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-bad-end",
+        "interactionId": "p4-order",
+        "eventType": "interaction.completed",
+        "occurredAt": "2026-10-30T10:00:02Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-bad-end",
+        "interactionId": "p4-order",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-bad-output",
+        "interactionId": "p4-order",
+        "eventType": "model.output_generated",
+        "occurredAt": "2026-10-30T10:00:00Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-bad-output",
+        "interactionId": "p4-order",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-order",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-order",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "p4-bad-output",
+            "interactionId": "p4-order",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T10:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-bad-start",
+            "interactionId": "p4-order",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T10:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-bad-end",
+            "interactionId": "p4-order",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T10:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "OUT_OF_ORDER_EVENT",
+            "message": "model.output_generated occurred before interaction.started.",
+            "eventId": "p4-bad-output",
+            "eventType": "model.output_generated"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-stop",
+        "interactionId": "p4-stop",
+        "eventType": "interaction.stopped",
+        "occurredAt": "2026-10-30T10:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-stop",
+        "interactionId": "p4-stop",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-stop-start",
+        "interactionId": "p4-stop",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-30T10:00:00Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-stop-start",
+        "interactionId": "p4-stop",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-stop",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-stop",
+        "status": "stopped",
+        "events": [
+          {
+            "eventId": "p4-stop-start",
+            "interactionId": "p4-stop",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T10:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-stop",
+            "interactionId": "p4-stop",
+            "eventType": "interaction.stopped",
+            "occurredAt": "2026-10-30T10:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-multi-end",
+        "interactionId": "p4-multi",
+        "eventType": "interaction.completed",
+        "occurredAt": "2026-10-30T10:00:00Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-multi-end",
+        "interactionId": "p4-multi",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-multi-output",
+        "interactionId": "p4-multi",
+        "eventType": "model.output_generated",
+        "occurredAt": "2026-10-30T10:00:02Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-multi-output",
+        "interactionId": "p4-multi",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "p4-multi-review",
+        "interactionId": "p4-multi",
+        "eventType": "review.completed",
+        "occurredAt": "2026-10-30T10:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "reviewerId": "synthetic-reviewer",
+          "action": "accept",
+          "reason": "Synthetic review"
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "p4-multi-review",
+        "interactionId": "p4-multi",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-multi",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-multi",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "p4-multi-end",
+            "interactionId": "p4-multi",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T10:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-multi-review",
+            "interactionId": "p4-multi",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T10:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "accept",
+              "reason": "Synthetic review"
+            }
+          },
+          {
+            "eventId": "p4-multi-output",
+            "interactionId": "p4-multi",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T10:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "OUT_OF_ORDER_EVENT",
+            "message": "interaction.completed occurred before model.output_generated.",
+            "eventId": "p4-multi-end",
+            "eventType": "interaction.completed"
+          },
+          {
+            "code": "OUT_OF_ORDER_EVENT",
+            "message": "interaction.completed occurred before review.completed.",
+            "eventId": "p4-multi-end",
+            "eventType": "interaction.completed"
+          },
+          {
+            "code": "OUT_OF_ORDER_EVENT",
+            "message": "review.completed occurred before model.output_generated.",
+            "eventId": "p4-multi-review",
+            "eventType": "review.completed"
+          },
+          {
+            "code": "MISSING_EVENT",
+            "message": "Finalized interaction is missing interaction.started.",
+            "eventType": "interaction.started"
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-late",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-late",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "p4-start",
+            "interactionId": "p4-late",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T10:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-output",
+            "interactionId": "p4-late",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T10:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "p4-done",
+            "interactionId": "p4-late",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T10:00:03Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/test/reset",
+      "auth": "reset",
+      "body": {
+        "confirm": true
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "reset": true,
+        "remainingEvents": 0,
+        "remainingInteractions": 0
+      }
+    }
+  ]
+}

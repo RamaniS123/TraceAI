@@ -65,7 +65,7 @@ def configuration(args):
     return args.base_url.rstrip('/'), tokens
 
 
-def planned_checks(root):
+def planned_checks(root, include_timeline=False):
     steps = read_json(root / 'tests/fixtures/phase-3-scenario.json')['steps']
     checks = [{'name': f'scenario-{index:02d}', **step} for index, step in enumerate(steps, 1)]
     for path in ('/api/v1/events', '/api/v1/test/reset'):
@@ -87,6 +87,9 @@ def planned_checks(root):
             lookup['expectedBody'] = {'interactionId': 'int-size', 'status': 'in_progress',
                                       'events': [json.loads(raw)], 'warnings': []}
         checks.append(lookup)
+    if include_timeline:
+        steps = read_json(root / 'tests/fixtures/phase-4-timeline-scenario.json')['steps']
+        checks.extend({'name': f'phase4-timeline-{index:02d}', **step} for index, step in enumerate(steps, 1))
     return checks
 
 
@@ -192,12 +195,13 @@ def main(argv=None, *, transport=None):
     parser.add_argument('--env-file', help='Optional local credentials file; process environment takes precedence')
     parser.add_argument('--timeout', type=float, default=5, help='Per-request timeout in seconds')
     parser.add_argument('--wait-seconds', type=float, default=0, help='Read-only readiness wait, at most 60 seconds')
+    parser.add_argument('--phase4-timeline', action='store_true', help='Also run the Phase 4 chunk 1 warning and late-event scenario')
     parser.add_argument('--report', type=Path, help='Write a sanitized JSON result file')
     args = parser.parse_args(argv)
     started = datetime.now(timezone.utc).isoformat()
     try:
         origin, tokens = configuration(args)
-        checks = planned_checks(ROOT)
+        checks = planned_checks(ROOT, include_timeline=args.phase4_timeline)
         contract = read_json(ROOT / 'contracts/openapi.json')
     except (ValueError, OSError):
         # Keep credential values, file paths, and raw exception strings out of logs.

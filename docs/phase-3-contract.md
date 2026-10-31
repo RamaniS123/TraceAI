@@ -1,5 +1,9 @@
 # Phase 3 contract and decisions
 
+Historical Phase 3 notes. Phase 4 chunk 1 supersedes the empty-warning assumption;
+see [the implemented warning profile](phase-4-timeline.md). Other unresolved pod
+decisions remain provisional.
+
 Source: Phase 2 submission, agreed specification v1.1 dated September 22, 2026,
 Sections 5.1–5.3 and 6.1. `contracts/openapi.json` is the proposed machine-readable
 Phase 3 profile; `contracts/event.schema.json` is its standalone JSON Schema

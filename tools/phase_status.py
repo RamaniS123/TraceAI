@@ -14,12 +14,12 @@ ROOT = Path(__file__).resolve().parents[1]
 CLEANUP = {'name': 'final-cleanup', 'method': 'POST', 'path': '/api/v1/test/reset', 'expectedStatus': 200}
 
 
-def evaluator_checks():
+def evaluator_checks(include_timeline=False):
     """The evaluator's own plan, so check names and endpoints never need copying by hand."""
     spec = importlib.util.spec_from_file_location('api_runner', ROOT / 'tools/run_phase3_api_tests.py')
     runner = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(runner)
-    return runner.planned_checks(ROOT) + [CLEANUP]
+    return runner.planned_checks(ROOT, include_timeline=include_timeline) + [CLEANUP]
 
 
 def operation_path(path):
@@ -32,9 +32,12 @@ def problems(data, checks):
     """Names in the data file that no longer match the evaluator or each other."""
     known = {check['name'] for check in checks}
     found = []
+    profile_known = {check['name'] for check in evaluator_checks(include_timeline=True)}
     for ac, criterion in data['acceptanceCriteria'].items():
         if criterion['checks'] != 'all':
             found += [f'{ac} refers to unknown check {name}' for name in criterion['checks'] if name not in known]
+        for names in criterion.get('profileChecks', {}).values():
+            found += [f'{ac} refers to unknown profile check {name}' for name in names if name not in profile_known]
     requirement_ids = {req['id'] for req in data['requirements']}
     for req in data['requirements']:
         found += [f"{req['id']} refers to unknown check {name}" for name in req.get('checks', []) if name not in known]
@@ -52,7 +55,11 @@ def tally(names, results):
 
 
 def criterion_checks(criterion, checks):
-    return [check['name'] for check in checks] if criterion['checks'] == 'all' else criterion['checks']
+    if criterion['checks'] == 'all':
+        return [check['name'] for check in checks]
+    known = {check['name'] for check in checks}
+    extra = [name for names in criterion.get('profileChecks', {}).values() for name in names if name in known]
+    return list(dict.fromkeys(criterion['checks'] + extra))
 
 
 def requirement_entry(req, data, checks, results):
@@ -151,7 +158,7 @@ def main(argv=None):
     except (OSError, ValueError) as exc:
         print(f'Could not read input: {type(exc).__name__}', file=sys.stderr)
         return 2
-    checks = evaluator_checks()
+    checks = evaluator_checks(include_timeline=any(row.get('name', '').startswith('phase4-timeline-') for row in report.get('checks', [])))
     found = problems(data, checks)
     if found:
         print('docs/requirements.json is out of date:\n  ' + '\n  '.join(found), file=sys.stderr)

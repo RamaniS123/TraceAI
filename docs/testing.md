@@ -128,3 +128,12 @@ cloud workspace; a hosted Actions result must be checked separately in GitHub.
 No public deployment or evaluation of the other team's service has occurred yet.
 The Render launch is described in [deployment instructions](deployment.md).
 The existing HTTPX/Starlette TestClient deprecation warning remains non-failing.
+
+
+## Phase 4 timeline increment
+
+The opt-in `--phase4-timeline` evaluator profile runs 68 checks, including the
+26-step warning/late-event fixture. The default profile remains 42 checks.
+Use `TRACEAI_TEST_TIMELINE_ENABLED=true` to select the same profile on the hosted
+tester. See [timeline rules and verification](phase-4-timeline.md). New schema
+warnings are machine-readable; displaying them in the frontend is a later chunk.

@@ -32,4 +32,4 @@ traceai = ["openapi.json", "static/*.html", "static/*.css", "static/*.js"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["integration: requires a migrated isolated PostgreSQL test database"]
+markers = ["integration: requires a migrated isolated PostgreSQL test database", "phase4: Phase 4 increment checks"]

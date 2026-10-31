@@ -66,8 +66,9 @@ def validate_response(response, path, method):
     Draft202012Validator(document, format_checker=FormatChecker()).validate(response.json())
 
 
-def test_complete_shared_scenario(client):
-    scenario = json.loads((FIXTURES / 'phase-3-scenario.json').read_text())
+@pytest.mark.parametrize('scenario_file', ['phase-3-scenario.json', pytest.param('phase-4-timeline-scenario.json', marks=pytest.mark.phase4)])
+def test_complete_shared_scenario(client, scenario_file):
+    scenario = json.loads((FIXTURES / scenario_file).read_text())
     for index, step in enumerate(scenario['steps']):
         headers = {'api': client.api_headers, 'reset': client.reset_headers,
                    'none': {}, 'invalid': {'Authorization': 'Bearer invalid-synthetic-token'}}[step['auth']]
@@ -156,7 +157,7 @@ def test_full_timestamp_precision_ties_and_terminal_status(client):
     result = retrieve(client).json()
     assert [e['eventId'] for e in result['events']] == ['evt-a', 'evt-b', 'evt-z']
     assert result['status'] == 'stopped'
-    assert result['warnings'] == []
+    assert result['warnings'] == [{'code': 'MISSING_EVENT', 'message': 'Finalized interaction is missing interaction.started.', 'eventType': 'interaction.started'}]
 
 
 def test_concurrent_identical_submissions_store_once(client):

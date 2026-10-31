@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "TraceAI Phase 3 API",
-    "version": "0.1.0",
-    "description": "Provisional Phase 3 profile of Phase 2 submission v1.1, Sections 5\u20136. Assumptions in docs/phase-3-contract.md require pod review. Audit reports and warning analysis are deferred."
+    "title": "TraceAI Phase 4 API \u2014 timeline increment",
+    "version": "0.2.0",
+    "description": "Phase 4 chunk 1 extends the Phase 3 profile with read-time timeline warnings. Lifecycle rules in docs/phase-4-timeline.md are provisional pending pod agreement. Audit reporting and correction application are deferred."
   },
   "security": [
     {
@@ -114,7 +114,7 @@
         "operationId": "getInteraction",
         "responses": {
           "200": {
-            "description": "Events ordered by occurredAt instant, then eventId; warnings empty in Phase 3",
+            "description": "Events ordered by occurredAt instant and then eventId, derived status, and deterministic missing/sequence warnings. Rules are documented in docs/phase-4-timeline.md.",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,9 +460,8 @@
           },
           "warnings": {
             "type": "array",
-            "maxItems": 0,
             "items": {
-              "type": "object"
+              "$ref": "#/components/schemas/EventWarning"
             }
           }
         },
@@ -585,6 +584,45 @@
           "error"
         ],
         "additionalProperties": false
+      },
+      "EventWarning": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "MISSING_EVENT",
+              "OUT_OF_ORDER_EVENT",
+              "CORRECTED_EVENT"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "eventId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "interaction.started",
+              "model.output_generated",
+              "review.completed",
+              "interaction.completed",
+              "interaction.stopped",
+              "record.corrected"
+            ]
+          }
+        },
+        "description": "Missing-event warnings identify the missing eventType and have no eventId. Order warnings identify the event whose timestamp precedes a lower lifecycle stage. CORRECTED_EVENT is reserved for a later increment."
       }
     }
   }

@@ -1,6 +1,12 @@
-# TraceAI pod specification (Teams 103 and 106)
+# TraceAI specification and implementation profile
 
-This page is the intra-pod specification registered for cross-team testing. It
+**Phase 4 status:** Team 106's warning increment is implemented under provisional
+rules in [phase-4-timeline.md](phase-4-timeline.md). This page is our registered
+implementation profile; it is not evidence that Team 103 approved the new rules.
+The Phase 2 model attachment and report Section 5 also differ, so their authority
+and lifecycle details still need reconciliation.
+
+This page is the specification registered for cross-team testing. It
 covers the shared project API, test preparation, resets, cleanup, acceptance
 criteria and coverage counting. The authority is the **Phase 2 specification
 v1.1, agreed by Teams 103 and 106 on 2026-09-22** (Phase 2 Sections 3–5). The
@@ -23,7 +29,7 @@ Protected operations require `Authorization: Bearer <token>`.
 | Operation | Requirements | Success | Errors | Phase |
 | --- | --- | --- | --- | --- |
 | `POST /api/v1/events` | REQ-01, 04, 05, 07, 08, 11, 12 | 201 receipt; identical duplicate 200 | 400, 401, 409, 413 (> 65,536 bytes), 422, 503 | 3 |
-| `GET /api/v1/interactions/{interactionId}` | REQ-02, 03, 05, 09, 11, 14 | 200 events ordered by `occurredAt`, then `eventId` | 401, 404, 503 | 3 (warnings always `[]`) |
+| `GET /api/v1/interactions/{interactionId}` | REQ-02, 03, 05, 09, 11, 14 | 200 events ordered by `occurredAt`, then `eventId` | 401, 404, 503 | 3–4 (timeline warnings; provisional rules linked above) |
 | `GET /api/v1/interactions/{interactionId}/report` | REQ-05, 06, 09, 11, 14 | 200 audit report | 401, 404, 503 | 4 |
 | `POST /api/v1/test/reset` with `{"confirm": true}` | REQ-10, 11, 14 | 200 `{reset, remainingEvents: 0, remainingInteractions: 0}` | 400, 401, 403, 503 | 3 |
 | `GET /health` (no auth) | REQ-08, 14 | 200 `{status, api, storage}` | 503 | 3 |
@@ -69,7 +75,7 @@ either implementation.
 | --- | --- | --- | --- | --- |
 | AC-01 | Event submission and validation | REQ-01, REQ-07 | 3 | scenario 3–6, 11–22; boundary checks |
 | AC-02 | Interaction grouping | REQ-02 | 3 | scenario 7, 8, 27, 28 |
-| AC-03 | Timeline and warning detection | REQ-03 | 4 | not yet |
+| AC-03 | Timeline and warning detection | REQ-03 | 4 | opt-in 26-step timeline scenario plus unit/integration tests |
 | AC-04 | Duplicate and conflicting events | REQ-04 | 4 (delivered early) | scenario 9, 10 |
 | AC-05 | Human review and audit report | REQ-05, REQ-06 | 4 | not yet |
 | AC-06 | Storage failure | REQ-08 | 4 | integration tests only (cannot be triggered through the API) |

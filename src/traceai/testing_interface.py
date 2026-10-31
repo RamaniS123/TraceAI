@@ -262,7 +262,8 @@ def execute(app, session_id, session):
     try:
         runner = load_tool('run_phase3_api_tests')
         status_tool = load_tool('phase_status')
-        checks = runner.planned_checks(runner.ROOT) + [CLEANUP]
+        timeline = os.environ.get('TRACEAI_TEST_TIMELINE_ENABLED', 'false').lower() in ('true', '1')
+        checks = runner.planned_checks(runner.ROOT, include_timeline=timeline) + [CLEANUP]
         contract = json.loads(files('traceai').joinpath('openapi.json').read_text())
         data = json.loads((runner.ROOT / 'docs/requirements.json').read_text(encoding='utf-8'))
         tokens = target_tokens(app, target_url)

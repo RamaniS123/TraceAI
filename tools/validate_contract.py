@@ -36,7 +36,7 @@ def main():
         pass
     else:
         raise AssertionError('Malformed fixture unexpectedly parsed')
-    scenario = load('tests/fixtures/phase-3-scenario.json')['steps']
+    scenario = load('tests/fixtures/phase-3-scenario.json')['steps'] + load('tests/fixtures/phase-4-timeline-scenario.json')['steps']
     for step in scenario:
         path = step['path']
         if path.startswith('/api/v1/interactions/'):

@@ -75,3 +75,12 @@ CI runs the same check against a local server with `--require-pass`.
   for setup); request them privately from Team 106. Run one session at a time;
   setup resets the test dataset. Max times: tester setup 120 s (includes a
   free-tier cold start), tester run 300 s, system setup 90 s.
+
+
+## Optional Phase 4 timeline profile
+
+The HTTP setup/run/report formats above are unchanged. The default suite remains
+42 checks. `TRACEAI_TEST_TIMELINE_ENABLED=true` selects 68 checks, adding the
+warning and late-arrival scenario; the CLI selects it with `--phase4-timeline`.
+AC-03 is then counted as exercised, with rule-alignment limitations documented in
+[phase-4-timeline.md](phase-4-timeline.md). Reports still distinguish pass/fail/error/skip.

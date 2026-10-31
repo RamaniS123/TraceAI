@@ -1,4 +1,4 @@
-name: Phase 3 tests
+name: TraceAI regression and timeline tests
 
 on:
   push:
@@ -70,6 +70,7 @@ jobs:
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true' EXIT
           python tools/run_phase3_api_tests.py --base-url http://127.0.0.1:8000 --allow-test-reset --wait-seconds 20 --report reports/api.json
+          python tools/run_phase3_api_tests.py --base-url http://127.0.0.1:8000 --allow-test-reset --phase4-timeline --report reports/timeline-api.json
       - name: Test the course testing interface (our tester against our system)
         shell: bash
         env:
