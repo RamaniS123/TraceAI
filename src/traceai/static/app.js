@@ -3,12 +3,27 @@
   const $ = (id) => document.getElementById(id);
   let token = "";
   let session = 0;
+  let viewRevision = 0;
+  let reportJSON = "";
   const labels = {"interaction.started": "Interaction started", "model.output_generated": "Model output generated", "review.completed": "Human review completed", "interaction.completed": "Interaction completed", "interaction.stopped": "Interaction stopped", "record.corrected": "Record corrected"};
   function feedback(id, message, error = false) {
     $(id).textContent = message;
     $(id).className = `feedback ${error ? "error" : "success"}`;
   }
+  function clearReport() {
+    reportJSON = "";
+    $("audit-report").hidden = true;
+    $("download-report").disabled = true;
+    $("load-report").disabled = false;
+    for (const id of ["report-metadata", "report-reviews", "report-corrections"]) $(id).replaceChildren();
+    $("report-disclaimer").textContent = "";
+    feedback("report-status", "");
+  }
   function clearHistory() {
+    viewRevision++;
+    clearReport();
+    $("warning-list").replaceChildren();
+    $("warning-summary").textContent = "";
     $("interaction-result").hidden = true;
     $("empty-state").hidden = false;
     $("event-list").replaceChildren();
@@ -18,7 +33,8 @@
   }
   async function api(path, options = {}) {
     if (!token) throw new Error("Connect your API token in step 1 first.");
-    const response = await fetch(path, {...options, headers: {...options.headers, Authorization: `Bearer ${token}`}, cache: "no-store", redirect: "error"});
+    const {rawResponse = false, ...requestOptions} = options;
+    const response = await fetch(path, {...requestOptions, headers: {...requestOptions.headers, Authorization: `Bearer ${token}`}, cache: "no-store", redirect: "error"});
     if (response.status === 401) throw new Error("The API token was rejected. Check the token in your Render service settings and reconnect.");
     if (response.status === 404) throw new Error("No records were found for that interaction ID.");
     if (response.status === 409) throw new Error("That event ID already exists with different content. Use a new event ID.");
@@ -26,6 +42,10 @@
     if (response.status === 422) throw new Error("The event was rejected. Check the UTC timestamp, required fields, and event-specific data.");
     if (response.status === 503) throw new Error("Storage is unavailable. Try again once the service is healthy.");
     if (!response.ok) throw new Error(`The request could not be completed (HTTP ${response.status}).`);
+    if (rawResponse) {
+      const raw = await response.text();
+      return {data: JSON.parse(raw), raw};
+    }
     return response.json();
   }
   async function health() {
@@ -84,7 +104,7 @@
   });
   function dataHint() {
     const type = $("event-type").value;
-    $("data-help").textContent = type === "review.completed" ? 'Include reviewerId, action (accept, override, reject, or escalate), and reason in the JSON object.' : type === "record.corrected" ? 'Include correctsEventId and reason. Phase 3 records the correction; it does not apply it to the original event.' : 'Optional details go inside this JSON object. An empty object is valid for this event type.';
+    $("data-help").textContent = type === "review.completed" ? 'Include reviewerId, action (accept, override, reject, or escalate), and reason in the JSON object.' : type === "record.corrected" ? 'Include correctsEventId and reason. The target must already exist in this interaction. The original event stays unchanged.' : 'Optional details go inside this JSON object. An empty object is valid for this event type.';
   }
   $("event-type").addEventListener("change", dataHint);
   $("occurred-at").value = new Date().toISOString();
@@ -106,6 +126,8 @@
       const receipt = await api("/api/v1/events", {method: "POST", headers: {"Content-Type": "application/json"}, body});
       if (currentSession !== session) return;
       feedback("submit-status", receipt.duplicate ? `Event ${receipt.eventId} was already stored. No duplicate was created.` : `Stored event ${receipt.eventId}. Find interaction ${receipt.interactionId} to view it.`);
+      clearHistory();
+      feedback("lookup-status", "Records changed. Find events again to refresh the history and report.");
       $("lookup-id").value = fields.interactionId;
     } catch (error) {
       if (currentSession === session) feedback("submit-status", error instanceof TypeError ? "Unable to reach the service. Check your connection and try again." : error.message, true);
@@ -117,7 +139,48 @@
     element.textContent = text;
     return element;
   }
+  function renderWarnings(warnings) {
+    $("warning-list").replaceChildren();
+    $("warning-summary").textContent = warnings.length ? `${warnings.length} timeline notice${warnings.length === 1 ? "" : "s"}. Review the records below.` : "No timeline warnings were reported for these records.";
+    const titles = {MISSING_EVENT: "Missing event", OUT_OF_ORDER_EVENT: "Event out of order", CORRECTED_EVENT: "Correction recorded"};
+    for (const warning of warnings) {
+      const card = textElement("article", "warning-card", "");
+      card.append(textElement("h4", "", titles[warning.code] || warning.code), textElement("p", "", warning.message));
+      if (warning.eventId) card.append(textElement("p", "record-reference", `Event: ${warning.eventId}`));
+      if (warning.eventType) card.append(textElement("p", "record-reference", `Type: ${labels[warning.eventType] || warning.eventType}`));
+      if (warning.correctsEventId) card.append(textElement("p", "record-reference", `Original event: ${warning.correctsEventId}`));
+      $("warning-list").append(card);
+    }
+  }
+  function renderReport(data, raw) {
+    // Refresh the timeline from this exact report snapshot, rather than mixing reads.
+    renderInteraction(data);
+    const metadata = $("report-metadata");
+    metadata.replaceChildren();
+    for (const [label, value] of [["Stored events", data.metadata.eventCount], ["First event", data.metadata.firstOccurredAt], ["Last event", data.metadata.lastOccurredAt], ["Model versions", data.modelVersions.join(", ")], ["Application versions", data.applicationVersions.join(", ")]]) {
+      metadata.append(textElement("dt", "", label), textElement("dd", "", String(value)));
+    }
+    $("report-reviews").replaceChildren();
+    if (!data.reviewActions.length) $("report-reviews").append(textElement("p", "muted", "No human reviews recorded."));
+    for (const review of data.reviewActions) {
+      const card = textElement("article", "report-record", "");
+      card.append(textElement("h4", "", `${review.reviewerId || "Reviewer ID not recorded"} · ${review.action}`), textElement("p", "", review.reason), textElement("p", "record-reference", `Event: ${review.eventId} · ${review.occurredAt}`));
+      $("report-reviews").append(card);
+    }
+    $("report-corrections").replaceChildren();
+    if (!data.corrections.length) $("report-corrections").append(textElement("p", "muted", "No linked corrections recorded."));
+    for (const correction of data.corrections) {
+      const card = textElement("article", "report-record", "");
+      card.append(textElement("h4", "", correction.linkValid ? "Valid correction link" : "Invalid historical correction link"), textElement("p", "record-reference", `${correction.eventId} → ${correction.correctsEventId}`), textElement("p", "", correction.reason), textElement("p", "record-reference", correction.occurredAt));
+      $("report-corrections").append(card);
+    }
+    $("report-disclaimer").textContent = data.disclaimer;
+    reportJSON = raw;
+    $("download-report").disabled = false;
+    $("audit-report").hidden = false;
+  }
   function renderInteraction(data) {
+    renderWarnings(data.warnings);
     $("result-id").textContent = data.interactionId;
     $("result-status").textContent = data.status.replaceAll("_", " ");
     $("event-count").textContent = `${data.events.length} stored event${data.events.length === 1 ? "" : "s"}`;
@@ -140,15 +203,44 @@
     const currentSession = session;
     $("lookup-button").disabled = true;
     clearHistory();
+    const revision = viewRevision;
     feedback("lookup-status", "Finding stored events…");
     try {
       const data = await api(`/api/v1/interactions/${encodeURIComponent($("lookup-id").value)}`);
       if (currentSession !== session) return;
+      if (revision !== viewRevision) return;
       renderInteraction(data);
       feedback("lookup-status", "Retrieved from the connected database.");
     } catch (error) {
-      if (currentSession === session) feedback("lookup-status", error instanceof TypeError ? "Unable to reach the service. Check your connection and try again." : error.message, true);
+      if (currentSession === session && revision === viewRevision) feedback("lookup-status", error instanceof TypeError ? "Unable to reach the service. Check your connection and try again." : error.message, true);
     } finally { $("lookup-button").disabled = false; }
+  });
+  $("load-report").addEventListener("click", async () => {
+    const currentSession = session;
+    const revision = viewRevision;
+    const identifier = $("result-id").textContent;
+    clearReport();
+    $("load-report").disabled = true;
+    feedback("report-status", "Loading audit report…");
+    try {
+      const {data, raw} = await api(`/api/v1/interactions/${encodeURIComponent(identifier)}/report`, {rawResponse: true});
+      if (currentSession !== session || revision !== viewRevision) return;
+      renderReport(data, raw);
+      feedback("report-status", "Report loaded. History and warnings reflect the same snapshot.");
+    } catch (error) {
+      if (currentSession === session && revision === viewRevision) feedback("report-status", error instanceof TypeError ? "Unable to reach the service. Try loading the report again." : error.message, true);
+    } finally {
+      if (currentSession === session && revision === viewRevision) $("load-report").disabled = false;
+    }
+  });
+  $("download-report").addEventListener("click", () => {
+    if (!reportJSON || !token) return;
+    const url = URL.createObjectURL(new Blob([reportJSON], {type: "application/json"}));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "traceai-audit-report.json";
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
   window.addEventListener("pagehide", () => $("disconnect").click());
   health();

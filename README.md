@@ -4,9 +4,10 @@ TraceAI records synthetic AI-interaction events through a shared HTTP API.
 It supports event history and audit evidence; it does not generate AI outputs or
 certify legal compliance.
 
-## Current progress: Phase 4, chunks 1–4
+## Current progress: Phase 4, chunks 1–5
 
 - [Pod specification for cross-team testing](docs/pod-specification.md)
+- [Browser warnings and audit reports](docs/phase-4-frontend.md)
 - [Reliability, safe errors and restart evidence](docs/phase-4-reliability.md)
 - [Audit reports](docs/phase-4-reports.md)
 - [Correction links and human-review records](docs/phase-4-records.md)
@@ -24,15 +25,16 @@ certify legal compliance.
 These artifacts follow Sections 5–6 of the Phase 2 submission. Provisional
 choices are documented for pod review.
 
-The homepage now provides an event submission form, interaction viewer, and
-service health status. [Start with a browser demonstration](docs/frontend.md).
+The homepage provides event submission, interaction history, service health,
+timeline warnings, and downloadable audit reports.
+[Start with a browser demonstration](docs/frontend.md).
 
 The four Phase 3 endpoints are implemented with PostgreSQL storage, bearer
 authentication, event validation, duplicate/conflict handling, and opt-in test
 reset. Timeline ordering and missing/sequence warnings are now implemented in
 the API. Corrections are validated as new linked records and review details are
-checked and retained. Audit reports now expose those records through the API; frontend
-warning/report rendering remains a later chunk.
+checked and retained. Audit reports expose those records through the API and
+browser, with review/correction summaries and an exact JSON download.
 See [development instructions](docs/development.md)
 for installation, database startup, migrations, and integration tests.
 
