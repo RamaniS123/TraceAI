@@ -45,13 +45,14 @@ class EventInput(BaseModel):
     def event_specific_data(self):
         data = self.data
         if self.eventType == "review.completed":
-            if not isinstance(data.get("reviewerId"), str):
-                raise ValueError("data.reviewerId must be a string")
+            reviewer = data.get("reviewerId")
+            if not isinstance(reviewer, str) or not reviewer.strip() or not 1 <= len(reviewer) <= 64:
+                raise ValueError("data.reviewerId must be a nonblank string of 1–64 characters")
             if data.get("action") not in ("accept", "override", "reject", "escalate"):
                 raise ValueError("data.action must be a supported review action")
         if self.eventType in ("review.completed", "record.corrected"):
             reason = data.get("reason")
-            if not isinstance(reason, str) or not 1 <= len(reason) <= 500:
+            if not isinstance(reason, str) or not reason.strip() or not 1 <= len(reason) <= 500:
                 raise ValueError("data.reason must be a string of 1–500 characters")
         if self.eventType == "record.corrected":
             target = data.get("correctsEventId")

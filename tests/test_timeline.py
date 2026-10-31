@@ -95,7 +95,9 @@ def test_corrections_are_visible_but_do_not_rewrite_lifecycle_in_this_increment(
     original = event('interaction.completed', 2)
     correction = event('record.corrected', 1, data={'correctsEventId': original['eventId'], 'reason': 'synthetic'})
     result = build_interaction('int-unit', [original, correction])
-    assert [w['eventType'] for w in result['warnings']] == ['interaction.started', 'model.output_generated']
+    assert result['warnings'][0]['code'] == 'CORRECTED_EVENT'
+    assert result['warnings'][0]['correctsEventId'] == original['eventId']
+    assert [w['eventType'] for w in result['warnings'][1:]] == ['interaction.started', 'model.output_generated']
     assert correction in result['events'] and original in result['events']
 
 

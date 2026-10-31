@@ -85,3 +85,14 @@ def test_timeline_profile_is_only_counted_when_its_checks_are_in_the_run():
     names = status.criterion_checks(criterion, extended)
     assert names and all(name.startswith('phase4-timeline-') for name in names)
     assert status.problems(DATA, extended) == []
+
+
+def test_record_checks_only_count_the_exercised_parts_of_review_and_correction_criteria():
+    extended = status.evaluator_checks(include_records=True)
+    assert status.problems(DATA, extended) == []
+    for ac in ('AC-05', 'AC-07'):
+        assert status.criterion_checks(DATA['acceptanceCriteria'][ac], CHECKS) == []
+        assert status.criterion_checks(DATA['acceptanceCriteria'][ac], extended)
+    req5 = next(req for req in DATA['requirements'] if req['id'] == 'REQ-05')
+    req9 = next(req for req in DATA['requirements'] if req['id'] == 'REQ-09')
+    assert req5['missing'] and req9['missing']  # Partial evidence must not imply full Phase 4 completion.

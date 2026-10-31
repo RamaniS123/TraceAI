@@ -137,3 +137,13 @@ The opt-in `--phase4-timeline` evaluator profile runs 68 checks, including the
 Use `TRACEAI_TEST_TIMELINE_ENABLED=true` to select the same profile on the hosted
 tester. See [timeline rules and verification](phase-4-timeline.md). New schema
 warnings are machine-readable; displaying them in the frontend is a later chunk.
+
+
+## Phase 4 review and correction profile
+
+`--phase4-records` runs the 99-check profile (42 baseline + 26 timeline + 31
+review/correction checks). The hosted tester selects it with
+`TRACEAI_TEST_RECORDS_ENABLED=true`. Default 42-check behavior and HTTP control
+formats are unchanged. See [record-link rules and evidence](phase-4-records.md).
+Review/audit and persistence/correction criteria are only partially exercised;
+this profile is not a claim that audit reporting or all Phase 4 work is complete.

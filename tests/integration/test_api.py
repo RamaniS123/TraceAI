@@ -66,7 +66,7 @@ def validate_response(response, path, method):
     Draft202012Validator(document, format_checker=FormatChecker()).validate(response.json())
 
 
-@pytest.mark.parametrize('scenario_file', ['phase-3-scenario.json', pytest.param('phase-4-timeline-scenario.json', marks=pytest.mark.phase4)])
+@pytest.mark.parametrize('scenario_file', ['phase-3-scenario.json', pytest.param('phase-4-timeline-scenario.json', marks=pytest.mark.phase4), pytest.param('phase-4-records-scenario.json', marks=pytest.mark.phase4)])
 def test_complete_shared_scenario(client, scenario_file):
     scenario = json.loads((FIXTURES / scenario_file).read_text())
     for index, step in enumerate(scenario['steps']):
@@ -238,3 +238,169 @@ def test_rejected_media_types_and_routes_use_safe_error_shape(client):
         assert set(response.json()) == {'error'}
         assert set(response.json()['error']) == {'code', 'message'}
     assert retrieve(client).status_code == 404
+
+
+@pytest.mark.phase4
+@pytest.mark.parametrize('action', ['accept', 'override', 'reject', 'escalate'])
+def test_review_preserves_reviewer_action_reason_and_exact_timestamp(client, action):
+    body = event(eventId='review-full', eventType='review.completed',
+                 occurredAt='2026-10-30T14:30:00.123456789+00:00',
+                 data={'reviewerId': 'reviewer-1', 'action': action, 'reason': '  Synthetic review reason.  '})
+    assert submit(client, body).status_code == 201
+    assert retrieve(client).json()['events'] == [body]
+    assert submit(client, body).status_code == 200
+
+
+@pytest.mark.phase4
+@pytest.mark.parametrize('data', [
+    {'reviewerId': '', 'action': 'accept', 'reason': 'Synthetic'},
+    {'reviewerId': ' \t\n', 'action': 'accept', 'reason': 'Synthetic'},
+    {'reviewerId': 'x' * 65, 'action': 'accept', 'reason': 'Synthetic'},
+    {'reviewerId': 123, 'action': 'accept', 'reason': 'Synthetic'},
+    {'reviewerId': 'reviewer', 'action': 'approve', 'reason': 'Synthetic'},
+    {'reviewerId': 'reviewer', 'action': True, 'reason': 'Synthetic'},
+    {'reviewerId': 'reviewer', 'action': 'accept', 'reason': ' \n\t'},
+    {'reviewerId': 'reviewer', 'action': 'accept', 'reason': 'x' * 501},
+    {'reviewerId': 'reviewer', 'action': 'accept'},
+])
+def test_incomplete_reviews_are_rejected_without_storage(client, data):
+    assert submit(client, event(eventId='invalid-review', eventType='review.completed', data=data)).status_code == 422
+    assert retrieve(client).status_code == 404
+
+
+@pytest.mark.phase4
+def test_correction_preserves_original_receipt_and_exposes_link(client):
+    from sqlalchemy import select
+    from traceai.models import Event
+    original = event(data={'outputReference': 'original-synthetic-output'})
+    assert submit(client, original).status_code == 201
+    with client.app.state.engine.connect() as connection:
+        before = dict(connection.execute(select(Event.__table__).where(Event.event_id == original['eventId'])).mappings().one())
+    correction = event(eventId='correction-1', eventType='record.corrected',
+                       data={'correctsEventId': original['eventId'], 'reason': 'Synthetic explanation', 'note': 'Original remains unchanged'})
+    assert submit(client, correction).status_code == 201
+    response = retrieve(client)
+    validate_response(response, '/api/v1/interactions/{interactionId}', 'get')
+    assert response.json()['events'] == sorted([original, correction], key=lambda item: item['eventId'])
+    assert response.json()['warnings'] == [{'code': 'CORRECTED_EVENT', 'message': 'A linked correction is recorded; the original event is retained.', 'eventId': 'correction-1', 'eventType': 'record.corrected', 'correctsEventId': original['eventId']}]
+    with client.app.state.engine.connect() as connection:
+        after = dict(connection.execute(select(Event.__table__).where(Event.event_id == original['eventId'])).mappings().one())
+    assert before == after  # Includes original payload, original timestamp and received_at.
+    assert submit(client, correction).status_code == 200
+    assert len(retrieve(client).json()['events']) == 2
+    assert len(retrieve(client).json()['warnings']) == 1
+
+
+@pytest.mark.phase4
+def test_missing_self_and_cross_interaction_targets_fail_atomically_with_same_safe_error(client):
+    other = event(eventId='other-record', interactionId='other-interaction')
+    assert submit(client, other).status_code == 201
+    errors = []
+    for identifier, target in [('new-missing', 'absent'), ('new-self', 'new-self'), ('new-cross', other['eventId'])]:
+        body = event(eventId=identifier, eventType='record.corrected', data={'correctsEventId': target, 'reason': 'Synthetic'})
+        response = submit(client, body)
+        assert response.status_code == 422
+        errors.append(response.json())
+        assert retrieve(client).status_code == 404
+    assert errors[0] == errors[1] == errors[2]
+    assert errors[0]['error']['code'] == 'INVALID_CORRECTION'
+    assert retrieve(client, other['interactionId']).json()['events'] == [other]
+
+
+@pytest.mark.phase4
+def test_correction_can_be_retried_after_its_missing_target_is_accepted(client):
+    original = event()
+    correction = event(eventId='late-correction', eventType='record.corrected', data={'correctsEventId': original['eventId'], 'reason': 'Synthetic'})
+    assert submit(client, correction).status_code == 422
+    assert submit(client, original).status_code == 201
+    assert submit(client, correction).status_code == 201
+    assert len(retrieve(client).json()['events']) == 2
+
+
+@pytest.mark.phase4
+def test_multiple_corrections_and_chains_are_kept_as_separate_records(client):
+    original = event()
+    first = event(eventId='c1', eventType='record.corrected', occurredAt='2026-10-15T14:29:00Z', data={'correctsEventId': original['eventId'], 'reason': 'Explains a synthetic clock issue'})
+    second = event(eventId='c2', eventType='record.corrected', data={'correctsEventId': 'c1', 'reason': 'Further explanation'})
+    sibling = event(eventId='c3', eventType='record.corrected', data={'correctsEventId': original['eventId'], 'reason': 'Another explanation'})
+    for body in [original, first, second, sibling]:
+        assert submit(client, body).status_code == 201
+    result = retrieve(client).json()
+    assert len(result['events']) == 4
+    assert [w['correctsEventId'] for w in result['warnings']] == [original['eventId'], 'c1', original['eventId']]
+    assert original in result['events']
+    assert result['status'] == 'in_progress'
+
+
+@pytest.mark.phase4
+def test_changed_correction_id_conflicts_without_retargeting_or_rewriting(client):
+    a, b = event(), event(eventId='original-b')
+    for original in (a, b):
+        assert submit(client, original).status_code == 201
+    correction = event(eventId='c1', eventType='record.corrected', data={'correctsEventId': a['eventId'], 'reason': 'Synthetic'})
+    assert submit(client, correction).status_code == 201
+    changed = {**correction, 'data': {**correction['data'], 'correctsEventId': b['eventId']}}
+    assert submit(client, changed).status_code == 409
+    result = retrieve(client).json()
+    assert correction in result['events'] and changed not in result['events']
+    assert result['warnings'][0]['correctsEventId'] == a['eventId']
+
+
+@pytest.mark.phase4
+def test_invalid_legacy_correction_chain_cannot_receive_a_new_correction(client):
+    from sqlalchemy import insert
+    from datetime import datetime
+    from traceai.models import Event
+    with client.app.state.engine.begin() as connection:
+        for identifier, target in [('legacy-a', 'legacy-b'), ('legacy-b', 'legacy-a')]:
+            connection.execute(insert(Event).values(event_id=identifier, interaction_id='int-a', event_type='record.corrected', occurred_at=datetime.fromisoformat('2026-10-15T14:30:00+00:00'), occurred_at_text='2026-10-15T14:30:00Z', model_version='model-1', application_version='app-1', data={'correctsEventId': target, 'reason': 'Legacy synthetic record'}))
+    new = event(eventId='new-correction', eventType='record.corrected', data={'correctsEventId': 'legacy-a', 'reason': 'Synthetic'})
+    assert submit(client, new).status_code == 422
+    result = retrieve(client).json()
+    assert len(result['events']) == 2
+    assert result['warnings'] == []
+
+
+@pytest.mark.phase4
+def test_concurrent_identical_corrections_store_one_copy(client):
+    original = event()
+    assert submit(client, original).status_code == 201
+    correction = event(eventId='concurrent-correction', eventType='record.corrected', data={'correctsEventId': original['eventId'], 'reason': 'Synthetic'})
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        responses = list(pool.map(lambda _: submit(client, correction), range(5)))
+    assert sorted(response.status_code for response in responses) == [200, 200, 200, 200, 201]
+    assert len(retrieve(client).json()['events']) == 2
+
+
+@pytest.mark.phase4
+def test_review_identifier_and_reason_limits_accept_the_exact_boundaries(client):
+    body = event(eventId='review-boundary', eventType='review.completed',
+                 data={'reviewerId': 'é' * 64, 'action': 'escalate', 'reason': 'r' * 500})
+    assert submit(client, body).status_code == 201
+    assert retrieve(client).json()['events'] == [body]
+
+
+@pytest.mark.phase4
+def test_correction_target_uses_the_existing_event_id_domain_without_normalization(client):
+    original = event(eventId='   ')
+    assert submit(client, original).status_code == 201
+    correction = event(eventId='space-id-correction', eventType='record.corrected', data={'correctsEventId': original['eventId'], 'reason': 'Synthetic clarification'})
+    assert submit(client, correction).status_code == 201
+    assert retrieve(client).json()['warnings'][0]['correctsEventId'] == '   '
+
+
+@pytest.mark.phase4
+def test_previously_accepted_review_details_remain_readable_without_rewrite(client):
+    from sqlalchemy import insert
+    from datetime import datetime
+    from traceai.models import Event
+    legacy_data = {'reviewerId': '', 'action': 'accept', 'reason': '   '}
+    with client.app.state.engine.begin() as connection:
+        connection.execute(insert(Event).values(event_id='legacy-review', interaction_id='int-a', event_type='review.completed', occurred_at=datetime.fromisoformat('2026-10-15T14:30:00+00:00'), occurred_at_text='2026-10-15T14:30:00Z', model_version='model-1', application_version='app-1', data=legacy_data))
+    response = retrieve(client)
+    assert response.status_code == 200
+    validate_response(response, '/api/v1/interactions/{interactionId}', 'get')
+    stored = response.json()['events'][0]
+    assert stored['data'] == legacy_data
+    assert submit(client, stored).status_code == 422  # Stronger rules apply to new input only.
+    assert retrieve(client).json()['events'] == [stored]

@@ -37,9 +37,9 @@ page navigation clear the token and displayed records. Requests already sent to
 the API may still finish after disconnect; disconnect does not undo accepted events.
 
 Only synthetic data should be submitted. All six event types can be recorded;
-review/correction types require their contract-defined data fields. Warnings,
-audit reports, correction application, accounts, and a global interaction search
-are not implemented. JSON data display uses browser numeric precision; use raw
+review/correction types require their contract-defined data fields. Timeline warnings and correction-link validation are implemented in the API.
+Frontend warning display, audit reports, automatic correction replacement, accounts,
+and a global interaction search are not implemented. JSON data display uses browser numeric precision; use raw
 API responses when inspecting numbers that exceed JavaScript numeric precision.
 Submitted JSON numbers are sent in their original text without browser rounding.
 

@@ -160,3 +160,18 @@ def test_timeline_profile_is_available_without_changing_default_phase3_suite(cli
     # Scope is exercised, not passed: this fixture's target intentionally returns 503.
     assert report['coverage']['system']['covered'] == 7
     assert report['coverage']['system']['total'] == 11
+
+
+@pytest.mark.phase4
+def test_records_profile_includes_prior_timeline_checks_and_partial_coverage(client, monkeypatch):
+    monkeypatch.setenv('TRACEAI_TEST_RECORDS_ENABLED', 'true')
+    sid = setup_session(client)
+    response = client.post('/tester/test/run', json={'session_id': sid})
+    assert response.status_code == 200
+    report = response.json()
+    assert len(report['results']) == 99
+    assert any(row['test_id'].startswith('phase4-timeline-') for row in report['results'])
+    assert any(row['test_id'].startswith('phase4-records-') for row in report['results'])
+    # This mocked target fails requests. Coverage still means exercised scope only.
+    assert report['coverage']['system']['covered'] == 9
+    assert report['coverage']['system']['total'] == 11

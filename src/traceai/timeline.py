@@ -1,9 +1,10 @@
-"""Phase 4 chunk 1: read-only timeline analysis for the current event vocabulary.
+"""Phase 4: read-only timeline analysis and structural correction annotations.
 
 Rules are provisional until pod reconciliation; see docs/phase-4-timeline.md.
-Corrections remain visible records and do not change the effective timeline yet.
+Corrections remain visible records and do not overwrite the original timeline.
 """
 from traceai.schemas import timestamp_key
+from traceai.corrections import valid_correction_ids, target_id
 
 STAGES = (
     'interaction.started',
@@ -33,10 +34,21 @@ def build_interaction(interaction_id, records):
         if kind in TERMINAL:
             status = TERMINAL[kind]
 
+    corrected = valid_correction_ids({event["eventId"]: event for event in events})
     warnings = []
     for instant, event in timed:
         kind = event['eventType']
-        if kind not in RANK:  # Corrections have no lifecycle position in chunk 1.
+        if kind == 'record.corrected':
+            if event['eventId'] in corrected:
+                warnings.append({
+                    'code': 'CORRECTED_EVENT',
+                    'message': 'A linked correction is recorded; the original event is retained.',
+                    'eventId': event['eventId'],
+                    'eventType': kind,
+                    'correctsEventId': target_id(event),
+                })
+            continue
+        if kind not in RANK:
             continue
         for prerequisite in STAGES[:RANK[kind]]:
             if prerequisite in latest and instant < latest[prerequisite]:

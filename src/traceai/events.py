@@ -6,6 +6,7 @@ from sqlalchemy import delete, select, text
 from sqlalchemy.dialects.postgresql import insert
 
 from traceai.errors import APIError
+from traceai.corrections import InvalidCorrection, validate_correction_link
 from traceai.models import Event
 from traceai.schemas import timestamp_key
 from traceai.timeline import build_interaction
@@ -46,6 +47,23 @@ def store_event(engine, event):
             stored = connection.execute(select(Event.__table__).where(Event.event_id == event["eventId"])).mappings().one()
             if comparable(public_event(stored)) != comparable(event):
                 raise APIError(409, "EVENT_CONFLICT", "Event ID is already associated with different content.")
+        elif event['eventType'] == 'record.corrected':
+            def lookup(identifier):
+                # The insertion and these key-share locks keep reset/deletion from
+                # breaking a validated link before this transaction commits.
+                row = connection.execute(
+                    select(Event.__table__).where(Event.event_id == identifier)
+                    .with_for_update(read=True, key_share=True)
+                ).mappings().first()
+                return public_event(row) if row is not None else None
+            try:
+                validate_correction_link(event, lookup)
+            except InvalidCorrection:
+                # Same response for missing, cross-interaction, and cyclic targets.
+                # Raising inside engine.begin rolls back the new correction row.
+                raise APIError(422, 'INVALID_CORRECTION',
+                               'Correction must link to an existing, acyclic event history in the same interaction.') from None
+
     return {"eventId": event["eventId"], "interactionId": event["interactionId"], "stored": True, "duplicate": inserted is None}
 
 

@@ -1,0 +1,939 @@
+{
+  "description": "Phase 4 chunk 2: immutable review details, correction validation, duplicates, chains, and existing warnings. Requires reset consent; synthetic data only.",
+  "steps": [
+    {
+      "method": "POST",
+      "path": "/api/v1/test/reset",
+      "auth": "reset",
+      "body": {
+        "confirm": true
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "reset": true,
+        "remainingEvents": 0,
+        "remainingInteractions": 0
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-review",
+        "interactionId": "p4-records",
+        "eventType": "review.completed",
+        "occurredAt": "2026-10-30T11:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "reviewerId": "synthetic-reviewer",
+          "action": "override",
+          "reason": "  Synthetic review details retained.  "
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "records-review",
+        "interactionId": "p4-records",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-records",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-records",
+        "status": "in_progress",
+        "events": [
+          {
+            "eventId": "records-review",
+            "interactionId": "p4-records",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T11:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review details retained.  "
+            }
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-invalid-review-0",
+        "interactionId": "p4-records",
+        "eventType": "review.completed",
+        "occurredAt": "2026-10-30T11:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "reviewerId": "",
+          "action": "override",
+          "reason": "  Synthetic review details retained.  "
+        }
+      },
+      "expectedStatus": 422
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-invalid-review-1",
+        "interactionId": "p4-records",
+        "eventType": "review.completed",
+        "occurredAt": "2026-10-30T11:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "reviewerId": "   ",
+          "action": "override",
+          "reason": "  Synthetic review details retained.  "
+        }
+      },
+      "expectedStatus": 422
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-invalid-review-2",
+        "interactionId": "p4-records",
+        "eventType": "review.completed",
+        "occurredAt": "2026-10-30T11:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "reviewerId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "action": "override",
+          "reason": "  Synthetic review details retained.  "
+        }
+      },
+      "expectedStatus": 422
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-invalid-review-3",
+        "interactionId": "p4-records",
+        "eventType": "review.completed",
+        "occurredAt": "2026-10-30T11:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "reviewerId": "synthetic-reviewer",
+          "action": "approve",
+          "reason": "  Synthetic review details retained.  "
+        }
+      },
+      "expectedStatus": 422
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-invalid-review-4",
+        "interactionId": "p4-records",
+        "eventType": "review.completed",
+        "occurredAt": "2026-10-30T11:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "reviewerId": "synthetic-reviewer",
+          "action": "override",
+          "reason": "\t\n"
+        }
+      },
+      "expectedStatus": 422
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-records",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-records",
+        "status": "in_progress",
+        "events": [
+          {
+            "eventId": "records-review",
+            "interactionId": "p4-records",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T11:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review details retained.  "
+            }
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-c1",
+        "interactionId": "p4-records",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T11:00:02Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "records-review",
+          "reason": "Synthetic clarification"
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "records-c1",
+        "interactionId": "p4-records",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-records",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-records",
+        "status": "in_progress",
+        "events": [
+          {
+            "eventId": "records-review",
+            "interactionId": "p4-records",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T11:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review details retained.  "
+            }
+          },
+          {
+            "eventId": "records-c1",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-review",
+              "reason": "Synthetic clarification"
+            }
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-review"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-c1",
+        "interactionId": "p4-records",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T11:00:02Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "records-review",
+          "reason": "Synthetic clarification"
+        }
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "eventId": "records-c1",
+        "interactionId": "p4-records",
+        "stored": true,
+        "duplicate": true
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-records",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-records",
+        "status": "in_progress",
+        "events": [
+          {
+            "eventId": "records-review",
+            "interactionId": "p4-records",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T11:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review details retained.  "
+            }
+          },
+          {
+            "eventId": "records-c1",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-review",
+              "reason": "Synthetic clarification"
+            }
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-review"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-c1",
+        "interactionId": "p4-records",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T11:00:02Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "records-review",
+          "reason": "Different content"
+        }
+      },
+      "expectedStatus": 409
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-other",
+        "interactionId": "p4-records-other",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-30T11:00:00Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "records-other",
+        "interactionId": "p4-records-other",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-missing",
+        "interactionId": "p4-records-invalid",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T11:00:02Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "absent",
+          "reason": "Synthetic"
+        }
+      },
+      "expectedStatus": 422
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-self",
+        "interactionId": "p4-records-invalid",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T11:00:02Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "records-self",
+          "reason": "Synthetic"
+        }
+      },
+      "expectedStatus": 422
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-cross",
+        "interactionId": "p4-records-invalid",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T11:00:02Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "records-other",
+          "reason": "Synthetic"
+        }
+      },
+      "expectedStatus": 422
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-records-invalid",
+      "auth": "api",
+      "expectedStatus": 404
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-blank",
+        "interactionId": "p4-records",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T11:00:02Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "records-review",
+          "reason": "   "
+        }
+      },
+      "expectedStatus": 422
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-records",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-records",
+        "status": "in_progress",
+        "events": [
+          {
+            "eventId": "records-review",
+            "interactionId": "p4-records",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T11:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review details retained.  "
+            }
+          },
+          {
+            "eventId": "records-c1",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-review",
+              "reason": "Synthetic clarification"
+            }
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-review"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-c2",
+        "interactionId": "p4-records",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T11:00:03Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "records-c1",
+          "reason": "Further synthetic clarification"
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "records-c2",
+        "interactionId": "p4-records",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-c3",
+        "interactionId": "p4-records",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T11:00:04Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "records-review",
+          "reason": "Separate synthetic clarification"
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "records-c3",
+        "interactionId": "p4-records",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-records",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-records",
+        "status": "in_progress",
+        "events": [
+          {
+            "eventId": "records-review",
+            "interactionId": "p4-records",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T11:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review details retained.  "
+            }
+          },
+          {
+            "eventId": "records-c1",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-review",
+              "reason": "Synthetic clarification"
+            }
+          },
+          {
+            "eventId": "records-c2",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:03Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-c1",
+              "reason": "Further synthetic clarification"
+            }
+          },
+          {
+            "eventId": "records-c3",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:04Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-review",
+              "reason": "Separate synthetic clarification"
+            }
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-review"
+          },
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c2",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-c1"
+          },
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c3",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-review"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-end",
+        "interactionId": "p4-records",
+        "eventType": "interaction.completed",
+        "occurredAt": "2026-10-30T11:00:05Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "records-end",
+        "interactionId": "p4-records",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-records",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-records",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "records-review",
+            "interactionId": "p4-records",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T11:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review details retained.  "
+            }
+          },
+          {
+            "eventId": "records-c1",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-review",
+              "reason": "Synthetic clarification"
+            }
+          },
+          {
+            "eventId": "records-c2",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:03Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-c1",
+              "reason": "Further synthetic clarification"
+            }
+          },
+          {
+            "eventId": "records-c3",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:04Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-review",
+              "reason": "Separate synthetic clarification"
+            }
+          },
+          {
+            "eventId": "records-end",
+            "interactionId": "p4-records",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T11:00:05Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-review"
+          },
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c2",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-c1"
+          },
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c3",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-review"
+          },
+          {
+            "code": "MISSING_EVENT",
+            "message": "Finalized interaction is missing interaction.started.",
+            "eventType": "interaction.started"
+          },
+          {
+            "code": "MISSING_EVENT",
+            "message": "Finalized interaction is missing model.output_generated.",
+            "eventType": "model.output_generated"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-start",
+        "interactionId": "p4-records",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-30T11:00:00Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "records-start",
+        "interactionId": "p4-records",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "records-output",
+        "interactionId": "p4-records",
+        "eventType": "model.output_generated",
+        "occurredAt": "2026-10-30T11:00:00Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "records-output",
+        "interactionId": "p4-records",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-records",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-records",
+        "status": "completed",
+        "events": [
+          {
+            "eventId": "records-output",
+            "interactionId": "p4-records",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T11:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "records-start",
+            "interactionId": "p4-records",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T11:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "records-review",
+            "interactionId": "p4-records",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T11:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review details retained.  "
+            }
+          },
+          {
+            "eventId": "records-c1",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-review",
+              "reason": "Synthetic clarification"
+            }
+          },
+          {
+            "eventId": "records-c2",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:03Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-c1",
+              "reason": "Further synthetic clarification"
+            }
+          },
+          {
+            "eventId": "records-c3",
+            "interactionId": "p4-records",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T11:00:04Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "records-review",
+              "reason": "Separate synthetic clarification"
+            }
+          },
+          {
+            "eventId": "records-end",
+            "interactionId": "p4-records",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T11:00:05Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-review"
+          },
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c2",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-c1"
+          },
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "records-c3",
+            "eventType": "record.corrected",
+            "correctsEventId": "records-review"
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/p4-records-other",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "p4-records-other",
+        "status": "in_progress",
+        "events": [
+          {
+            "eventId": "records-other",
+            "interactionId": "p4-records-other",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T11:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/test/reset",
+      "auth": "reset",
+      "body": {
+        "confirm": true
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "reset": true,
+        "remainingEvents": 0,
+        "remainingInteractions": 0
+      }
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "TraceAI Phase 4 API \u2014 timeline increment",
-    "version": "0.2.0",
-    "description": "Phase 4 chunk 1 extends the Phase 3 profile with read-time timeline warnings. Lifecycle rules in docs/phase-4-timeline.md are provisional pending pod agreement. Audit reporting and correction application are deferred."
+    "title": "TraceAI Phase 4 API \u2014 timelines and linked records",
+    "version": "0.3.0",
+    "description": "Phase 4 chunks 1\u20132 profile: timeline warnings, validated correction links, and nonblank human-review details. Rules in docs/phase-4-records.md and docs/phase-4-timeline.md remain provisional pending pod agreement. Audit reports are deferred."
   },
   "security": [
     {
@@ -76,7 +76,7 @@
             }
           },
           "422": {
-            "description": "Event validation failed",
+            "description": "Invalid event fields, incomplete review details, or invalid correction links (INVALID_CORRECTION: missing, self-referential, cross-interaction or cyclic history). No partial record is stored.",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,7 +344,10 @@
                   "type": "object",
                   "properties": {
                     "reviewerId": {
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "\\S"
                     },
                     "action": {
                       "type": "string",
@@ -358,7 +361,8 @@
                     "reason": {
                       "type": "string",
                       "minLength": 1,
-                      "maxLength": 500
+                      "maxLength": 500,
+                      "pattern": "\\S"
                     }
                   },
                   "required": [
@@ -394,7 +398,8 @@
                     "reason": {
                       "type": "string",
                       "minLength": 1,
-                      "maxLength": 500
+                      "maxLength": 500,
+                      "pattern": "\\S"
                     }
                   },
                   "required": [
@@ -455,7 +460,7 @@
           "events": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/EventInput"
+              "$ref": "#/components/schemas/StoredEvent"
             }
           },
           "warnings": {
@@ -620,9 +625,149 @@
               "interaction.stopped",
               "record.corrected"
             ]
+          },
+          "correctsEventId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
           }
         },
-        "description": "Missing-event warnings identify the missing eventType and have no eventId. Order warnings identify the event whose timestamp precedes a lower lifecycle stage. CORRECTED_EVENT is reserved for a later increment."
+        "description": "MISSING_EVENT identifies an absent eventType. OUT_OF_ORDER_EVENT identifies the premature event. CORRECTED_EVENT identifies the correction event and its correctsEventId target; it does not modify or supersede the original record."
+      },
+      "StoredEvent": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "interactionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "interaction.started",
+              "model.output_generated",
+              "review.completed",
+              "interaction.completed",
+              "interaction.stopped",
+              "record.corrected"
+            ]
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|\\+00:00)$"
+          },
+          "modelVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "applicationVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "eventId",
+          "interactionId",
+          "eventType",
+          "occurredAt",
+          "modelVersion",
+          "applicationVersion",
+          "data"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "eventType": {
+                  "const": "review.completed"
+                }
+              },
+              "required": [
+                "eventType"
+              ]
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "reviewerId": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string",
+                      "enum": [
+                        "accept",
+                        "override",
+                        "reject",
+                        "escalate"
+                      ]
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    }
+                  },
+                  "required": [
+                    "reviewerId",
+                    "action",
+                    "reason"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "eventType": {
+                  "const": "record.corrected"
+                }
+              },
+              "required": [
+                "eventType"
+              ]
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "correctsEventId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    }
+                  },
+                  "required": [
+                    "correctsEventId",
+                    "reason"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "description": "Stored records preserve the original accepted representation, including legacy review details. New submissions must satisfy the stricter EventInput constraints."
       }
     }
   }

@@ -2,7 +2,8 @@
 
 ## Status and scope
 
-Team 106's implemented profile is now OpenAPI version **0.2.0**. The existing
+Historical chunk 1 profile: OpenAPI **0.2.0**. Chunk 2 advances the implemented
+profile to **0.3.0**; see [correction and review rules](phase-4-records.md). The existing
 camelCase fields, dotted event types, authentication, endpoints, submission
 receipts, and interaction statuses are retained. `InteractionView.warnings` now
 contains warning objects rather than being constrained to an empty array.
@@ -69,11 +70,11 @@ warnings follow sequence warnings. Retrieval and repeated reads are deterministi
 }
 ```
 
-Missing warnings name the absent `eventType` and omit `eventId`. The schema keeps
-`CORRECTED_EVENT` reserved, but chunk 1 does not emit it. Corrections are returned
-as accepted records without changing the lifecycle analysis or original records.
+Missing warnings name the absent `eventType` and omit `eventId`. Chunk 1 reserved `CORRECTED_EVENT`; chunk 2 now emits it for structurally valid
+correction links. Corrections remain separate records without overwriting the
+original lifecycle history. See [chunk 2](phase-4-records.md) for annotation details.
 
-Conflicting finalizations, unexpected event-type multiplicity, full correction
+Conflicting finalizations, unexpected event-type multiplicity, automatic replacement
 semantics, audit reports, and frontend warning rendering are not implemented by
 this chunk. No legal-compliance determination is made.
 
