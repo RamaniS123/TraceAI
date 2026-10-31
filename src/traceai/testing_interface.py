@@ -21,6 +21,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from starlette.concurrency import run_in_threadpool
 
 from traceai.events import reset_events
+from traceai.requests import MAX_BODY_BYTES, unique_object
 
 SOURCES = ('tester', 'system', 'communication', 'unknown')
 CODE_BASIS = 'Source lines; coverage instrumentation is not enabled in the deployed service'
@@ -40,7 +41,15 @@ def problem(status, message, source):
 
 async def json_object(request):
     try:
-        body = await request.json()
+        raw = bytearray()
+        async for chunk in request.stream():
+            if len(raw) + len(chunk) > MAX_BODY_BYTES:
+                return None
+            raw.extend(chunk)
+        def reject_constant(value):
+            raise ValueError('Non-finite JSON number')
+        body = json.loads(bytes(raw).decode('utf-8'), object_pairs_hook=unique_object,
+                          parse_constant=reject_constant)
     except Exception:  # Malformed JSON, wrong encoding or an empty body.
         return None
     return body if isinstance(body, dict) else None
@@ -78,6 +87,9 @@ async def system_setup(request: Request):
     except SQLAlchemyError:
         del sessions[session_id]
         return problem(500, 'Could not reset the test dataset.', 'system')
+    except Exception:
+        del sessions[session_id]
+        raise
     sessions[session_id] = 'ready'
     return JSONResponse(status_code=201, content={'session_id': session_id})
 
@@ -150,8 +162,8 @@ def forwarded_error(response):
     except ValueError:
         body = {}
     body = body if isinstance(body, dict) else {}
-    message = body.get('message') if isinstance(body.get('message'), str) and body.get('message') else \
-        f'Target system setup returned HTTP {response.status_code}.'
+    # Remote error text is untrusted and can contain credentials or tracebacks.
+    message = f'Target system setup returned HTTP {response.status_code}.'
     source = body.get('source') if body.get('source') in SOURCES else 'system'
     return problem(response.status_code, message, source)
 

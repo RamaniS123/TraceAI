@@ -2,7 +2,7 @@
 
 Run commands from the repository root. Requires Python 3.11+ and Docker Compose
 v2. The checked-in dependency lock was validated on Python 3.12/Linux. The
-PostgreSQL service uses version 16. No public deployment is configured yet.
+PostgreSQL service uses version 16. Render deployment is described in [deployment.md](deployment.md).
 
 ## Install and configure
 
@@ -58,11 +58,11 @@ Make an internal request to `GET /health`. Expected response after migration:
 The endpoint checks the events table and migration revision. An unavailable,
 unmigrated, or mismatched database yields HTTP 503 and the same safe shape with
 status unhealthy and storage unavailable. This does not yet test write access
-or implement complete Phase 4 storage-failure analysis.
+or certify that future writes will succeed. See [Phase 4 reliability checks](phase-4-reliability.md).
 
 All four Phase 3 operations are available. `/docs` and `/openapi.json` serve the
-authored contract in `contracts/openapi.json`; warning analysis and reports are
-deferred as documented in the Phase 3 profile.
+authored contract in `contracts/openapi.json`; warning analysis and audit reports
+are implemented under the provisional Phase 4 profile.
 
 ## Database design
 

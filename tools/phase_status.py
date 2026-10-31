@@ -68,6 +68,8 @@ def requirement_entry(req, data, checks, results):
         criterion = data['acceptanceCriteria'][ac]
         ac_names = criterion_checks(criterion, checks)
         names += ac_names
+        if criterion.get('localEvidence'):
+            evidence.append(f"{ac} ({criterion['localEvidence']}; local/CI evidence, not verified by this evaluator run)")
         if ac_names:
             counts = tally(ac_names, results)
             evidence.append(f"{ac} ({counts['passed']}/{counts['total']} checks passed)")

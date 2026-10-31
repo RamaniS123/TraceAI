@@ -1,4 +1,4 @@
-name: TraceAI regression and timeline tests
+name: TraceAI regression and reliability tests
 
 on:
   push:
@@ -52,6 +52,8 @@ jobs:
           alembic check
       - name: Run tests
         run: pytest -q --junitxml=reports/pytest.xml
+      - name: Check process restart, storage failure, and safe logs
+        run: python tools/check_local_reliability.py --allow-test-reset --report reports/local-reliability.json
       - name: Generate ephemeral local API credentials
         run: |
           python - <<'PY'

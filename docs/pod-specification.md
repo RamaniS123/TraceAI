@@ -81,9 +81,9 @@ either implementation.
 | AC-04 | Duplicate and conflicting events | REQ-04 | 4 (delivered early) | scenario 9, 10 |
 | AC-05 | Human review and audit report | REQ-05, REQ-06 | 4 | review checks in records profile; audit checks in reports profile |
 | AC-06 | Storage failure | REQ-08 | 4 | integration tests only (cannot be triggered through the API) |
-| AC-07 | Record persistence and corrections | REQ-09 | 4 | correction-link checks in records profile; full persistence acceptance deferred |
+| AC-07 | Record persistence and corrections | REQ-09 | 4 | correction-link checks in records profile; local process-restart/rollback/reconnect checks (see phase-4-reliability.md) |
 | AC-08 | Test reset | REQ-10 | 3 | scenario 2, 25, 26, 29–31 |
-| AC-09 | Security | REQ-11, REQ-12 | 3 (authentication) | scenario 1, 23–25; authentication checks |
+| AC-09 | Security | REQ-11, REQ-12 | 3 (authentication) | scenario 1, 23–25; authentication checks plus local error/log canaries |
 | AC-10 | Capacity and performance | REQ-13 | 5 | not yet |
 | AC-11 | Cross-team conformance | REQ-14 | 3 (basic) | every check validates responses against the contract |
 

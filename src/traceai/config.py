@@ -1,5 +1,5 @@
 """Environment-based configuration; never render secret settings in responses."""
-from pydantic import SecretStr, field_validator, model_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import make_url
 
@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     api_token: SecretStr | None = None
     reset_token: SecretStr | None = None
     test_reset_enabled: bool = False
+    storage_timeout_ms: int = Field(default=5000, ge=100, le=60000)
 
     @field_validator("database_url")
     @classmethod

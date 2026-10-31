@@ -105,7 +105,7 @@ def test_system_setup_error_is_forwarded_and_no_session_is_created():
     app.state.tester_transport = httpx.MockTransport(target)
     with TestClient(app) as client:
         response = client.post('/tester/test/setup', json={'target_url': TARGET})
-        assert response.json() == {'message': 'Session exists.', 'source': 'system'}
+        assert response.json() == {'message': 'Target system setup returned HTTP 409.', 'source': 'system'}
         assert response.status_code == 409
         assert app.state.tester_sessions == {}
 

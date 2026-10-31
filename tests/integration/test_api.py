@@ -498,3 +498,110 @@ def test_audit_report_preserves_exact_numeric_payloads(client):
     assert response.status_code == 201
     report = client.get('/api/v1/interactions/int-a/report', headers=client.api_headers)
     assert simplejson.loads(report.text, use_decimal=True)['events'] == [body]
+
+
+@pytest.mark.phase4
+@pytest.mark.parametrize('operation', ['write', 'reset'])
+@pytest.mark.parametrize('failure_point', ['statement', 'commit'])
+def test_failed_transaction_rolls_back_before_acknowledgement(client, operation, failure_point, caplog):
+    """A real insert/delete ran, but no success is returned before commit."""
+    from sqlalchemy import event as sa_event, select
+    from sqlalchemy.exc import OperationalError
+    from traceai.models import Event
+    assert submit(client, event()).status_code == 201
+    engine = client.app.state.engine
+    with engine.connect() as connection:
+        original = connection.execute(select(Event.__table__)).mappings().all()
+    canary = 'synthetic-commit-failure-private-detail'
+    def fail(*args):
+        if failure_point == 'statement':
+            statement = args[2].lstrip().upper()
+            if not statement.startswith(('INSERT ', 'DELETE ')):
+                return
+        raise OperationalError('private SQL '+canary, {'password':canary}, RuntimeError('/srv/'+canary))
+    hook = 'after_cursor_execute' if failure_point == 'statement' else 'commit'
+    sa_event.listen(engine, hook, fail)
+    try:
+        response = submit(client, event(eventId='not-committed')) if operation == 'write' else \
+            client.post('/api/v1/test/reset', json={'confirm':True}, headers=client.reset_headers)
+        assert response.status_code == 503
+        assert response.json()['error']['code'] == 'STORAGE_UNAVAILABLE'
+        assert canary not in response.text + caplog.text
+    finally:
+        sa_event.remove(engine, hook, fail)
+    with engine.connect() as connection:
+        assert connection.execute(select(Event.__table__)).mappings().all() == original
+    assert client.get('/health').status_code == 200
+    if operation == 'write':
+        # Retrying the same ID after a known rollback is a new write, then a duplicate.
+        assert submit(client, event(eventId='not-committed')).status_code == 201
+        assert submit(client, event(eventId='not-committed')).json()['duplicate'] is True
+
+
+@pytest.mark.phase4
+def test_pool_reconnects_after_postgresql_terminates_idle_connection(client, app_settings):
+    from sqlalchemy import text
+    from traceai.db import create_database_engine
+    assert submit(client, event()).status_code == 201
+    before = client.get('/api/v1/interactions/int-a/report', headers=client.api_headers).json()
+    engine = client.app.state.engine
+    with engine.connect() as connection:
+        pid = connection.execute(text('SELECT pg_backend_pid()')).scalar_one()
+    admin = create_database_engine(app_settings)
+    try:
+        with admin.begin() as connection:
+            assert connection.execute(text('SELECT pg_terminate_backend(:pid)'), {'pid':pid}).scalar_one()
+        assert client.get('/health').status_code == 200
+        assert client.get('/api/v1/interactions/int-a/report', headers=client.api_headers).json() == before
+        assert submit(client, event()).json()['duplicate'] is True
+    finally:
+        admin.dispose()
+
+
+@pytest.mark.phase4
+def test_blocked_database_write_times_out_without_partial_storage(client, app_settings):
+    from sqlalchemy import text
+    from traceai.db import create_database_engine
+    settings = app_settings.model_copy(update={'storage_timeout_ms':200})
+    # A real PostgreSQL lock blocks INSERT until this transaction ends.
+    locker = create_database_engine(app_settings)
+    try:
+        with TestClient(create_app(settings)) as blocked:
+            with locker.begin() as connection:
+                connection.execute(text('LOCK TABLE events IN SHARE MODE'))
+                response = blocked.post('/api/v1/events', json=event(), headers=client.api_headers)
+                assert response.status_code == 503
+                assert response.json()['error']['code'] == 'STORAGE_UNAVAILABLE'
+            assert retrieve(client).status_code == 404
+            assert submit(client, event()).status_code == 201
+    finally:
+        locker.dispose()
+
+
+@pytest.mark.phase4
+@pytest.mark.parametrize('operation', ['write', 'reset'])
+def test_postgresql_deferred_failure_at_commit_preserves_previous_data(client, operation, caplog):
+    """A real deferred PostgreSQL trigger rejects COMMIT, not just INSERT/DELETE."""
+    from uuid import uuid4
+    from sqlalchemy import text
+    engine = client.app.state.engine
+    assert submit(client, event()).status_code == 201
+    suffix = uuid4().hex
+    function, trigger = 'test_commit_'+suffix, 'test_commit_trigger_'+suffix
+    action = 'INSERT' if operation == 'write' else 'DELETE'
+    canary = 'synthetic-deferred-private-detail'
+    with engine.begin() as connection:
+        connection.execute(text(f"CREATE FUNCTION {function}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION '{canary}'; END; $$"))
+        connection.execute(text(f'CREATE CONSTRAINT TRIGGER {trigger} AFTER {action} ON events DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION {function}()'))
+    try:
+        response = submit(client, event(eventId='commit-rejected')) if operation == 'write' else \
+            client.post('/api/v1/test/reset', headers=client.reset_headers, json={'confirm':True})
+        assert response.status_code == 503
+        assert response.json()['error']['code'] == 'STORAGE_UNAVAILABLE'
+        assert canary not in response.text + caplog.text
+        assert retrieve(client).json()['events'] == [event()]
+    finally:
+        with engine.begin() as connection:
+            connection.execute(text(f'DROP TRIGGER {trigger} ON events'))
+            connection.execute(text(f'DROP FUNCTION {function}()'))
+    assert submit(client, event(eventId='commit-rejected')).status_code == 201

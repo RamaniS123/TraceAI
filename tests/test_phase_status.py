@@ -109,3 +109,9 @@ def test_report_checks_are_in_the_optional_profile_and_match_the_report_operatio
     assert {c['expectedStatus'] for c in report_checks} >= {200, 401, 404}
     assert all(status.operation_path(c['path']) == '/api/v1/interactions/{interactionId}/report' for c in report_checks)
     assert any(name.startswith('phase4-reports-') for name in status.criterion_checks(DATA['acceptanceCriteria']['AC-05'], extended))
+
+
+def test_local_reliability_evidence_is_distinguished_from_remote_run(tmp_path, capsys):
+    out = run(tmp_path, capsys)
+    assert 'local/CI evidence, not verified by this evaluator run' in line(out, 'REQ-12')
+    assert 'independent Uvicorn restart checks' in line(out, 'REQ-09')

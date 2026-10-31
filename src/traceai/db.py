@@ -18,7 +18,8 @@ def create_database_engine(settings: Settings):
         settings.database_url.get_secret_value(),
         pool_pre_ping=True,
         hide_parameters=True,
-        connect_args={"connect_timeout": 3},
+        connect_args={"connect_timeout": 3,
+                      "options": f"-c statement_timeout={settings.storage_timeout_ms}"},
     )
 
     @event.listens_for(engine, "connect")
