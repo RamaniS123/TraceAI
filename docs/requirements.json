@@ -69,7 +69,7 @@
      "acceptanceCriteria": ["AC-10"], "missing": "Not started; Phase 5."},
     {"id": "REQ-14", "name": "Network-accessible common interface with equivalent cross-team results", "plannedPhase": 3, "workedOn": true,
      "acceptanceCriteria": ["AC-11"],
-     "missing": "Basic endpoint conformance only; equivalence of warnings and reports with Team 103 is Phase 4-5."}
+     "missing": "Local/own-interface conformance is tested; no Phase 4 Team 103 run or approved shared contract is available. See docs/pod-compatibility.json for network/key/agreement blockers."}
   ],
   "operations": [
     {"method": "POST", "path": "/api/v1/events", "plannedPhase": 3,

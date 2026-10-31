@@ -1,0 +1,54 @@
+{
+  "status": "unresolved",
+  "as_of": "2026-10-31",
+  "agreement": "The user reported agreement to document Phase 3 incompatibilities and resolve them in Phase 4. No subsequent common contract approval has been supplied.",
+  "team106": {
+    "system_url": "https://traceai-zm1t.onrender.com",
+    "tester_url": "https://traceai-zm1t.onrender.com/tester",
+    "contract": "contracts/openapi.json",
+    "operations": 5,
+    "acceptance_criteria": 11
+  },
+  "team103_reported": {
+    "current_urls_confirmed": false,
+    "system_url": "http://3.134.49.218:8000",
+    "tester_url": "http://3.134.49.218:8001",
+    "contract_url": "http://3.134.49.218:8000/openapi.json",
+    "operations": 7,
+    "acceptance_criteria": 15,
+    "source": "Previously shared registry, email, traceability text and draft coverage mapping; not a newly fetched contract."
+  },
+  "historical_phase3_evidence": {
+    "our_tester_against_team103": {
+      "source": "Team 103 email quoted by the user; execution date and raw JSON report not supplied",
+      "passed": 0,
+      "failed": 1,
+      "unrun": 41,
+      "reason": "Health-response schema mismatch stopped the unchanged Python runner"
+    },
+    "team103_tester_against_ours": {
+      "status": "not_run",
+      "results": null,
+      "reason": "Reported interface incompatibility; not a completed cross-team run"
+    }
+  },
+  "phase4_live_evidence": {
+    "our_tester_against_team103": {"status": "not_attempted", "results": null},
+    "team103_tester_against_ours": {"status": "not_attempted", "results": null},
+    "blockers": [
+      "This cloud workspace permits our Render host but not Team 103's IP; draft update failed with draft_not_editable",
+      "No configured Team 103 test/reset key",
+      "No verified current Team 103 OpenAPI document or approved common contract",
+      "Team 103 must confirm its hosted tester allows our URL and holds our current access credentials"
+    ]
+  },
+  "decisions_needed": [
+    {"id": "COMP-01", "topic": "Paths and field names", "difference": "Team 106 uses /api/v1 and camelCase; Team 103 reported unprefixed paths and snake_case", "owners": [106,103], "status": "unresolved"},
+    {"id": "COMP-02", "topic": "Event vocabulary, lifecycle and warnings", "difference": "The teams use different six-event vocabularies; user_input/final_decision cannot safely be treated as review/correction records", "owners": [106,103], "status": "unresolved"},
+    {"id": "COMP-03", "topic": "Health, receipts and duplicates", "difference": "Reported health status ok vs healthy; Team 106 identical duplicates return 200, while Team 103 rejects repeated IDs", "owners": [106,103], "status": "unresolved"},
+    {"id": "COMP-04", "topic": "Validation and limits", "difference": "Reported 32 KB events/UTC Z only vs Team 106 65536-byte requests and UTC Z or +00:00; confirm exact timestamp, unknown-field and review rules", "owners": [106,103], "status": "unresolved"},
+    {"id": "COMP-05", "topic": "Authentication, reset and batch", "difference": "Different protected operations, reset response bodies/statuses and batch support; confirm keys and approved isolated target before running destructive setup", "owners": [106,103], "status": "unresolved"},
+    {"id": "COMP-06", "topic": "Audit reports and corrections", "difference": "Agree exact report schema, disclaimer, correction-link semantics and deterministic ordering; Team 103's current full report schema has not been supplied", "owners": [106,103], "status": "unresolved"},
+    {"id": "COMP-07", "topic": "Coverage denominators and mappings", "difference": "Five vs seven components and eleven vs fifteen ACs; AC identifiers have different meanings. Never compare percentages as if inventories already match", "owners": [106,103], "status": "unresolved"}
+  ]
+}

@@ -6,7 +6,8 @@ are implemented under provisional rules in [phase-4-timeline.md](phase-4-timelin
 [phase-4-reports.md](phase-4-reports.md). This page is our registered
 implementation profile; it is not evidence that Team 103 approved the new rules.
 The Phase 2 model attachment and report Section 5 also differ, so their authority
-and lifecycle details still need reconciliation.
+and lifecycle details still need reconciliation. See [Phase 4 delivery](phase-4-delivery.md)
+for current access blockers, evidence and the unapproved decision list.
 
 This page is the specification registered for cross-team testing. It
 covers the shared project API, test preparation, resets, cleanup, acceptance
@@ -116,7 +117,7 @@ observable ways:
 | Reset success | 200 with counts | 204, no body |
 | Health body | `{status, api, storage}` | `{status: "ok"}` |
 | Body limit | 65,536 bytes per request | 32 KB per event, 1 MB per request |
-| Additional operations | none | `POST /events/batch`; audit report implemented |
+| Additional operations | audit report implemented | `POST /events/batch`; audit report implemented |
 | Acceptance criteria counted | AC-01 to AC-11 (Phase 2) | AC-01 to AC-15 |
 | Components counted | 5 operations | 7 routes |
 
@@ -130,4 +131,6 @@ setup; Team 103's tester has not yet approved Team 106's URL).
 cross-team check for well-formed reports, which is the Phase 3 goal. Early in
 Phase 4 the pod agrees on one API, one acceptance-criteria list and one component
 list, with instructor sign-off for any change to the Phase 2 shared scope, and
-both implementations and testers are aligned to it.
+both implementations and testers are aligned to it. As of 2026-10-31 no later
+agreement or new Team 103 run has been supplied; the current unresolved issues
+and historical-versus-current evidence are in [pod-compatibility.json](pod-compatibility.json).

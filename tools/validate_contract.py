@@ -1,5 +1,6 @@
 """Validate proposed contract artifacts; this is not an HTTP acceptance runner."""
 import json
+import yaml
 from pathlib import Path
 
 from jsonschema import Draft202012Validator, FormatChecker
@@ -15,6 +16,7 @@ def load(path):
 def main():
     contract = load('contracts/openapi.json')
     validate_spec(contract)
+    validate_spec(yaml.safe_load((ROOT / 'docs/testing-interface.openapi.yaml').read_text()))
     assert contract == load('src/traceai/openapi.json'), 'Bundled API contract differs from authored contract'
     schema = load('contracts/event.schema.json')
     Draft202012Validator.check_schema(schema)

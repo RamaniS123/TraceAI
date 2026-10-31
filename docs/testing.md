@@ -1,4 +1,4 @@
-# Phase 3 automated testing
+# Automated testing — Phase 4 delivery
 
 ## CI on GitHub
 
@@ -16,8 +16,10 @@ the evaluator's exit status and stops the server on completion. JUnit and JSON
 results are uploaded as the `phase-3-test-results` artifact even on test failure.
 Reports exclude raw response bodies, request authorization headers, and tokens.
 
-There are currently 52 pytest cases: 34 application/database integration cases,
-14 runner validation/failure cases, three hosted database configuration cases, and one public frontend case. The independent evaluator has 42 checks.
+The Phase 4 delivery workspace run has 198 passing pytest cases, plus a separate
+Playwright browser scenario and five process/reliability groups. The independent
+evaluator retains 42 baseline checks and offers 68/99/126-check Phase 4 profiles.
+The Render blueprint selects the 126-check profile for the hosted tester.
 A passing pytest count is distinct from a passing deployed-service evaluation.
 
 ## Run the independent evaluator against either team
@@ -56,7 +58,7 @@ Example (replace the illustrative URL and use that team's credential file):
 
 Repeat with the other team's base URL and credentials. The evaluator uses the
 same fixed inputs and expected outputs for both teams. These results validate
-this provisional Phase 3 profile; full cross-team equivalence remains Phase 5.
+this provisional Phase 3 profile; cross-team equivalence remains blocked pending contract agreement and actual peer runs.
 
 For a local running service, using its isolated test dataset:
 
@@ -155,3 +157,10 @@ See [phase-4-reports.md](phase-4-reports.md) for the optional 126-check
 `TRACEAI_TEST_REPORTS_ENABLED=true` on the web service to select it for hosted
 tester runs. The default remains 42 checks; registry base URLs and HTTP request
 fields stay unchanged. Test runs reset the authorized synthetic target data.
+
+## Cross-team delivery evidence
+
+See [phase-4-delivery.md](phase-4-delivery.md) for the read-only readiness mode,
+explicit destructive-run flag, exact JSON report artifacts, contract comparison,
+release-identification headers and current Team 103 blockers. Two local instances
+passing tests in both directions is not evidence of a Team 103 run.

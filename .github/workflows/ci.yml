@@ -79,12 +79,13 @@ jobs:
         shell: bash
         env:
           TRACEAI_PUBLIC_URL: http://127.0.0.1:8000
+          TRACEAI_TEST_REPORTS_ENABLED: 'true'
         run: |
           uvicorn traceai.main:create_app --factory --host 127.0.0.1 --port 8000 > "$RUNNER_TEMP/interface.log" 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 40); do curl -sf http://127.0.0.1:8000/health > /dev/null && break; sleep 0.5; done
-          python tools/check_testing_interface.py --tester http://127.0.0.1:8000/tester --target http://127.0.0.1:8000 --require-pass
+          python tools/check_testing_interface.py --tester http://127.0.0.1:8000/tester --target http://127.0.0.1:8000 --allow-test-reset --require-pass
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -109,9 +110,9 @@ jobs:
         run: |
           container_id=$(docker run --detach --network host \
             --env TRACEAI_DATABASE_URL --env TRACEAI_API_TOKEN --env TRACEAI_RESET_TOKEN \
-            --env TRACEAI_TEST_RESET_ENABLED --env PORT=8000 traceai:ci)
+            --env TRACEAI_TEST_RESET_ENABLED --env TRACEAI_TEST_REPORTS_ENABLED=true --env PORT=8000 traceai:ci)
           trap 'docker rm --force "$container_id" > /dev/null 2>&1 || true' EXIT
-          python tools/run_phase3_api_tests.py --base-url http://127.0.0.1:8000 --allow-test-reset --wait-seconds 30 --report reports/container-api.json
+          python tools/run_phase3_api_tests.py --base-url http://127.0.0.1:8000 --allow-test-reset --wait-seconds 30 --phase4-reports --report reports/container-api.json
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4

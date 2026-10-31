@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 from secrets import compare_digest
 import threading
+from time import monotonic
 from urllib.parse import urlsplit
 from uuid import uuid4
 
@@ -26,6 +27,7 @@ from traceai.requests import MAX_BODY_BYTES, unique_object
 SOURCES = ('tester', 'system', 'communication', 'unknown')
 CODE_BASIS = 'Source lines; coverage instrumentation is not enabled in the deployed service'
 SETUP_TIMEOUT = 90  # Covers a free-tier cold start of the target system.
+RUN_TIMEOUT = 240  # Check budget; final coverage lookup adds at most CHECK_TIMEOUT.
 CHECK_TIMEOUT = 30
 CLEANUP = {'name': 'final-cleanup', 'method': 'POST', 'path': '/api/v1/test/reset', 'auth': 'reset',
            'body': {'confirm': True}, 'expectedStatus': 200,
@@ -245,9 +247,13 @@ def code_coverage(http, target_url, session_id):
         code = response.json()['coverage']['code'] if response.status_code == 200 else None
     except (httpx.HTTPError, ValueError, KeyError, TypeError):
         code = None
-    if (isinstance(code, dict) and isinstance(code.get('basis'), str) and code['basis']
-            and all(code.get(k) is None or (isinstance(code.get(k), int) and code[k] >= 0) for k in ('covered', 'total'))):
-        return {'covered': code.get('covered'), 'total': code.get('total'), 'basis': code['basis']}
+    if isinstance(code, dict) and isinstance(code.get('basis'), str) and code['basis'].strip():
+        covered, total = code.get('covered'), code.get('total')
+        unknown = covered is None and total is None
+        measured = (all(isinstance(value,int) and not isinstance(value,bool) and value>=0
+                        for value in (covered,total)) and covered<=total)
+        if unknown or measured:
+            return {'covered':covered,'total':total,'basis':code['basis']}
     return {'covered': None, 'total': None, 'basis': 'Source lines; the target system report was unavailable or malformed'}
 
 
@@ -265,6 +271,26 @@ def coverage(status_tool, data, checks, results, code):
                        'basis': 'Acceptance criteria AC-01 to AC-11 (Phase 2 Section 4.1) exercised by at least one executed test'}}
 
 
+def suite_plan():
+    runner = load_tool('run_phase3_api_tests')
+    enabled = lambda name: os.environ.get(name,'false').lower() in ('true','1')
+    timeline = enabled('TRACEAI_TEST_TIMELINE_ENABLED')
+    records = enabled('TRACEAI_TEST_RECORDS_ENABLED')
+    reports = enabled('TRACEAI_TEST_REPORTS_ENABLED')
+    profile = 'phase4-reports' if reports else 'phase4-records' if records else 'phase4-timeline' if timeline else 'phase3'
+    return runner, runner.planned_checks(runner.ROOT,include_timeline=timeline,include_records=records,include_reports=reports)+[CLEANUP], profile
+
+
+@tester_router.get('', include_in_schema=False)
+@tester_router.get('/', include_in_schema=False)
+def tester_info():
+    _, checks, profile = suite_plan()
+    return {'service':'TraceAI hosted tester','profile':profile,'planned_checks':len(checks),
+            'message':'Use the POST setup/run endpoints and GET report endpoint; this base URL describes the tester.',
+            'resets_target_data':True,'check_budget_seconds':RUN_TIMEOUT,
+            'documentation':'https://github.com/RamaniS123/TraceAI/blob/main/docs/testing-interface.md'}
+
+
 def execute(app, session_id, session):
     target_url = session['target_url']
     report = {'session_id': session_id, 'target_url': target_url, 'results': [],
@@ -272,17 +298,18 @@ def execute(app, session_id, session):
                            for name in ('code', 'component', 'system')}}
     checks = []
     try:
-        runner = load_tool('run_phase3_api_tests')
+        runner, checks, _ = suite_plan()
         status_tool = load_tool('phase_status')
-        timeline = os.environ.get('TRACEAI_TEST_TIMELINE_ENABLED', 'false').lower() in ('true', '1')
-        records = os.environ.get('TRACEAI_TEST_RECORDS_ENABLED', 'false').lower() in ('true', '1')
-        reports = os.environ.get('TRACEAI_TEST_REPORTS_ENABLED', 'false').lower() in ('true', '1')
-        checks = runner.planned_checks(runner.ROOT, include_timeline=timeline, include_records=records, include_reports=reports) + [CLEANUP]
         contract = json.loads(files('traceai').joinpath('openapi.json').read_text())
         data = json.loads((runner.ROOT / 'docs/requirements.json').read_text(encoding='utf-8'))
         tokens = target_tokens(app, target_url)
+        deadline = monotonic() + RUN_TIMEOUT
         with client(app, CHECK_TIMEOUT) as http:
             for check in checks:
+                remaining = deadline - monotonic()
+                if remaining <= 0:
+                    raise TimeoutError("Tester check budget exhausted")
+                http.timeout = httpx.Timeout(min(CHECK_TIMEOUT,remaining))
                 report['results'].append({'test_id': check['name'],
                                           **evaluate(runner, http, target_url, tokens, check, contract)})
             code = code_coverage(http, target_url, session_id)

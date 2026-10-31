@@ -189,3 +189,42 @@ def test_audit_profile_exercises_all_five_operations_without_changing_report_pro
     assert report['coverage']['component']['covered'] == report['coverage']['component']['total'] == 5
     assert report['coverage']['system']['covered'] == 9
     assert client.get('/tester/test/report', params={'session_id': sid}).json() == report
+
+
+@pytest.mark.phase4
+@pytest.mark.parametrize('covered,total',[(True,1),(None,4),(3,None),(5,2)])
+def test_peer_code_coverage_is_normalized_to_valid_unknown_measure(client,covered,total):
+    from traceai.testing_interface import code_coverage
+    def target(request):
+        return httpx.Response(200,json={'coverage':{'code':{'covered':covered,'total':total,'basis':'Source lines'}}})
+    with httpx.Client(transport=httpx.MockTransport(target)) as http:
+        value=code_coverage(http,TARGET,'session')
+    assert value['covered'] is None and value['total'] is None and value['basis']
+
+
+@pytest.mark.phase4
+@pytest.mark.parametrize('extended,total,profile',[(False,42,'phase3'),(True,126,'phase4-reports')])
+def test_tester_base_describes_active_profile_without_access_secrets(client,monkeypatch,extended,total,profile):
+    for name in ('TRACEAI_TEST_TIMELINE_ENABLED','TRACEAI_TEST_RECORDS_ENABLED','TRACEAI_TEST_REPORTS_ENABLED'):
+        monkeypatch.delenv(name,raising=False)
+    if extended:monkeypatch.setenv('TRACEAI_TEST_REPORTS_ENABLED','true')
+    for path in ('/tester','/tester/'):
+        response=client.get(path)
+        assert response.status_code==200
+        assert response.json()['planned_checks']==total and response.json()['profile']==profile
+        assert 'synthetic-api-secret' not in response.text and 'synthetic-reset-secret' not in response.text
+
+
+@pytest.mark.phase4
+def test_run_budget_retains_partial_report_and_accounts_for_unrun_checks(client,monkeypatch):
+    monkeypatch.setenv('TRACEAI_TEST_REPORTS_ENABLED','true')
+    sid=setup_session(client)
+    clock=iter([0,241])
+    monkeypatch.setattr('traceai.testing_interface.monotonic',lambda:next(clock))
+    response=client.post('/tester/test/run',json={'session_id':sid})
+    assert response.status_code==500
+    report=client.get('/tester/test/report',params={'session_id':sid}).json()
+    assert len(report['results'])==126
+    assert report['results'][0]['outcome']=='error'
+    assert all(row['outcome']=='skip' for row in report['results'][1:])
+    assert report['coverage']['system']['covered'] is None

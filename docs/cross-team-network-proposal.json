@@ -1,0 +1,8 @@
+{
+  "purpose": "Proposed cloud-workspace HTTP access for Team 103's previously reported host. Not Render configuration; not applied or saved successfully.",
+  "config": {
+    "network": {"allowed_domains": ["traceai-zm1t.onrender.com", "3.134.49.218"]}
+  },
+  "observed_blocker": "draft_not_editable when saving the current environment configuration draft",
+  "credentials": "No Team 103 key is included or configured by this proposal. Confirm their current URLs and approved test access privately."
+}

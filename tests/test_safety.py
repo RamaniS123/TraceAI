@@ -109,3 +109,14 @@ def test_startup_migration_failure_exits_without_launching_server_or_leaking(mon
     output = capsys.readouterr()
     assert output.err == 'Startup failed: database migration could not be completed.\n'
     assert CANARY not in output.out + output.err
+
+
+@pytest.mark.parametrize('revision', ['a'*40, 'not-a-revision-private-canary'])
+def test_health_identifies_release_without_exposing_arbitrary_environment_values(monkeypatch,revision):
+    monkeypatch.setenv('RENDER_GIT_COMMIT',revision)
+    with TestClient(create_app(Settings(**SETTINGS))) as client:
+        response=client.get('/health')
+        assert response.status_code==503
+        assert response.headers['x-traceai-contract']==client.get('/openapi.json').json()['info']['version']
+        assert response.headers.get('x-traceai-revision')==(revision if len(revision)==40 else None)
+        assert 'private-canary' not in response.text+str(response.headers)

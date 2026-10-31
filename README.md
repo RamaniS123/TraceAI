@@ -4,8 +4,9 @@ TraceAI records synthetic AI-interaction events through a shared HTTP API.
 It supports event history and audit evidence; it does not generate AI outputs or
 certify legal compliance.
 
-## Current progress: Phase 4, chunks 1–5
+## Current progress: Phase 4 features delivered; cross-team verification pending
 
+- [Phase 4 delivery and remaining cross-team blockers](docs/phase-4-delivery.md)
 - [Pod specification for cross-team testing](docs/pod-specification.md)
 - [Browser warnings and audit reports](docs/phase-4-frontend.md)
 - [Reliability, safe errors and restart evidence](docs/phase-4-reliability.md)

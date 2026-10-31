@@ -60,7 +60,7 @@ class SafeErrorBoundary:
             if started:
                 raise RuntimeError('Response could not be completed.') from None
             path = scope.get('path', '')
-            if path.startswith('/tester/test/'):
+            if path == '/tester' or path.startswith('/tester/'):
                 body = {'message': 'The tester could not complete the request.', 'source': 'tester'}
             elif path.startswith('/test/'):
                 body = {'message': 'The system could not complete the request.', 'source': 'system'}

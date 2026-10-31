@@ -1,13 +1,18 @@
 # Render deployment — Phase 3, chunk 5
 
-## Status
+## Current status
 
-The account owner launched the Blueprint at https://traceai-zm1t.onrender.com.
-A browser screenshot confirmed healthy API and PostgreSQL access. Authenticated
-public API testing remains pending; workspace requests have encountered network
-restrictions, and the hosted credentials are not available to the test runner.
-The frontend is served at `/` after Render deploys the frontend commit.
-Local API, browser, and container validation have passed.
+The system is deployed at https://traceai-zm1t.onrender.com with a browser frontend,
+project API and hosted tester at `/tester`. Read-only health/route checks establish
+reachability; a separate destructive suite is required to establish deployed test
+results. Current Phase 4 delivery, exact local results and cross-team blockers are
+in [phase-4-delivery.md](phase-4-delivery.md).
+
+`render.yaml` enables the 126-check Phase 4 hosted profile. After a Blueprint sync,
+read `GET /tester` to confirm the actual profile/count and `GET /health` headers to
+identify the contract/revision. If the Blueprint has not synced, the code default
+is 42 checks until `TRACEAI_TEST_REPORTS_ENABLED=true` is applied. The two base URLs
+in the endpoint registry do not change.
 
 ## Launch on Render
 
@@ -106,7 +111,7 @@ service as deployed-and-validated until the real HTTPS request and suite pass.
 - Reset returns 403: use the separate reset credential and check reset is enabled
   for the isolated test deployment.
 
-## Verified locally
+## Initial Phase 3 local evidence (historical)
 
 51 pytest checks pass, contract validation passes, and Alembic detects no model
 changes. The built Docker image runs as a nonroot user, applies migrations to an

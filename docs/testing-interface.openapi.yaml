@@ -1,7 +1,7 @@
 openapi: 3.1.1
 info:
   title: TraceAI testing interface (tester and system /test endpoints)
-  version: 1.0.0
+  version: 1.1.0
   description: >-
     Course cross-team testing interface. The pod project API is described in
     contracts/openapi.json. Error bodies on these endpoints are {message, source}.
@@ -50,6 +50,13 @@ components:
             component: {$ref: '#/components/schemas/Measure'}
             system: {$ref: '#/components/schemas/Measure'}
 paths:
+  /:
+    get:
+      summary: "Tester only: describe the active profile without starting a run"
+      responses:
+        '200':
+          description: Active profile, planned check count, check budget, reset notice and documentation link
+          content: {application/json: {schema: {type: object, required: [service, profile, planned_checks, resets_target_data]}}}
   /test/setup:
     post:
       summary: "Tester: create a session and wait for system setup (system: reset the test dataset for a session)"
@@ -95,7 +102,7 @@ paths:
         - {name: session_id, in: query, required: true, schema: {type: string, minLength: 1}}
       responses:
         '200':
-          description: Tester returns a SuiteReport; system returns {session_id, coverage: {code}}
+          description: "Tester returns a SuiteReport; system returns {session_id, coverage: {code}}"
           content: {application/json: {schema: {type: object}}}
         default:
           description: 400 missing session_id, 404 unknown session, 409 not finished / still preparing

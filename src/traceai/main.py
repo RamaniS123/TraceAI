@@ -2,6 +2,8 @@
 from contextlib import asynccontextmanager
 from importlib.resources import files
 import json
+import os
+import re
 
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
@@ -82,6 +84,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/health")
     def health():
+        headers = {"X-TraceAI-Contract": app.openapi()['info']['version']}
+        revision = os.environ.get('RENDER_GIT_COMMIT', '')
+        if re.fullmatch(r'[0-9a-fA-F]{40,64}', revision):
+            headers['X-TraceAI-Revision'] = revision
         try:
             with engine.connect() as connection:
                 connection.execute(text("SELECT event_id FROM events LIMIT 0"))
@@ -89,8 +95,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 if revision != "0001_events":
                     raise RuntimeError("Storage migration mismatch")
         except (SQLAlchemyError, RuntimeError):
-            return JSONResponse(status_code=503, content={"status": "unhealthy", "api": "available", "storage": "unavailable"})
-        return {"status": "healthy", "api": "available", "storage": "available"}
+            return JSONResponse(status_code=503, content={"status": "unhealthy", "api": "available", "storage": "unavailable"}, headers=headers)
+        return JSONResponse(content={"status": "healthy", "api": "available", "storage": "available"}, headers=headers)
 
     @app.post("/api/v1/events", dependencies=[Depends(require_access)])
     async def submit_event(request: Request):
