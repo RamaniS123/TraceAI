@@ -1,8 +1,9 @@
 # TraceAI specification and implementation profile
 
-**Phase 4 status:** Team 106's warning, correction-link, and review increments
+**Phase 4 status:** Team 106's warning, correction-link, review, and audit-report increments
 are implemented under provisional rules in [phase-4-timeline.md](phase-4-timeline.md)
-and [phase-4-records.md](phase-4-records.md). This page is our registered
+[phase-4-records.md](phase-4-records.md), and
+[phase-4-reports.md](phase-4-reports.md). This page is our registered
 implementation profile; it is not evidence that Team 103 approved the new rules.
 The Phase 2 model attachment and report Section 5 also differ, so their authority
 and lifecycle details still need reconciliation.
@@ -78,7 +79,7 @@ either implementation.
 | AC-02 | Interaction grouping | REQ-02 | 3 | scenario 7, 8, 27, 28 |
 | AC-03 | Timeline and warning detection | REQ-03 | 4 | opt-in 26-step timeline scenario plus unit/integration tests |
 | AC-04 | Duplicate and conflicting events | REQ-04 | 4 (delivered early) | scenario 9, 10 |
-| AC-05 | Human review and audit report | REQ-05, REQ-06 | 4 | review-record checks in records profile; audit report deferred |
+| AC-05 | Human review and audit report | REQ-05, REQ-06 | 4 | review checks in records profile; audit checks in reports profile |
 | AC-06 | Storage failure | REQ-08 | 4 | integration tests only (cannot be triggered through the API) |
 | AC-07 | Record persistence and corrections | REQ-09 | 4 | correction-link checks in records profile; full persistence acceptance deferred |
 | AC-08 | Test reset | REQ-10 | 3 | scenario 2, 25, 26, 29–31 |

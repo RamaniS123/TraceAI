@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "TraceAI Phase 4 API \u2014 timelines and linked records",
-    "version": "0.3.0",
-    "description": "Phase 4 chunks 1\u20132 profile: timeline warnings, validated correction links, and nonblank human-review details. Rules in docs/phase-4-records.md and docs/phase-4-timeline.md remain provisional pending pod agreement. Audit reports are deferred."
+    "title": "TraceAI Phase 4 API \u2014 audit reports",
+    "version": "0.4.0",
+    "description": "Phase 4 chunks 1\u20133 implementation profile: timelines, immutable correction links, human reviews, and deterministic audit reports. Formats in docs/phase-4-reports.md remain provisional pending pod agreement. This service supports review of submitted records, not compliance certification."
   },
   "security": [
     {
@@ -261,6 +261,73 @@
           }
         },
         "security": []
+      }
+    },
+    "/api/v1/interactions/{interactionId}/report": {
+      "get": {
+        "operationId": "getAuditReport",
+        "responses": {
+          "200": {
+            "description": "Complete audit report for the recorded interaction, including incomplete/open histories.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditReport"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown interaction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "interactionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          }
+        ]
       }
     }
   },
@@ -768,6 +835,193 @@
           }
         ],
         "description": "Stored records preserve the original accepted representation, including legacy review details. New submissions must satisfy the stricter EventInput constraints."
+      },
+      "ReportMetadata": {
+        "type": "object",
+        "properties": {
+          "eventCount": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "firstOccurredAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|\\+00:00)$"
+          },
+          "lastOccurredAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|\\+00:00)$"
+          }
+        },
+        "required": [
+          "eventCount",
+          "firstOccurredAt",
+          "lastOccurredAt"
+        ],
+        "additionalProperties": false
+      },
+      "ReviewAction": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "reviewerId": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "accept",
+              "override",
+              "reject",
+              "escalate"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|\\+00:00)$"
+          }
+        },
+        "required": [
+          "eventId",
+          "reviewerId",
+          "action",
+          "reason",
+          "occurredAt"
+        ],
+        "additionalProperties": false,
+        "description": "Recorded review data and exact event time; legacy accepted reviewer IDs/reasons are preserved. Identity and decision correctness are not verified."
+      },
+      "CorrectionRecord": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "correctsEventId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|\\+00:00)$"
+          },
+          "linkValid": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "eventId",
+          "correctsEventId",
+          "reason",
+          "occurredAt",
+          "linkValid"
+        ],
+        "additionalProperties": false,
+        "description": "A separate correction record. linkValid means an existing acyclic same-interaction chain, not replacement of any original content."
+      },
+      "AuditReport": {
+        "type": "object",
+        "properties": {
+          "interactionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "in_progress",
+              "completed",
+              "stopped"
+            ]
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ReportMetadata"
+          },
+          "modelVersions": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          },
+          "applicationVersions": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          },
+          "events": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/StoredEvent"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventWarning"
+            }
+          },
+          "reviewActions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReviewAction"
+            }
+          },
+          "corrections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CorrectionRecord"
+            }
+          },
+          "disclaimer": {
+            "type": "string",
+            "const": "This report supports review of submitted event records. It does not certify legal compliance or evaluate AI outputs or human decisions."
+          }
+        },
+        "required": [
+          "interactionId",
+          "status",
+          "metadata",
+          "modelVersions",
+          "applicationVersions",
+          "events",
+          "warnings",
+          "reviewActions",
+          "corrections",
+          "disclaimer"
+        ],
+        "additionalProperties": false,
+        "description": "A deterministic JSON export from one interaction snapshot. Version arrays are sorted and unique; events, reviews, corrections and warnings use the shared timeline ordering. No generated report ID, generation timestamp, or compliance verdict is included."
       }
     }
   }

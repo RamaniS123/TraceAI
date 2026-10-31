@@ -72,6 +72,7 @@ jobs:
           python tools/run_phase3_api_tests.py --base-url http://127.0.0.1:8000 --allow-test-reset --wait-seconds 20 --report reports/api.json
           python tools/run_phase3_api_tests.py --base-url http://127.0.0.1:8000 --allow-test-reset --phase4-timeline --report reports/timeline-api.json
           python tools/run_phase3_api_tests.py --base-url http://127.0.0.1:8000 --allow-test-reset --phase4-records --report reports/records-api.json
+          python tools/run_phase3_api_tests.py --base-url http://127.0.0.1:8000 --allow-test-reset --phase4-reports --report reports/audit-api.json
       - name: Test the course testing interface (our tester against our system)
         shell: bash
         env:

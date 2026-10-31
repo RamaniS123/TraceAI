@@ -1,4 +1,4 @@
-"""Application lifecycle and the Phase 3 HTTP interface."""
+"""Application lifecycle, browser frontend, and TraceAI HTTP interface."""
 from contextlib import asynccontextmanager
 from importlib.resources import files
 import json
@@ -16,7 +16,7 @@ from traceai.auth import require_access, require_reset
 from traceai.config import Settings
 from traceai.db import create_database_engine, session_factory
 from traceai.errors import APIError
-from traceai.events import get_interaction, reset_events, store_event
+from traceai.events import get_audit_report, get_interaction, reset_events, store_event
 from traceai.requests import parse_body
 from traceai.schemas import EventInput, ResetRequest
 from traceai.testing_interface import init_state, system_router, tester_router
@@ -101,6 +101,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/api/v1/interactions/{interactionId}", dependencies=[Depends(require_access)])
     def retrieve_interaction(interactionId: str):
         return json_response(get_interaction(engine, interactionId))
+
+    @app.get("/api/v1/interactions/{interactionId}/report", dependencies=[Depends(require_access)])
+    def audit_report(interactionId: str):
+        response = json_response(get_audit_report(engine, interactionId))
+        response.headers['Cache-Control'] = 'no-store'
+        return response
 
     @app.post("/api/v1/test/reset", dependencies=[Depends(require_reset)])
     async def reset_test_data(request: Request):

@@ -175,3 +175,17 @@ def test_records_profile_includes_prior_timeline_checks_and_partial_coverage(cli
     # This mocked target fails requests. Coverage still means exercised scope only.
     assert report['coverage']['system']['covered'] == 9
     assert report['coverage']['system']['total'] == 11
+
+
+@pytest.mark.phase4
+def test_audit_profile_exercises_all_five_operations_without_changing_report_protocol(client, monkeypatch):
+    monkeypatch.setenv('TRACEAI_TEST_REPORTS_ENABLED', 'true')
+    sid = setup_session(client)
+    response = client.post('/tester/test/run', json={'session_id': sid})
+    assert response.status_code == 200
+    report = response.json()
+    assert len(report['results']) == 126
+    assert any(row['test_id'].startswith('phase4-reports-') for row in report['results'])
+    assert report['coverage']['component']['covered'] == report['coverage']['component']['total'] == 5
+    assert report['coverage']['system']['covered'] == 9
+    assert client.get('/tester/test/report', params={'session_id': sid}).json() == report

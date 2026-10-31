@@ -65,7 +65,7 @@ def configuration(args):
     return args.base_url.rstrip('/'), tokens
 
 
-def planned_checks(root, include_timeline=False, include_records=False):
+def planned_checks(root, include_timeline=False, include_records=False, include_reports=False):
     steps = read_json(root / 'tests/fixtures/phase-3-scenario.json')['steps']
     checks = [{'name': f'scenario-{index:02d}', **step} for index, step in enumerate(steps, 1)]
     for path in ('/api/v1/events', '/api/v1/test/reset'):
@@ -87,12 +87,15 @@ def planned_checks(root, include_timeline=False, include_records=False):
             lookup['expectedBody'] = {'interactionId': 'int-size', 'status': 'in_progress',
                                       'events': [json.loads(raw)], 'warnings': []}
         checks.append(lookup)
-    if include_timeline or include_records:
+    if include_timeline or include_records or include_reports:
         steps = read_json(root / 'tests/fixtures/phase-4-timeline-scenario.json')['steps']
         checks.extend({'name': f'phase4-timeline-{index:02d}', **step} for index, step in enumerate(steps, 1))
-    if include_records:
+    if include_records or include_reports:
         steps = read_json(root / 'tests/fixtures/phase-4-records-scenario.json')['steps']
         checks.extend({'name': f'phase4-records-{index:02d}', **step} for index, step in enumerate(steps, 1))
+    if include_reports:
+        steps = read_json(root / 'tests/fixtures/phase-4-reports-scenario.json')['steps']
+        checks.extend({'name': f'phase4-reports-{index:02d}', **step} for index, step in enumerate(steps, 1))
     return checks
 
 
@@ -107,7 +110,7 @@ def check_response(response, check, contract):
         raise CheckFailure('Response is not valid UTF-8 JSON.') from None
     path = check['path']
     if path.startswith('/api/v1/interactions/'):
-        path = '/api/v1/interactions/{interactionId}'
+        path = '/api/v1/interactions/{interactionId}' + ('/report' if path.endswith('/report') else '')
     schema = contract['paths'][path][check['method'].lower()]['responses'][str(response.status_code)]['content']['application/json']['schema']
     validator = Draft202012Validator({**schema, 'components': contract['components']}, format_checker=FormatChecker())
     if next(validator.iter_errors(body), None) is not None:
@@ -198,6 +201,7 @@ def main(argv=None, *, transport=None):
     parser.add_argument('--env-file', help='Optional local credentials file; process environment takes precedence')
     parser.add_argument('--timeout', type=float, default=5, help='Per-request timeout in seconds')
     parser.add_argument('--wait-seconds', type=float, default=0, help='Read-only readiness wait, at most 60 seconds')
+    parser.add_argument('--phase4-reports', action='store_true', help='Run audit-report checks and both prior Phase 4 scenarios')
     parser.add_argument('--phase4-records', action='store_true', help='Run Phase 4 review/correction checks and the earlier timeline profile')
     parser.add_argument('--phase4-timeline', action='store_true', help='Also run the Phase 4 chunk 1 warning and late-event scenario')
     parser.add_argument('--report', type=Path, help='Write a sanitized JSON result file')
@@ -205,7 +209,7 @@ def main(argv=None, *, transport=None):
     started = datetime.now(timezone.utc).isoformat()
     try:
         origin, tokens = configuration(args)
-        checks = planned_checks(ROOT, include_timeline=args.phase4_timeline, include_records=args.phase4_records)
+        checks = planned_checks(ROOT, include_timeline=args.phase4_timeline, include_records=args.phase4_records, include_reports=args.phase4_reports)
         contract = read_json(ROOT / 'contracts/openapi.json')
     except (ValueError, OSError):
         # Keep credential values, file paths, and raw exception strings out of logs.

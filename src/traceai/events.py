@@ -10,6 +10,7 @@ from traceai.corrections import InvalidCorrection, validate_correction_link
 from traceai.models import Event
 from traceai.schemas import timestamp_key
 from traceai.timeline import build_interaction
+from traceai.reports import build_audit_report
 
 
 def public_event(row):
@@ -73,6 +74,11 @@ def get_interaction(engine, interaction_id):
     if not rows:
         raise APIError(404, "INTERACTION_NOT_FOUND", "Interaction was not found.")
     return build_interaction(interaction_id, (public_event(row) for row in rows))
+
+
+def get_audit_report(engine, interaction_id):
+    # One SELECT provides the single snapshot used by every report section.
+    return build_audit_report(get_interaction(engine, interaction_id))
 
 
 def reset_events(engine):

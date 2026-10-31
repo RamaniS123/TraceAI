@@ -94,3 +94,11 @@ review/correction checks). The hosted tester selects it with
 formats are unchanged. See [record-link rules and evidence](phase-4-records.md).
 Review/audit and persistence/correction criteria are only partially exercised;
 this profile is not a claim that audit reporting or all Phase 4 work is complete.
+
+## Phase 4 audit-report profile
+
+See [phase-4-reports.md](phase-4-reports.md) for the optional 126-check
+`--phase4-reports` profile (including earlier timeline/record checks). Set
+`TRACEAI_TEST_REPORTS_ENABLED=true` on the web service to select it for hosted
+tester runs. The default remains 42 checks; registry base URLs and HTTP request
+fields stay unchanged. Test runs reset the authorized synthetic target data.

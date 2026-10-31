@@ -36,11 +36,11 @@ def main():
         pass
     else:
         raise AssertionError('Malformed fixture unexpectedly parsed')
-    scenario = load('tests/fixtures/phase-3-scenario.json')['steps'] + load('tests/fixtures/phase-4-timeline-scenario.json')['steps'] + load('tests/fixtures/phase-4-records-scenario.json')['steps']
+    scenario = load('tests/fixtures/phase-3-scenario.json')['steps'] + load('tests/fixtures/phase-4-timeline-scenario.json')['steps'] + load('tests/fixtures/phase-4-records-scenario.json')['steps'] + load('tests/fixtures/phase-4-reports-scenario.json')['steps']
     for step in scenario:
         path = step['path']
         if path.startswith('/api/v1/interactions/'):
-            path = '/api/v1/interactions/{interactionId}'
+            path = '/api/v1/interactions/{interactionId}' + ('/report' if path.endswith('/report') else '')
         operation = contract['paths'][path][step['method'].lower()]
         response = operation['responses'][str(step['expectedStatus'])]
         if 'expectedBody' in step:

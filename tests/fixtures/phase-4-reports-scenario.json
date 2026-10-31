@@ -1,0 +1,1132 @@
+{
+  "description": "Audit-report success/error, authentication, read stability, versions, review/correction history, late records and reset invalidation. Synthetic data only; reset consent required.",
+  "steps": [
+    {
+      "method": "POST",
+      "path": "/api/v1/test/reset",
+      "auth": "reset",
+      "body": {
+        "confirm": true
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "reset": true,
+        "remainingEvents": 0,
+        "remainingInteractions": 0
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/absent/report",
+      "auth": "api",
+      "expectedStatus": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/absent/report",
+      "auth": "none",
+      "expectedStatus": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/absent/report",
+      "auth": "invalid",
+      "expectedStatus": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-end",
+        "interactionId": "audit-demo",
+        "eventType": "interaction.completed",
+        "occurredAt": "2026-10-30T12:00:04Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "audit-end",
+        "interactionId": "audit-demo",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-start",
+        "interactionId": "audit-demo",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-30T12:00:00Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "audit-start",
+        "interactionId": "audit-demo",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-output",
+        "interactionId": "audit-demo",
+        "eventType": "model.output_generated",
+        "occurredAt": "2026-10-30T12:00:01Z",
+        "modelVersion": "model-2",
+        "applicationVersion": "app-1",
+        "data": {
+          "outputReference": "synthetic-output"
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "audit-output",
+        "interactionId": "audit-demo",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-review",
+        "interactionId": "audit-demo",
+        "eventType": "review.completed",
+        "occurredAt": "2026-10-30T12:00:02Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-2",
+        "data": {
+          "reviewerId": "synthetic-reviewer",
+          "action": "override",
+          "reason": "  Synthetic review  "
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "audit-review",
+        "interactionId": "audit-demo",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-c1",
+        "interactionId": "audit-demo",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T12:00:03Z",
+        "modelVersion": "model-3",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "audit-review",
+          "reason": "Synthetic clarification"
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "audit-c1",
+        "interactionId": "audit-demo",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/audit-demo/report",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "audit-demo",
+        "status": "completed",
+        "metadata": {
+          "eventCount": 5,
+          "firstOccurredAt": "2026-10-30T12:00:00Z",
+          "lastOccurredAt": "2026-10-30T12:00:04Z"
+        },
+        "modelVersions": [
+          "model-1",
+          "model-2",
+          "model-3"
+        ],
+        "applicationVersions": [
+          "app-1",
+          "app-2"
+        ],
+        "events": [
+          {
+            "eventId": "audit-start",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T12:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "audit-output",
+            "interactionId": "audit-demo",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T12:00:01Z",
+            "modelVersion": "model-2",
+            "applicationVersion": "app-1",
+            "data": {
+              "outputReference": "synthetic-output"
+            }
+          },
+          {
+            "eventId": "audit-review",
+            "interactionId": "audit-demo",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T12:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-2",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review  "
+            }
+          },
+          {
+            "eventId": "audit-c1",
+            "interactionId": "audit-demo",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "modelVersion": "model-3",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "audit-review",
+              "reason": "Synthetic clarification"
+            }
+          },
+          {
+            "eventId": "audit-end",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T12:00:04Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "audit-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "audit-review"
+          }
+        ],
+        "reviewActions": [
+          {
+            "eventId": "audit-review",
+            "reviewerId": "synthetic-reviewer",
+            "action": "override",
+            "reason": "  Synthetic review  ",
+            "occurredAt": "2026-10-30T12:00:02Z"
+          }
+        ],
+        "corrections": [
+          {
+            "eventId": "audit-c1",
+            "correctsEventId": "audit-review",
+            "reason": "Synthetic clarification",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "linkValid": true
+          }
+        ],
+        "disclaimer": "This report supports review of submitted event records. It does not certify legal compliance or evaluate AI outputs or human decisions."
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/audit-demo/report",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "audit-demo",
+        "status": "completed",
+        "metadata": {
+          "eventCount": 5,
+          "firstOccurredAt": "2026-10-30T12:00:00Z",
+          "lastOccurredAt": "2026-10-30T12:00:04Z"
+        },
+        "modelVersions": [
+          "model-1",
+          "model-2",
+          "model-3"
+        ],
+        "applicationVersions": [
+          "app-1",
+          "app-2"
+        ],
+        "events": [
+          {
+            "eventId": "audit-start",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T12:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "audit-output",
+            "interactionId": "audit-demo",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T12:00:01Z",
+            "modelVersion": "model-2",
+            "applicationVersion": "app-1",
+            "data": {
+              "outputReference": "synthetic-output"
+            }
+          },
+          {
+            "eventId": "audit-review",
+            "interactionId": "audit-demo",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T12:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-2",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review  "
+            }
+          },
+          {
+            "eventId": "audit-c1",
+            "interactionId": "audit-demo",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "modelVersion": "model-3",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "audit-review",
+              "reason": "Synthetic clarification"
+            }
+          },
+          {
+            "eventId": "audit-end",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T12:00:04Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "audit-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "audit-review"
+          }
+        ],
+        "reviewActions": [
+          {
+            "eventId": "audit-review",
+            "reviewerId": "synthetic-reviewer",
+            "action": "override",
+            "reason": "  Synthetic review  ",
+            "occurredAt": "2026-10-30T12:00:02Z"
+          }
+        ],
+        "corrections": [
+          {
+            "eventId": "audit-c1",
+            "correctsEventId": "audit-review",
+            "reason": "Synthetic clarification",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "linkValid": true
+          }
+        ],
+        "disclaimer": "This report supports review of submitted event records. It does not certify legal compliance or evaluate AI outputs or human decisions."
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-c1",
+        "interactionId": "audit-demo",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T12:00:03Z",
+        "modelVersion": "model-3",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "audit-review",
+          "reason": "Synthetic clarification"
+        }
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "eventId": "audit-c1",
+        "interactionId": "audit-demo",
+        "stored": true,
+        "duplicate": true
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/audit-demo/report",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "audit-demo",
+        "status": "completed",
+        "metadata": {
+          "eventCount": 5,
+          "firstOccurredAt": "2026-10-30T12:00:00Z",
+          "lastOccurredAt": "2026-10-30T12:00:04Z"
+        },
+        "modelVersions": [
+          "model-1",
+          "model-2",
+          "model-3"
+        ],
+        "applicationVersions": [
+          "app-1",
+          "app-2"
+        ],
+        "events": [
+          {
+            "eventId": "audit-start",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T12:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "audit-output",
+            "interactionId": "audit-demo",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T12:00:01Z",
+            "modelVersion": "model-2",
+            "applicationVersion": "app-1",
+            "data": {
+              "outputReference": "synthetic-output"
+            }
+          },
+          {
+            "eventId": "audit-review",
+            "interactionId": "audit-demo",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T12:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-2",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review  "
+            }
+          },
+          {
+            "eventId": "audit-c1",
+            "interactionId": "audit-demo",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "modelVersion": "model-3",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "audit-review",
+              "reason": "Synthetic clarification"
+            }
+          },
+          {
+            "eventId": "audit-end",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T12:00:04Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "audit-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "audit-review"
+          }
+        ],
+        "reviewActions": [
+          {
+            "eventId": "audit-review",
+            "reviewerId": "synthetic-reviewer",
+            "action": "override",
+            "reason": "  Synthetic review  ",
+            "occurredAt": "2026-10-30T12:00:02Z"
+          }
+        ],
+        "corrections": [
+          {
+            "eventId": "audit-c1",
+            "correctsEventId": "audit-review",
+            "reason": "Synthetic clarification",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "linkValid": true
+          }
+        ],
+        "disclaimer": "This report supports review of submitted event records. It does not certify legal compliance or evaluate AI outputs or human decisions."
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-foreign",
+        "interactionId": "audit-foreign",
+        "eventType": "model.output_generated",
+        "occurredAt": "2026-10-30T12:00:01Z",
+        "modelVersion": "foreign-model",
+        "applicationVersion": "foreign-app",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "audit-foreign",
+        "interactionId": "audit-foreign",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/audit-demo/report",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "audit-demo",
+        "status": "completed",
+        "metadata": {
+          "eventCount": 5,
+          "firstOccurredAt": "2026-10-30T12:00:00Z",
+          "lastOccurredAt": "2026-10-30T12:00:04Z"
+        },
+        "modelVersions": [
+          "model-1",
+          "model-2",
+          "model-3"
+        ],
+        "applicationVersions": [
+          "app-1",
+          "app-2"
+        ],
+        "events": [
+          {
+            "eventId": "audit-start",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T12:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "audit-output",
+            "interactionId": "audit-demo",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T12:00:01Z",
+            "modelVersion": "model-2",
+            "applicationVersion": "app-1",
+            "data": {
+              "outputReference": "synthetic-output"
+            }
+          },
+          {
+            "eventId": "audit-review",
+            "interactionId": "audit-demo",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T12:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-2",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review  "
+            }
+          },
+          {
+            "eventId": "audit-c1",
+            "interactionId": "audit-demo",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "modelVersion": "model-3",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "audit-review",
+              "reason": "Synthetic clarification"
+            }
+          },
+          {
+            "eventId": "audit-end",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T12:00:04Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "audit-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "audit-review"
+          }
+        ],
+        "reviewActions": [
+          {
+            "eventId": "audit-review",
+            "reviewerId": "synthetic-reviewer",
+            "action": "override",
+            "reason": "  Synthetic review  ",
+            "occurredAt": "2026-10-30T12:00:02Z"
+          }
+        ],
+        "corrections": [
+          {
+            "eventId": "audit-c1",
+            "correctsEventId": "audit-review",
+            "reason": "Synthetic clarification",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "linkValid": true
+          }
+        ],
+        "disclaimer": "This report supports review of submitted event records. It does not certify legal compliance or evaluate AI outputs or human decisions."
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/audit-foreign/report",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "audit-foreign",
+        "status": "in_progress",
+        "metadata": {
+          "eventCount": 1,
+          "firstOccurredAt": "2026-10-30T12:00:01Z",
+          "lastOccurredAt": "2026-10-30T12:00:01Z"
+        },
+        "modelVersions": [
+          "foreign-model"
+        ],
+        "applicationVersions": [
+          "foreign-app"
+        ],
+        "events": [
+          {
+            "eventId": "audit-foreign",
+            "interactionId": "audit-foreign",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T12:00:01Z",
+            "modelVersion": "foreign-model",
+            "applicationVersion": "foreign-app",
+            "data": {}
+          }
+        ],
+        "warnings": [],
+        "reviewActions": [],
+        "corrections": [],
+        "disclaimer": "This report supports review of submitted event records. It does not certify legal compliance or evaluate AI outputs or human decisions."
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-late-end",
+        "interactionId": "audit-late",
+        "eventType": "interaction.completed",
+        "occurredAt": "2026-10-30T12:00:04Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "audit-late-end",
+        "interactionId": "audit-late",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/audit-late/report",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "audit-late",
+        "status": "completed",
+        "metadata": {
+          "eventCount": 1,
+          "firstOccurredAt": "2026-10-30T12:00:04Z",
+          "lastOccurredAt": "2026-10-30T12:00:04Z"
+        },
+        "modelVersions": [
+          "model-1"
+        ],
+        "applicationVersions": [
+          "app-1"
+        ],
+        "events": [
+          {
+            "eventId": "audit-late-end",
+            "interactionId": "audit-late",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T12:00:04Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "MISSING_EVENT",
+            "message": "Finalized interaction is missing interaction.started.",
+            "eventType": "interaction.started"
+          },
+          {
+            "code": "MISSING_EVENT",
+            "message": "Finalized interaction is missing model.output_generated.",
+            "eventType": "model.output_generated"
+          }
+        ],
+        "reviewActions": [],
+        "corrections": [],
+        "disclaimer": "This report supports review of submitted event records. It does not certify legal compliance or evaluate AI outputs or human decisions."
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-late-start",
+        "interactionId": "audit-late",
+        "eventType": "interaction.started",
+        "occurredAt": "2026-10-30T12:00:00Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "audit-late-start",
+        "interactionId": "audit-late",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-late-output",
+        "interactionId": "audit-late",
+        "eventType": "model.output_generated",
+        "occurredAt": "2026-10-30T12:00:01Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {}
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "audit-late-output",
+        "interactionId": "audit-late",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/audit-late/report",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "audit-late",
+        "status": "completed",
+        "metadata": {
+          "eventCount": 3,
+          "firstOccurredAt": "2026-10-30T12:00:00Z",
+          "lastOccurredAt": "2026-10-30T12:00:04Z"
+        },
+        "modelVersions": [
+          "model-1"
+        ],
+        "applicationVersions": [
+          "app-1"
+        ],
+        "events": [
+          {
+            "eventId": "audit-late-start",
+            "interactionId": "audit-late",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T12:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "audit-late-output",
+            "interactionId": "audit-late",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T12:00:01Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "audit-late-end",
+            "interactionId": "audit-late",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T12:00:04Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [],
+        "reviewActions": [],
+        "corrections": [],
+        "disclaimer": "This report supports review of submitted event records. It does not certify legal compliance or evaluate AI outputs or human decisions."
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-bad-c",
+        "interactionId": "audit-demo",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T12:00:05Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "absent",
+          "reason": "Synthetic"
+        }
+      },
+      "expectedStatus": 422
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/audit-demo/report",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "audit-demo",
+        "status": "completed",
+        "metadata": {
+          "eventCount": 5,
+          "firstOccurredAt": "2026-10-30T12:00:00Z",
+          "lastOccurredAt": "2026-10-30T12:00:04Z"
+        },
+        "modelVersions": [
+          "model-1",
+          "model-2",
+          "model-3"
+        ],
+        "applicationVersions": [
+          "app-1",
+          "app-2"
+        ],
+        "events": [
+          {
+            "eventId": "audit-start",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T12:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "audit-output",
+            "interactionId": "audit-demo",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T12:00:01Z",
+            "modelVersion": "model-2",
+            "applicationVersion": "app-1",
+            "data": {
+              "outputReference": "synthetic-output"
+            }
+          },
+          {
+            "eventId": "audit-review",
+            "interactionId": "audit-demo",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T12:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-2",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review  "
+            }
+          },
+          {
+            "eventId": "audit-c1",
+            "interactionId": "audit-demo",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "modelVersion": "model-3",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "audit-review",
+              "reason": "Synthetic clarification"
+            }
+          },
+          {
+            "eventId": "audit-end",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T12:00:04Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "audit-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "audit-review"
+          }
+        ],
+        "reviewActions": [
+          {
+            "eventId": "audit-review",
+            "reviewerId": "synthetic-reviewer",
+            "action": "override",
+            "reason": "  Synthetic review  ",
+            "occurredAt": "2026-10-30T12:00:02Z"
+          }
+        ],
+        "corrections": [
+          {
+            "eventId": "audit-c1",
+            "correctsEventId": "audit-review",
+            "reason": "Synthetic clarification",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "linkValid": true
+          }
+        ],
+        "disclaimer": "This report supports review of submitted event records. It does not certify legal compliance or evaluate AI outputs or human decisions."
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/events",
+      "auth": "api",
+      "body": {
+        "eventId": "audit-c2",
+        "interactionId": "audit-demo",
+        "eventType": "record.corrected",
+        "occurredAt": "2026-10-30T12:00:05Z",
+        "modelVersion": "model-1",
+        "applicationVersion": "app-1",
+        "data": {
+          "correctsEventId": "audit-c1",
+          "reason": "Further synthetic clarification"
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "eventId": "audit-c2",
+        "interactionId": "audit-demo",
+        "stored": true,
+        "duplicate": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/audit-demo/report",
+      "auth": "api",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "interactionId": "audit-demo",
+        "status": "completed",
+        "metadata": {
+          "eventCount": 6,
+          "firstOccurredAt": "2026-10-30T12:00:00Z",
+          "lastOccurredAt": "2026-10-30T12:00:05Z"
+        },
+        "modelVersions": [
+          "model-1",
+          "model-2",
+          "model-3"
+        ],
+        "applicationVersions": [
+          "app-1",
+          "app-2"
+        ],
+        "events": [
+          {
+            "eventId": "audit-start",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.started",
+            "occurredAt": "2026-10-30T12:00:00Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "audit-output",
+            "interactionId": "audit-demo",
+            "eventType": "model.output_generated",
+            "occurredAt": "2026-10-30T12:00:01Z",
+            "modelVersion": "model-2",
+            "applicationVersion": "app-1",
+            "data": {
+              "outputReference": "synthetic-output"
+            }
+          },
+          {
+            "eventId": "audit-review",
+            "interactionId": "audit-demo",
+            "eventType": "review.completed",
+            "occurredAt": "2026-10-30T12:00:02Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-2",
+            "data": {
+              "reviewerId": "synthetic-reviewer",
+              "action": "override",
+              "reason": "  Synthetic review  "
+            }
+          },
+          {
+            "eventId": "audit-c1",
+            "interactionId": "audit-demo",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "modelVersion": "model-3",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "audit-review",
+              "reason": "Synthetic clarification"
+            }
+          },
+          {
+            "eventId": "audit-end",
+            "interactionId": "audit-demo",
+            "eventType": "interaction.completed",
+            "occurredAt": "2026-10-30T12:00:04Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {}
+          },
+          {
+            "eventId": "audit-c2",
+            "interactionId": "audit-demo",
+            "eventType": "record.corrected",
+            "occurredAt": "2026-10-30T12:00:05Z",
+            "modelVersion": "model-1",
+            "applicationVersion": "app-1",
+            "data": {
+              "correctsEventId": "audit-c1",
+              "reason": "Further synthetic clarification"
+            }
+          }
+        ],
+        "warnings": [
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "audit-c1",
+            "eventType": "record.corrected",
+            "correctsEventId": "audit-review"
+          },
+          {
+            "code": "CORRECTED_EVENT",
+            "message": "A linked correction is recorded; the original event is retained.",
+            "eventId": "audit-c2",
+            "eventType": "record.corrected",
+            "correctsEventId": "audit-c1"
+          }
+        ],
+        "reviewActions": [
+          {
+            "eventId": "audit-review",
+            "reviewerId": "synthetic-reviewer",
+            "action": "override",
+            "reason": "  Synthetic review  ",
+            "occurredAt": "2026-10-30T12:00:02Z"
+          }
+        ],
+        "corrections": [
+          {
+            "eventId": "audit-c1",
+            "correctsEventId": "audit-review",
+            "reason": "Synthetic clarification",
+            "occurredAt": "2026-10-30T12:00:03Z",
+            "linkValid": true
+          },
+          {
+            "eventId": "audit-c2",
+            "correctsEventId": "audit-c1",
+            "reason": "Further synthetic clarification",
+            "occurredAt": "2026-10-30T12:00:05Z",
+            "linkValid": true
+          }
+        ],
+        "disclaimer": "This report supports review of submitted event records. It does not certify legal compliance or evaluate AI outputs or human decisions."
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/test/reset",
+      "auth": "reset",
+      "body": {
+        "confirm": true
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "reset": true,
+        "remainingEvents": 0,
+        "remainingInteractions": 0
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/interactions/audit-demo/report",
+      "auth": "api",
+      "expectedStatus": 404
+    }
+  ]
+}

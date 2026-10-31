@@ -66,7 +66,7 @@ def validate_response(response, path, method):
     Draft202012Validator(document, format_checker=FormatChecker()).validate(response.json())
 
 
-@pytest.mark.parametrize('scenario_file', ['phase-3-scenario.json', pytest.param('phase-4-timeline-scenario.json', marks=pytest.mark.phase4), pytest.param('phase-4-records-scenario.json', marks=pytest.mark.phase4)])
+@pytest.mark.parametrize('scenario_file', ['phase-3-scenario.json', pytest.param('phase-4-timeline-scenario.json', marks=pytest.mark.phase4), pytest.param('phase-4-records-scenario.json', marks=pytest.mark.phase4), pytest.param('phase-4-reports-scenario.json', marks=pytest.mark.phase4)])
 def test_complete_shared_scenario(client, scenario_file):
     scenario = json.loads((FIXTURES / scenario_file).read_text())
     for index, step in enumerate(scenario['steps']):
@@ -82,7 +82,7 @@ def test_complete_shared_scenario(client, scenario_file):
         assert response.status_code == step['expectedStatus'], f'Scenario step {index}: {response.text}'
         if 'expectedBody' in step:
             assert response.json() == step['expectedBody'], f'Scenario step {index}'
-        path = '/api/v1/interactions/{interactionId}' if step['path'].startswith('/api/v1/interactions/') else step['path']
+        path = ('/api/v1/interactions/{interactionId}' + ('/report' if step['path'].endswith('/report') else '')) if step['path'].startswith('/api/v1/interactions/') else step['path']
         validate_response(response, path, step['method'])
 
 
@@ -214,6 +214,7 @@ def test_storage_failure_never_confirms_write_or_reset():
         for method, path, body, token in [
             ('POST', '/api/v1/events', event(), settings.api_token),
             ('GET', '/api/v1/interactions/int-a', None, settings.api_token),
+            ('GET', '/api/v1/interactions/int-a/report', None, settings.api_token),
             ('POST', '/api/v1/test/reset', {'confirm': True}, settings.reset_token),
         ]:
             response = client.request(method, path, json=body, headers={'Authorization': 'Bearer '+token.get_secret_value()})
@@ -359,6 +360,11 @@ def test_invalid_legacy_correction_chain_cannot_receive_a_new_correction(client)
     result = retrieve(client).json()
     assert len(result['events']) == 2
     assert result['warnings'] == []
+    report = client.get('/api/v1/interactions/int-a/report', headers=client.api_headers)
+    assert report.status_code == 200
+    validate_response(report, '/api/v1/interactions/{interactionId}/report', 'get')
+    assert report.json()['metadata']['eventCount'] == 2
+    assert all(not correction['linkValid'] for correction in report.json()['corrections'])
 
 
 @pytest.mark.phase4
@@ -404,3 +410,91 @@ def test_previously_accepted_review_details_remain_readable_without_rewrite(clie
     assert stored['data'] == legacy_data
     assert submit(client, stored).status_code == 422  # Stronger rules apply to new input only.
     assert retrieve(client).json()['events'] == [stored]
+    report = client.get('/api/v1/interactions/int-a/report', headers=client.api_headers)
+    assert report.status_code == 200
+    validate_response(report, '/api/v1/interactions/{interactionId}/report', 'get')
+    assert report.json()['reviewActions'][0]['reviewerId'] == ''
+    assert report.json()['reviewActions'][0]['reason'] == '   '
+
+
+@pytest.mark.phase4
+def test_audit_report_contains_one_interaction_versions_reviews_corrections_and_metadata(client):
+    start = event(eventId='report-start', modelVersion='model-z', applicationVersion='app-z')
+    output = event(eventId='report-output', eventType='model.output_generated', occurredAt='2026-10-15T14:31:00Z', modelVersion='model-a', applicationVersion='app-a')
+    review = event(eventId='report-review', eventType='review.completed', occurredAt='2026-10-15T14:32:00.123456789+00:00', data={'reviewerId':'reviewer-1','action':'override','reason':'  Synthetic review  '})
+    correction = event(eventId='report-correction', eventType='record.corrected', occurredAt='2026-10-15T14:33:00Z', data={'correctsEventId':review['eventId'],'reason':'Synthetic clarification','suggestedAction':'reject'})
+    end = event(eventId='report-end', eventType='interaction.completed', occurredAt='2026-10-15T14:34:00Z')
+    foreign = event(eventId='foreign', interactionId='another-interaction', modelVersion='foreign-model')
+    for body in [end, start, output, review, correction, foreign]:
+        assert submit(client, body).status_code == 201
+    response = client.get('/api/v1/interactions/int-a/report', headers=client.api_headers)
+    assert response.status_code == 200
+    assert response.headers['cache-control'] == 'no-store'
+    validate_response(response, '/api/v1/interactions/{interactionId}/report', 'get')
+    report = response.json()
+    assert report['events'] == [start, output, review, correction, end]
+    assert report['modelVersions'] == ['model-2.1', 'model-a', 'model-z']
+    assert report['applicationVersions'] == ['app-1.4', 'app-a', 'app-z']
+    assert report['metadata'] == {'eventCount':5, 'firstOccurredAt':start['occurredAt'], 'lastOccurredAt':end['occurredAt']}
+    assert report['reviewActions'] == [{'eventId':review['eventId'],'reviewerId':'reviewer-1','action':'override','reason':'  Synthetic review  ','occurredAt':review['occurredAt']}]
+    assert report['corrections'] == [{'eventId':correction['eventId'],'correctsEventId':review['eventId'],'reason':'Synthetic clarification','occurredAt':correction['occurredAt'],'linkValid':True}]
+    assert report['warnings'] == retrieve(client).json()['warnings']
+    assert 'does not certify legal compliance' in report['disclaimer']
+
+
+@pytest.mark.phase4
+@pytest.mark.parametrize('auth', ['none', 'invalid'])
+def test_audit_report_authentication_precedes_interaction_lookup(client, auth):
+    headers = {} if auth == 'none' else {'Authorization':'Bearer invalid-synthetic-token'}
+    response = client.get('/api/v1/interactions/unknown/report', headers=headers)
+    assert response.status_code == 401
+    validate_response(response, '/api/v1/interactions/{interactionId}/report', 'get')
+    assert response.headers['www-authenticate'] == 'Bearer'
+
+
+@pytest.mark.phase4
+def test_unknown_report_is_404_and_creates_no_interaction(client):
+    response = client.get('/api/v1/interactions/unknown/report', headers=client.api_headers)
+    assert response.status_code == 404
+    assert response.json()['error']['code'] == 'INTERACTION_NOT_FOUND'
+    assert retrieve(client, 'unknown').status_code == 404
+
+
+@pytest.mark.phase4
+def test_audit_report_is_repeatable_read_only_and_not_cached_after_reset(client):
+    from sqlalchemy import select
+    from traceai.models import Event
+    assert submit(client, event()).status_code == 201
+    with client.app.state.engine.connect() as connection:
+        before = [dict(row) for row in connection.execute(select(Event.__table__).order_by(Event.event_id)).mappings()]
+    first = client.get('/api/v1/interactions/int-a/report', headers=client.api_headers)
+    second = client.get('/api/v1/interactions/int-a/report', headers=client.api_headers)
+    assert first.status_code == second.status_code == 200
+    assert first.content == second.content
+    with client.app.state.engine.connect() as connection:
+        after = [dict(row) for row in connection.execute(select(Event.__table__).order_by(Event.event_id)).mappings()]
+    assert before == after
+    assert client.post('/api/v1/test/reset', headers=client.reset_headers, json={'confirm':True}).status_code == 200
+    assert client.get('/api/v1/interactions/int-a/report', headers=client.api_headers).status_code == 404
+
+
+@pytest.mark.phase4
+def test_report_recomputes_incomplete_interaction_when_late_events_arrive(client):
+    end = event(eventId='end', eventType='interaction.completed', occurredAt='2026-10-15T14:32:00Z')
+    assert submit(client, end).status_code == 201
+    first = client.get('/api/v1/interactions/int-a/report', headers=client.api_headers).json()
+    assert first['metadata']['eventCount'] == 1 and len(first['warnings']) == 2
+    for body in [event(), event(eventId='output', eventType='model.output_generated', occurredAt='2026-10-15T14:31:00Z')]:
+        assert submit(client, body).status_code == 201
+    second = client.get('/api/v1/interactions/int-a/report', headers=client.api_headers).json()
+    assert second['metadata']['eventCount'] == 3 and second['warnings'] == []
+    assert first['metadata']['eventCount'] == 1 and len(first['warnings']) == 2
+
+
+@pytest.mark.phase4
+def test_audit_report_preserves_exact_numeric_payloads(client):
+    body = event(data={'score': Decimal('0.12345678901234567890123456789')})
+    response = client.post('/api/v1/events', content=simplejson.dumps(body, use_decimal=True), headers={**client.api_headers,'Content-Type':'application/json'})
+    assert response.status_code == 201
+    report = client.get('/api/v1/interactions/int-a/report', headers=client.api_headers)
+    assert simplejson.loads(report.text, use_decimal=True)['events'] == [body]

@@ -46,8 +46,11 @@ def test_passing_run_marks_planned_requirements_complete(tmp_path, capsys):
     assert 'REQ-01 - Validate, store and confirm events | Status: complete' in out
     assert 'AC-01 (20/20 checks passed)' in out
     assert 'Status: partial' in line(out, 'REQ-03')  # Warnings are documented as Phase 4.
-    assert not any(row.startswith('REQ-06') for row in out.splitlines())  # Not worked on this phase.
-    assert 'Implemented: no (planned for Phase 4)' in line(out, '[GET /api/v1/interactions/{interactionId}/report]')
+    assert 'Status: partial' in line(out, 'REQ-06')  # Agreement still pending; this baseline run has no report checks.
+    assert 'Implemented: partial' in line(out, '[GET /api/v1/interactions/{interactionId}/report]')
+    rows = out.splitlines()
+    report_line = rows.index(line(out, '[GET /api/v1/interactions/{interactionId}/report]'))
+    assert 'not exercised by this run' in rows[report_line + 1]
     assert 'Implemented: partial' in line(out, '[GET /api/v1/interactions/{interactionId}]')
 
 
@@ -96,3 +99,13 @@ def test_record_checks_only_count_the_exercised_parts_of_review_and_correction_c
     req5 = next(req for req in DATA['requirements'] if req['id'] == 'REQ-05')
     req9 = next(req for req in DATA['requirements'] if req['id'] == 'REQ-09')
     assert req5['missing'] and req9['missing']  # Partial evidence must not imply full Phase 4 completion.
+
+
+def test_report_checks_are_in_the_optional_profile_and_match_the_report_operation():
+    extended = status.evaluator_checks(include_reports=True)
+    assert status.problems(DATA, extended) == []
+    report_checks = [c for c in extended if c['path'].endswith('/report')]
+    assert any(c['expectedStatus'] == 200 for c in report_checks)
+    assert {c['expectedStatus'] for c in report_checks} >= {200, 401, 404}
+    assert all(status.operation_path(c['path']) == '/api/v1/interactions/{interactionId}/report' for c in report_checks)
+    assert any(name.startswith('phase4-reports-') for name in status.criterion_checks(DATA['acceptanceCriteria']['AC-05'], extended))
