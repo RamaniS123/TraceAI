@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "scope": "isolated local PostgreSQL and loopback HTTP only",
+  "source_revision": "62b0ff9b87a9aaeb21781fdb5faa035d5e2a8c24",
+  "started_at": "2026-11-18T20:58:51.860623+00:00",
+  "finished_at": "2026-11-18T20:59:32.859688+00:00",
+  "run_id": "b2af29502332",
+  "profile_version": "1.1.0",
+  "profile_sha256": "852d0c6255ec28fdba15bcdae9b89010b8f48bbc2340d2d33b6c5d6a2202ba7c",
+  "generator_sha256": "38e5c9e1900350ef2344dc2e44c9a3d34d37f4f0dd6691efdec713dcc14d1d7e",
+  "contract_sha256": "97c042670abbcc07940ac11f05fd9e20f2d6c9461b158b1e134ce3339bedb3a5",
+  "committed_manifest": "docs/phase-5-capacity-manifest.json",
+  "manifest_sha256": "111a68bb5147849933876d1a001b4ba35ded789269cb1f9fa7898ca50cbe0a51",
+  "database": {
+    "name": "traceai_p5_caf44c8d7014_test",
+    "host": "127.0.0.1",
+    "port": 40453,
+    "server_version": "16.15 (Debian 16.15-1.pgdg12+2)",
+    "shared_buffers": "128MB",
+    "max_connections": "100"
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "cpu_count": 5,
+    "application_workers": 1,
+    "sqlalchemy_pool_size": 5,
+    "sqlalchemy_max_overflow": 10,
+    "loader_clients": 1,
+    "response_cache": "none"
+  },
+  "capacity": {
+    "starting_events": 0,
+    "new_http_201_receipts": 10000,
+    "stored_events_before_restart": 10000,
+    "stored_events_after_restart": 10000,
+    "interactions": 100,
+    "minimum_events_per_interaction": 100,
+    "maximum_events_per_interaction": 100,
+    "event_type_counts": {
+      "interaction.started": 100,
+      "model.output_generated": 9600,
+      "review.completed": 100,
+      "record.corrected": 100,
+      "interaction.completed": 100
+    },
+    "initial_verification": {
+      "status": "passed",
+      "verified_events_in_both_views": 10000,
+      "verified_interactions": 100,
+      "verification_requests": 200
+    },
+    "verification_after_application_restart": {
+      "status": "passed",
+      "verified_events_in_both_views": 10000,
+      "verified_interactions": 100,
+      "verification_requests": 200
+    },
+    "record_loss": 0,
+    "changed_or_unexpected_records": 0,
+    "database_retained_for_chunk4": true
+  },
+  "synthetic_event_body_bytes": {
+    "minimum": 285,
+    "maximum": 387,
+    "total": 2897900
+  },
+  "safety": {
+    "public_or_peer_load_or_reset": false,
+    "local_reset_performed": false,
+    "application_reset_enabled_during_run": false,
+    "repeat_seed_against_nonempty_database": "blocked; 10000 rows retained"
+  },
+  "validation": {
+    "pytest": {
+      "tests": 230,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "contract_schema_fixture_plan_validation": "passed"
+  },
+  "acceptance": {
+    "local_capacity": "passed_for_this_isolated_dataset",
+    "hosted_or_peer_capacity": "not_measured",
+    "performance": "not_measured",
+    "REQ-13_and_AC-10": "incomplete; 1000-request network-excluded performance evaluation remains pending"
+  },
+  "artifacts_sha256": {
+    "reports/phase5-chunk3-manifest.json": "111a68bb5147849933876d1a001b4ba35ded789269cb1f9fa7898ca50cbe0a51",
+    "reports/phase5-chunk3-manifest.receipts.jsonl": "a41d4080d40c91a7d3763f2e1c9107ae994ee89b939255032678758ac146ddd8",
+    "reports/phase5-chunk3-capacity-seed.json": "aaddfa010c40074827323ba084f83a88379b565da6d7e634367a44a042771e9f",
+    "reports/phase5-chunk3-capacity-after-restart.json": "0161354b88302e21a8e9709507f08ad402c6de540f4fb8301452f0b992951314",
+    "reports/phase5-chunk3-capacity.json": "64b55460c3c4700c45d48474d28327d4cb30eae5c44627e60e723de8cf57cb8a",
+    "reports/phase5-chunk3-nonempty-guard.json": "3a839486ea6df1ddcfa0e8cbd5105f86737b11bd6187b118894590a637a6f231",
+    "reports/phase5-chunk3-pytest.xml": "a21abdb819dedb8edf7a24c7e8136b905a0b3d8be30bd8b005800983df9cbff1"
+  }
+}

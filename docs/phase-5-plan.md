@@ -179,3 +179,13 @@ empty after baseline regression cleanup, ready for the later controlled loader.
 Threat modeling, the verified tester target restriction and security regression
 evidence are recorded in [the security review](phase-5-security-review.md).
 Capacity and performance execution remain pending.
+
+## Chunk 3 result
+
+[Local capacity verification](phase-5-capacity.md) passed: 10,000 new HTTP events,
+100 interactions of 100 events each, exact history/audit verification before and
+after application restart, and no lost or changed records. The separately
+migrated local benchmark database and manifest are retained for chunk 4. Full
+regression/reset suites must now use a different database. This result supersedes
+the chunk 1 empty-database observation; it is not a performance or hosted-capacity
+verdict. REQ-13 / AC-10 remain incomplete pending the 1000-request performance run.

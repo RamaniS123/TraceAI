@@ -34,7 +34,7 @@
               "checks": ["scenario-01", "scenario-23", "scenario-24", "scenario-25", "authentication-events-none",
                          "authentication-events-invalid", "authentication-reset-none", "authentication-reset-invalid"]},
     "AC-10": {"name": "Capacity and performance", "requirements": ["REQ-13"], "checks": [],
-              "otherEvidence": "Plan only: contracts/phase-5-capacity-profile.json and docs/phase-5-plan.md. No capacity/performance acceptance run has been performed."},
+              "otherEvidence": "Local capacity passed with 10,000 events across 100 interactions of 100 events each, exact HTTP history/report verification before and after application restart; see docs/phase-5-capacity-results.json. The 1000-request network-excluded performance evaluation remains pending; no complete AC-10 acceptance is claimed."},
     "AC-11": {"name": "Cross-team conformance", "requirements": ["REQ-14"], "checks": "all"}
   },
   "requirements": [
@@ -67,7 +67,7 @@
      "acceptanceCriteria": ["AC-09"],
      "missing": ""},
     {"id": "REQ-13", "name": "Capacity and performance limits", "plannedPhase": 5, "workedOn": true,
-     "acceptanceCriteria": ["AC-10"], "missing": "Phase 5 chunk 1 defines the Phase 2 capacity targets, proposed workload and isolation/timing plan. Capacity loading and the 1000-request performance evaluation have not run."},
+     "acceptanceCriteria": ["AC-10"], "missing": "Local 10,000-event / 100-event-per-interaction capacity verified in Phase 5 chunk 3. The 1000-request network-excluded performance evaluation remains unverified; hosted and peer load tests have not run."},
     {"id": "REQ-14", "name": "Network-accessible common interface with equivalent cross-team results", "plannedPhase": 3, "workedOn": true,
      "acceptanceCriteria": ["AC-11"],
      "missing": ""}

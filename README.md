@@ -4,8 +4,9 @@ TraceAI records synthetic AI-interaction events through a shared HTTP API.
 It supports event history and audit evidence; it does not generate AI outputs or
 certify legal compliance.
 
-## Current progress: Phase 5 chunk 2 — threat model and security review
+## Current progress: Phase 5 chunk 3 — local capacity verified
 
+- [Phase 5 capacity loader, verification and results](docs/phase-5-capacity.md)
 - [Phase 5 threat model and security review](docs/phase-5-security-review.md)
 - [Phase 5 targets, measurement and dataset-isolation plan](docs/phase-5-plan.md)
 - [Confirmed Phase 4 functional results](docs/phase-4-confirmed-results.json)
