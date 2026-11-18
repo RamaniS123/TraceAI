@@ -17,7 +17,7 @@ def validate_phase5_plan(contract):
     """Check the declared plan, never score capacity/performance as executed."""
     profile = load('contracts/phase-5-capacity-profile.json')
     targets = profile['required_targets']
-    assert profile['status'] == 'planned_not_executed'
+    assert profile['status'] == 'capacity_tooling_implemented_performance_pending'
     assert profile['source']['project_contract_version'] == contract['info']['version']
     assert targets == {
         'minimum_stored_events': 10000, 'minimum_events_in_one_interaction': 100,

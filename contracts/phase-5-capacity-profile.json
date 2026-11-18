@@ -1,7 +1,7 @@
 {
-  "profile_version": "1.0.0",
+  "profile_version": "1.1.0",
   "name": "phase5-capacity-performance",
-  "status": "planned_not_executed",
+  "status": "capacity_tooling_implemented_performance_pending",
   "requirements": [
     "REQ-13"
   ],
@@ -121,11 +121,20 @@
     "separate capacity verdict, timing-measurement completeness and performance verdict"
   ],
   "not_claimed": [
-    "capacity or performance acceptance",
+    "performance acceptance or deployed capacity acceptance",
     "current database expiration",
     "peer approval of the proposed request mix",
     "a production load run",
     "source-code coverage",
     "a hard maximum supported capacity"
-  ]
+  ],
+  "capacity_runner": {
+    "tool": "tools/phase5_capacity.py",
+    "orchestrator": "tools/check_phase5_capacity.py",
+    "scope": "isolated loopback HTTP service and dedicated local PostgreSQL database",
+    "evidence": "docs/phase-5-capacity-results.json",
+    "loader_clients": 1,
+    "reset_performed": false,
+    "verification": "full history and full audit report for all 100 interactions, before and after application restart"
+  }
 }
