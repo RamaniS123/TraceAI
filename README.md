@@ -4,8 +4,9 @@ TraceAI records synthetic AI-interaction events through a shared HTTP API.
 It supports event history and audit evidence; it does not generate AI outputs or
 certify legal compliance.
 
-## Current progress: Phase 5 chunk 3 — local capacity verified
+## Current progress: Phase 5 chunk 4 — local performance verified
 
+- [Phase 5 timing, benchmark and measured results](docs/phase-5-performance.md)
 - [Phase 5 capacity loader, verification and results](docs/phase-5-capacity.md)
 - [Phase 5 threat model and security review](docs/phase-5-security-review.md)
 - [Phase 5 targets, measurement and dataset-isolation plan](docs/phase-5-plan.md)
@@ -69,8 +70,11 @@ These are historical functional results, not Phase 5 load-test results.
 Phase 5 targets are 10,000 stored events, 100 events in one interaction and 1,000
 ordinary requests from up to ten clients, with at least 95% completing within one
 second excluding external network delay. The [profile](contracts/phase-5-capacity-profile.json)
-and [plan](docs/phase-5-plan.md) define the proposed measurement/isolation approach;
-capacity loading, timing instrumentation and performance acceptance have not run.
+and [plan](docs/phase-5-plan.md) define the proposed measurement/isolation approach.
+Local capacity and performance runs passed: 10,000 records retained and 1,000/1,000
+correct requests at most one second, with ten observed in flight. See the
+[measurements and limits](docs/phase-5-performance.md). Hosted/peer load testing
+and pod confirmation of the proposed profile remain outstanding.
 Database expiration is not exposed by health and remains unverified.
 
 Use synthetic data only. Keep credentials in environment secrets and never

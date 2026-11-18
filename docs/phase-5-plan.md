@@ -189,3 +189,16 @@ migrated local benchmark database and manifest are retained for chunk 4. Full
 regression/reset suites must now use a different database. This result supersedes
 the chunk 1 empty-database observation; it is not a performance or hosted-capacity
 verdict. REQ-13 / AC-10 remain incomplete pending the 1000-request performance run.
+
+## Chunk 4 result
+
+[Local performance](phase-5-performance.md) passed at source revision
+`0e84aed8d6a0649285f23c071d801cf0406c113e`: all 1000 requests were correct,
+validly measured and at most one second, with ten observed in flight. Application
+p95 was 20.51 ms and maximum 68.63 ms. All 10,000 records remained unchanged.
+The local numerical capacity/performance targets are verified for this profile;
+hosted/peer performance and pod confirmation of workload/timing remain outstanding.
+Full regression now uses a separate `.env.phase5-regression` database so the
+benchmark dataset remains intact. Final cross-team regression and delivery are
+chunks 5 and 6. Earlier planning/pending statements above describe their original
+chunk baselines; the recorded chunk 3/4 results are the current local status.

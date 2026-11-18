@@ -136,8 +136,8 @@ retained. The manifest's random IDs are identifiers, not credentials.
 This is a controlled local capacity result for small synthetic reference payloads,
 not a supported maximum capacity, a hosted Render capacity result, a peer capacity
 result, or proof for all payload sizes. Sequential ingestion does not measure ten-
-client behavior. No 1,000-request benchmark or validated application timing is
-performed here. REQ-13 / AC-10 remain incomplete until the performance portion is
-measured and evaluated in chunk 4. Workload/timing interpretation still needs pod
-agreement before comparative load testing. No public or peer load/reset is part
-of this chunk.
+client behavior. Chunk 3 performed no 1,000-request benchmark or validated
+application timing. The subsequent [chunk 4 run](phase-5-performance.md) passed
+the local numerical performance targets; hosted/peer validation and pod agreement
+on workload/timing remain pending before comparative load testing. No public or
+peer load/reset is part of either local chunk.

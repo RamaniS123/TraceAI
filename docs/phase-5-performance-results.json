@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "scope": "local isolated retained capacity dataset",
+  "source_revision": "0e84aed8d6a0649285f23c071d801cf0406c113e",
+  "started_at": "2026-11-18T21:08:05.235476+00:00",
+  "timed_started_at": "2026-11-18T21:08:09.102266+00:00",
+  "timed_finished_at": "2026-11-18T21:08:19.598408+00:00",
+  "finished_at": "2026-11-18T21:08:22.844815+00:00",
+  "timed_started_at_local": "2026-11-18T16:08:09.102266-05:00",
+  "profile_version": "1.2.0",
+  "profile_sha256": "224dc55dd480a4bb78691f1d2acd7c2e50ab5ada43c80c62583c1f488c0c49f9",
+  "benchmark_sha256": "bd8ada998afe99e9f9eafd292e49cfda507b02d89af792b2b2b8920a596aabc6",
+  "manifest_sha256": "111a68bb5147849933876d1a001b4ba35ded789269cb1f9fa7898ca50cbe0a51",
+  "run_id": "b2af29502332",
+  "database": {
+    "name": "traceai_p5_caf44c8d7014_test",
+    "host": "127.0.0.1",
+    "port": 40453
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "cpu_count": 5,
+    "application_workers": 1,
+    "sqlalchemy_pool_size": 5,
+    "sqlalchemy_max_overflow": 10,
+    "clients": 10,
+    "response_cache": "none",
+    "topology": "client threads, application process and local PostgreSQL container share this machine"
+  },
+  "execution": {
+    "worker_limit": 10,
+    "maximum_observed_inflight_http_requests": 10,
+    "wall_seconds_including_client_validation": 10.496010114
+  },
+  "summary": {
+    "denominator": 1000,
+    "scheduled_results": 1000,
+    "plan_complete": true,
+    "measurement_complete": true,
+    "valid_server_measurements": 1000,
+    "missing_or_invalid_server_measurements": 0,
+    "correct_responses": 1000,
+    "incorrect_or_missing_responses": 0,
+    "fast_correct_responses": 1000,
+    "required_fast_correct_responses": 950,
+    "fast_correct_fraction": 1.0,
+    "server_durations_over_one_second": 0,
+    "integrity_before_and_after": true,
+    "performance_verdict": "passed_for_this_isolated_profile",
+    "seconds": {
+      "application": {
+        "count": 1000,
+        "p50": 0.006528866,
+        "p95": 0.020513153,
+        "p99": 0.035922127,
+        "max": 0.068626407
+      },
+      "client_end_to_end": {
+        "count": 1000,
+        "p50": 0.08522390899997845,
+        "p95": 0.1539198430000397,
+        "p99": 0.19673767199992653,
+        "max": 0.2585723440001857
+      }
+    },
+    "by_operation": {
+      "history": {
+        "application_seconds": {
+          "count": 500,
+          "p50": 0.006512621,
+          "p95": 0.019398559,
+          "p99": 0.035922127,
+          "max": 0.068626407
+        },
+        "client_end_to_end_seconds": {
+          "count": 500,
+          "p50": 0.0835616710000977,
+          "p95": 0.15023391399972752,
+          "p99": 0.19440690500005076,
+          "max": 0.2585723440001857
+        }
+      },
+      "report": {
+        "application_seconds": {
+          "count": 500,
+          "p50": 0.006559742,
+          "p95": 0.020513153,
+          "p99": 0.032922452,
+          "max": 0.058345984
+        },
+        "client_end_to_end_seconds": {
+          "count": 500,
+          "p50": 0.08667063500024597,
+          "p95": 0.1586056789997201,
+          "p99": 0.19673767199992653,
+          "max": 0.2357879099999991
+        }
+      }
+    }
+  },
+  "capacity": {
+    "events_before": 10000,
+    "events_after": 10000,
+    "interactions_before": 100,
+    "interactions_after": 100,
+    "warmup_verified_events_in_both_views": 10000,
+    "after_verified_events_in_both_views": 10000,
+    "inventories_identical": true,
+    "records_retained": true
+  },
+  "validation": {
+    "pytest": {
+      "tests": 262,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "local_http_functional_suite": {
+      "error": 0,
+      "fail": 0,
+      "pass": 126,
+      "skip": 0
+    },
+    "contract_schema_fixture_plan_validation": "passed",
+    "regression_database": "separate from retained capacity database"
+  },
+  "safety": {
+    "reset_or_seed_performed": false,
+    "public_or_peer_load_or_reset": false,
+    "application_reset_enabled_during_run": false
+  },
+  "limits": {
+    "hosted_or_peer_capacity_and_performance": "not measured",
+    "pod_confirmation_of_request_mix_and_timing": "pending",
+    "resources": "local machine shared by client, app and PostgreSQL container; database has no configured CPU/memory limits",
+    "warm_start": "full 200-request dataset verification before timing; not a cold-start benchmark",
+    "REQ-13_AC-10": "numerical targets passed for this isolated local profile; hosted/shared acceptance not established"
+  },
+  "all_requests_file": "docs/evidence/phase5-performance-requests.jsonl",
+  "artifacts_sha256": {
+    "docs/evidence/phase5-performance-requests.jsonl": "0028208efd0f4a2e86eeca6be719bfe909d086f5980be073452e3c16fdfa55c6",
+    "reports/phase5-chunk4-performance.json": "0ea5bda33d4cc49ae75915f561d6923acb08ee73e0dc4054aab1be15113310a2",
+    "reports/phase5-chunk4-pytest.xml": "fdf3f981e75951445d63f0511da808b6aae53c2f2e42f35ecf2f03c33e5d2b78",
+    "reports/phase5-chunk4-local-interface.json": "4963ba8f091a98d61025b92f09f88d57df99a55ec629e2c10bc2e455afb12329"
+  }
+}

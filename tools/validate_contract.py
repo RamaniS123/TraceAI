@@ -85,7 +85,7 @@ def main():
     print(f'PASS: OpenAPI, schema parity, {len(valid)} valid events, '
           f'{len(invalid)} invalid events, malformed JSON, 2 byte boundaries, '
           f'{len(scenario)} scenario steps and expected response schemas.')
-    print('PASS: Phase 5 plan invariants only; no capacity/performance benchmark executed.')
+    print('PASS: Phase 5 profile invariants; this validator does not execute capacity/performance benchmarks.')
 
 
 if __name__ == '__main__':

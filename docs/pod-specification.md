@@ -7,7 +7,8 @@ functional runs passed 126/126 against Team 103 and 130/130 against us; see
 review and report rules in the Phase 4 notes define that baseline. The known
 implementation differences in Section 6 are historical, preceding alignment.
 The new [Phase 5 workload/timing interpretation](phase-5-plan.md) is proposed
-for pod confirmation and has not been benchmarked.
+for pod confirmation. Our [isolated local run](phase-5-performance.md) passed the
+numerical targets; hosted/peer performance has not been measured.
 
 This page is the specification registered for cross-team testing. It
 covers the shared project API, test preparation, resets, cleanup, acceptance
@@ -85,7 +86,7 @@ either implementation.
 | AC-07 | Record persistence and corrections | REQ-09 | 4 | correction-link checks in records profile; local process-restart/rollback/reconnect checks (see phase-4-reliability.md) |
 | AC-08 | Test reset | REQ-10 | 3 | scenario 2, 25, 26, 29–31 |
 | AC-09 | Security | REQ-11, REQ-12 | 3 (authentication) | scenario 1, 23–25; authentication checks plus local error/log canaries |
-| AC-10 | Capacity and performance | REQ-13 | 5 | not yet |
+| AC-10 | Capacity and performance | REQ-13 | 5 | local 10,000-event capacity and 1,000-request benchmark passed; hosted/peer validation pending (phase-5-performance.md) |
 | AC-11 | Cross-team conformance | REQ-14 | 3 (basic) | every check validates responses against the contract |
 
 ## 5. Coverage counting rules
