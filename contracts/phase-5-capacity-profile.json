@@ -1,7 +1,7 @@
 {
-  "profile_version": "1.1.0",
+  "profile_version": "1.2.0",
   "name": "phase5-capacity-performance",
-  "status": "capacity_tooling_implemented_performance_pending",
+  "status": "capacity_and_performance_tooling_implemented",
   "requirements": [
     "REQ-13"
   ],
@@ -76,9 +76,8 @@
     "response_cache": "no application response-cache substitution; ordinary PostgreSQL/OS cache behavior retained and documented"
   },
   "measurement": {
-    "status": "not_implemented_in_chunk1",
+    "status": "implemented",
     "primary": "monotonic application response-ready duration per timed request",
-    "planned_metric": "Server-Timing: traceai_app;dur=<milliseconds>",
     "boundary": "ASGI HTTP application entry to response-start, after a buffered route has produced/serialized its response",
     "includes": [
       "authentication",
@@ -98,7 +97,9 @@
     "missing_invalid_or_negative_server_metric": "measurement_incomplete; never estimate network delay or claim network-excluded acceptance",
     "percentiles": "nearest-rank over all timed requests with valid measurements; report p50, p95, p99 and max plus exact fast-success count",
     "correctness": "zero lost/changed seed records and zero unexpected HTTP/schema/content errors; at least 950 of the 1000 requests both correct and at most 1.0 second",
-    "current_baseline_has_server_metric": false
+    "current_baseline_has_server_metric": false,
+    "runtime_has_server_metric": true,
+    "metric": "Server-Timing: traceai_app;dur=<milliseconds>"
   },
   "isolation": {
     "default_environment": "dedicated disposable local PostgreSQL database and separate app process",
@@ -121,7 +122,7 @@
     "separate capacity verdict, timing-measurement completeness and performance verdict"
   ],
   "not_claimed": [
-    "performance acceptance or deployed capacity acceptance",
+    "hosted or peer capacity/performance acceptance",
     "current database expiration",
     "peer approval of the proposed request mix",
     "a production load run",
@@ -136,5 +137,13 @@
     "loader_clients": 1,
     "reset_performed": false,
     "verification": "full history and full audit report for all 100 interactions, before and after application restart"
+  },
+  "performance_runner": {
+    "tool": "tools/phase5_benchmark.py",
+    "scope": "retained isolated local PostgreSQL dataset only",
+    "evidence": "docs/phase-5-performance-results.json",
+    "report_includes_all_1000_requests": true,
+    "no_retries": true,
+    "no_reset_or_seed": true
   }
 }

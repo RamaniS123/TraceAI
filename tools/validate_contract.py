@@ -17,7 +17,7 @@ def validate_phase5_plan(contract):
     """Check the declared plan, never score capacity/performance as executed."""
     profile = load('contracts/phase-5-capacity-profile.json')
     targets = profile['required_targets']
-    assert profile['status'] == 'capacity_tooling_implemented_performance_pending'
+    assert profile['status'] == 'capacity_and_performance_tooling_implemented'
     assert profile['source']['project_contract_version'] == contract['info']['version']
     assert targets == {
         'minimum_stored_events': 10000, 'minimum_events_in_one_interaction': 100,
@@ -39,7 +39,9 @@ def validate_phase5_plan(contract):
     assert profile['isolation']['independent_database_required'] is True
     assert profile['isolation']['id_prefix_is_sufficient_isolation'] is False
     assert profile['isolation']['public_shared_reset_or_load_in_chunk1'] is False
-    assert profile['measurement']['current_baseline_has_server_metric'] is False
+    assert profile['measurement']['current_baseline_has_server_metric'] is False  # Historical chunk 1 baseline
+    assert profile['measurement']['runtime_has_server_metric'] is True
+    assert profile['measurement']['metric'] == 'Server-Timing: traceai_app;dur=<milliseconds>'
 
 
 def main():

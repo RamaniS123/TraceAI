@@ -23,6 +23,7 @@ from traceai.requests import parse_body
 from traceai.schemas import EventInput, ResetRequest
 from traceai.safety import SafeErrorBoundary, configure_safe_access_logging
 from traceai.testing_interface import init_state, system_router, tester_router
+from traceai.timing import ApplicationTiming
 
 
 def json_response(body, status=200):
@@ -42,6 +43,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(title="TraceAI", version="0.1.0", lifespan=lifespan)
     app.add_middleware(SafeErrorBoundary)
+    app.add_middleware(ApplicationTiming)
     assets = files("traceai").joinpath("static")
     app.mount("/assets", StaticFiles(directory=str(assets)), name="assets")
 
