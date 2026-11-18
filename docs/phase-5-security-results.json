@@ -1,0 +1,31 @@
+{
+  "review_date": "2026-11-18",
+  "scope": "isolated local Phase 5 PostgreSQL only",
+  "pytest": {
+    "tests": 206,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "local_http_suite": {
+    "started_at": "2026-11-18T20:49:31.271264+00:00",
+    "finished_at": "2026-11-18T20:49:31.788452+00:00",
+    "status": "passed",
+    "counts": {
+      "error": 0,
+      "fail": 0,
+      "pass": 126,
+      "skip": 0
+    },
+    "session_id": "d215bd3d-f079-4864-a576-d2c4785720bc"
+  },
+  "unapproved_metadata_target_status": 403,
+  "contract_validation": "passed",
+  "capacity_performance_acceptance": "not executed",
+  "public_or_peer_resets": false,
+  "artifacts": {
+    "reports/phase5-chunk2-pytest.xml": "c94a3d15bf662558020130f0494a6ffa3742568f5faf8001ecf8824e86475e90",
+    "reports/phase5-chunk2-local-interface.json": "301d6410459bce1ce19505c499367ffc342f0e0f6ba3e20505386c3fbcd59c90",
+    "reports/phase5-chunk2-local-security.json": "934250b336fd0bb765b38096ac17adad75daec54ae6444bcbb06a83bd4690df3"
+  }
+}

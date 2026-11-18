@@ -1,7 +1,7 @@
 openapi: 3.1.1
 info:
   title: TraceAI testing interface (tester and system /test endpoints)
-  version: 1.1.0
+  version: 1.2.0
   description: >-
     Course cross-team testing interface. The pod project API is described in
     contracts/openapi.json. Error bodies on these endpoints are {message, source}.
@@ -63,6 +63,7 @@ paths:
       description: >-
         On the tester base URL the body is {target_url}. On the system base URL the
         body is {session_id, setup} and the reset bearer token is required.
+        Tester targets must have an operator-approved origin; unapproved targets return 403 before outbound requests.
       requestBody:
         required: true
         content:
@@ -78,7 +79,7 @@ paths:
             application/json:
               schema: {type: object, required: [session_id], properties: {session_id: {type: string, minLength: 1}}}
         default:
-          description: 400 invalid, 401 missing token (system), 403 disabled, 409 existing ID, 500 failure; target errors are forwarded by the tester
+          description: 400 invalid, 401 missing token (system), 403 reset disabled or tester target unapproved, 409 existing ID, 500 failure; target errors are forwarded by the tester
           content: {application/json: {schema: {$ref: '#/components/schemas/Problem'}}}
   /test/run:
     post:

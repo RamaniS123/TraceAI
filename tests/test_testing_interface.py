@@ -21,6 +21,7 @@ def settings(**changes):
 
 @pytest.fixture(autouse=True)
 def no_public_url(monkeypatch):
+    monkeypatch.setenv('TRACEAI_TESTER_ALLOWED_TARGETS', json.dumps([TARGET]))
     for name in ('TRACEAI_PUBLIC_URL', 'RENDER_EXTERNAL_URL', 'TRACEAI_TESTER_TARGET_TOKENS'):
         monkeypatch.delenv(name, raising=False)
 
@@ -228,3 +229,35 @@ def test_run_budget_retains_partial_report_and_accounts_for_unrun_checks(client,
     assert report['results'][0]['outcome']=='error'
     assert all(row['outcome']=='skip' for row in report['results'][1:])
     assert report['coverage']['system']['covered'] is None
+
+
+@pytest.mark.parametrize('target', [
+    'http://127.0.0.1:8000', 'http://169.254.169.254',
+    'https://target.test.evil.test', 'https://target.test:8443', 'http://target.test',
+])
+def test_unapproved_targets_never_reach_network(client, seen, target):
+    response = client.post('/tester/test/setup', json={'target_url': target})
+    assert_error_body(response, 403, 'tester')
+    assert seen == []
+
+
+def test_target_policy_fails_closed(client, seen, monkeypatch):
+    monkeypatch.setenv('TRACEAI_TESTER_ALLOWED_TARGETS', 'invalid-json')
+    assert client.post('/tester/test/setup', json={'target_url': TARGET}).status_code == 403
+    assert seen == []
+
+
+def test_credential_map_approves_peer(client, monkeypatch):
+    monkeypatch.delenv('TRACEAI_TESTER_ALLOWED_TARGETS')
+    monkeypatch.setenv('TRACEAI_TESTER_TARGET_TOKENS', json.dumps({'https://target.test': {'api': 'peer-key'}}))
+    setup_session(client)
+
+
+def test_setup_redirect_is_not_followed(client, seen):
+    def redirect(request):
+        seen.append(request)
+        return httpx.Response(307, headers={'Location': 'http://169.254.169.254/'})
+    client.app.state.tester_transport = httpx.MockTransport(redirect)
+    response = client.post('/tester/test/setup', json={'target_url': TARGET})
+    assert response.status_code == 307
+    assert len(seen) == 1

@@ -18,6 +18,11 @@ SETTINGS = dict(database_url=f'postgresql+psycopg://user:{CANARY}@127.0.0.1:1/un
 pytestmark = pytest.mark.phase4
 
 
+@pytest.fixture(autouse=True)
+def approved_mock_target(monkeypatch):
+    monkeypatch.setenv('TRACEAI_TESTER_ALLOWED_TARGETS', '["https://target.test"]')
+
+
 def test_unexpected_errors_are_safe_in_api_responses_and_logs(monkeypatch, caplog):
     def broken(*args):
         raise RuntimeError(f'{CANARY} postgresql://user:password@db/private /srv/private.py')

@@ -173,3 +173,9 @@ All 198 existing regression cases passed against the new isolated local database
 Contract/fixture and Phase 5 plan-invariant validation passed, as did dependency
 compatibility. No new capacity or latency result is claimed. The database is still
 empty after baseline regression cleanup, ready for the later controlled loader.
+
+## Chunk 2 follow-up
+
+Threat modeling, the verified tester target restriction and security regression
+evidence are recorded in [the security review](phase-5-security-review.md).
+Capacity and performance execution remain pending.

@@ -137,6 +137,32 @@ def valid_target(url):
             and not parts.password and not parts.query and not parts.fragment)
 
 
+def allowed_target(target_url):
+    """Only operator-approved origins may receive tester requests, including resets.
+
+    Credential-map keys approve existing peers; the explicit list supports peers
+    without authentication. Approval trusts all paths and DNS for that origin.
+    """
+    approved = []
+    own = os.environ.get('TRACEAI_PUBLIC_URL') or os.environ.get('RENDER_EXTERNAL_URL')
+    if own:
+        approved.append(own)
+    try:
+        configured = json.loads(os.environ.get('TRACEAI_TESTER_TARGET_TOKENS') or '{}')
+        if isinstance(configured, dict):
+            approved.extend(key for key, value in configured.items() if isinstance(value, dict))
+    except (ValueError, TypeError):
+        pass
+    try:
+        extra = json.loads(os.environ.get('TRACEAI_TESTER_ALLOWED_TARGETS') or '[]')
+        if isinstance(extra, list):
+            approved.extend(extra)
+    except (ValueError, TypeError):
+        pass
+    return any(isinstance(url, str) and valid_target(url) and origin(url) == origin(target_url)
+               for url in approved)
+
+
 def target_tokens(app, target_url):
     """Credentials are only ever sent to an origin they were configured for."""
     try:
@@ -198,6 +224,8 @@ async def tester_setup(request: Request):
     target = body.get('target_url') if body else None
     if not isinstance(target, str) or not valid_target(target):
         return problem(400, 'Body must be {"target_url": "<http(s) base URL without query, fragment or credentials>"}.', 'tester')
+    if not allowed_target(target):
+        return problem(403, 'Target origin is not approved by the tester operator.', 'tester')
     return await run_in_threadpool(prepare_target, request.app, target.rstrip('/'))
 
 

@@ -124,3 +124,21 @@ unrun after an abort; a subsequent authorized setup resets the target dataset.
 `GET /health` identifies the project contract in `X-TraceAI-Contract`; Render's
 Git SHA is included in `X-TraceAI-Revision` when available and valid. No secret
 configuration values are exposed.
+
+
+## Phase 5 target restrictions
+
+Tester setup rejects an unapproved origin with HTTP 403 before making any outbound
+request. Approved origins come from `TRACEAI_PUBLIC_URL` (falling back to
+`RENDER_EXTERNAL_URL`), dictionary entries in `TRACEAI_TESTER_TARGET_TOKENS`, or
+`TRACEAI_TESTER_ALLOWED_TARGETS`, a JSON array such as `["https://peer.example"]`
+for a peer that needs no credentials. Empty/malformed configuration grants no
+extra access. Approval is origin-wide (scheme, host and explicit port), including
+all paths and the operator's trusted DNS resolution. Redirects are not followed.
+
+Only approve services you operate or have permission to test: setup and runs
+reset synthetic data. Configured peers continue to work without a new setting.
+The tester endpoints remain public for the course interface, so an approved
+origin is not caller authentication or permission to run concurrent sessions.
+Coordinate access and restrict external ingress outside scheduled demonstrations
+when necessary; do not use this deployment for sensitive or production records.
