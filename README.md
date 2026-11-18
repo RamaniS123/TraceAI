@@ -4,9 +4,11 @@ TraceAI records synthetic AI-interaction events through a shared HTTP API.
 It supports event history and audit evidence; it does not generate AI outputs or
 certify legal compliance.
 
-## Current progress: Phase 4 features delivered; cross-team verification pending
+## Current progress: Phase 5 chunk 1 — baseline and capacity/performance plan
 
-- [Phase 4 delivery and remaining cross-team blockers](docs/phase-4-delivery.md)
+- [Phase 5 targets, measurement and dataset-isolation plan](docs/phase-5-plan.md)
+- [Confirmed Phase 4 functional results](docs/phase-4-confirmed-results.json)
+- [Historical Phase 4 delivery](docs/phase-4-delivery.md)
 - [Pod specification for cross-team testing](docs/pod-specification.md)
 - [Browser warnings and audit reports](docs/phase-4-frontend.md)
 - [Reliability, safe errors and restart evidence](docs/phase-4-reliability.md)
@@ -54,18 +56,20 @@ response shapes, and exact byte-boundary files. Dependencies are for artifact
 validation only; the application dependencies are defined in `pyproject.toml` and pinned in
 `requirements-dev.lock`.
 
-## Deployment status
+## Deployment and validation baseline
 
-The account owner has launched the service at https://traceai-zm1t.onrender.com.
-A browser health check confirmed API/database availability. Full authenticated
-public evaluation remains pending; local and container tests have passed.
-The frontend appears at the main address after Render deploys this update.
-See [deployment instructions](docs/deployment.md).
+The deployed system at https://traceai-zm1t.onrender.com is healthy as of the
+read-only Phase 5 baseline check. Phase 4 functional validation completed against
+our public service (126/126), our tester against Team 103 (126/126), and their
+tester against us (130/130). See [recorded results](docs/phase-4-confirmed-results.json).
+These are historical functional results, not Phase 5 load-test results.
 
-## Remaining work
-
-5. Complete authenticated testing against the public Render service.
-6. Operating instructions and Phase 3 demonstration checklist.
+Phase 5 targets are 10,000 stored events, 100 events in one interaction and 1,000
+ordinary requests from up to ten clients, with at least 95% completing within one
+second excluding external network delay. The [profile](contracts/phase-5-capacity-profile.json)
+and [plan](docs/phase-5-plan.md) define the proposed measurement/isolation approach;
+capacity loading, timing instrumentation and performance acceptance have not run.
+Database expiration is not exposed by health and remains unverified.
 
 Use synthetic data only. Keep credentials in environment secrets and never
 commit or log them. The reset operation is for an isolated test dataset only.

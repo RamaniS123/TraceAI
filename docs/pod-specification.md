@@ -1,13 +1,13 @@
 # TraceAI specification and implementation profile
 
-**Phase 4 status:** Team 106's warning, correction-link, review, and audit-report increments
-are implemented under provisional rules in [phase-4-timeline.md](phase-4-timeline.md)
-[phase-4-records.md](phase-4-records.md), and
-[phase-4-reports.md](phase-4-reports.md). This page is our registered
-implementation profile; it is not evidence that Team 103 approved the new rules.
-The Phase 2 model attachment and report Section 5 also differ, so their authority
-and lifecycle details still need reconciliation. See [Phase 4 delivery](phase-4-delivery.md)
-for current access blockers, evidence and the unapproved decision list.
+**Phase 5 baseline:** Both teams adopted project OpenAPI 0.4.2, the Phase 4
+profiles, AC-01 through AC-11 and the five-operation inventory. November 1
+functional runs passed 126/126 against Team 103 and 130/130 against us; see
+[confirmed evidence](phase-4-confirmed-results.json). The warning, correction,
+review and report rules in the Phase 4 notes define that baseline. The known
+implementation differences in Section 6 are historical, preceding alignment.
+The new [Phase 5 workload/timing interpretation](phase-5-plan.md) is proposed
+for pod confirmation and has not been benchmarked.
 
 This page is the specification registered for cross-team testing. It
 covers the shared project API, test preparation, resets, cleanup, acceptance
@@ -101,7 +101,7 @@ Tester reports count coverage as follows:
 
 Covered means exercised, not passed; pass and fail are reported in `results`.
 
-## 6. Known differences between the two implementations
+## 6. Historical differences before alignment
 
 As of 2026-10-27, Team 103's published contract
 (`http://3.134.49.218:8000/openapi.json`) differs from Phase 2 v1.1 in these
@@ -131,6 +131,5 @@ setup; Team 103's tester has not yet approved Team 106's URL).
 cross-team check for well-formed reports, which is the Phase 3 goal. Early in
 Phase 4 the pod agrees on one API, one acceptance-criteria list and one component
 list, with instructor sign-off for any change to the Phase 2 shared scope, and
-both implementations and testers are aligned to it. As of 2026-10-31 no later
-agreement or new Team 103 run has been supplied; the current unresolved issues
-and historical-versus-current evidence are in [pod-compatibility.json](pod-compatibility.json).
+both implementations and testers are aligned to it. The baseline was subsequently adopted and validated in both directions on
+November 1; current status is in [pod-compatibility.json](pod-compatibility.json).

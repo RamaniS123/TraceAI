@@ -1,0 +1,20 @@
+# Local-only benchmark storage. Credentials come from the ignored .env.phase5 file.
+name: ${P5_COMPOSE_PROJECT:?Generate the private Phase 5 environment first}
+services:
+  db:
+    image: postgres:16-bookworm
+    environment:
+      POSTGRES_USER: ${P5_POSTGRES_USER:?Missing Phase 5 database user}
+      POSTGRES_PASSWORD: ${P5_POSTGRES_PASSWORD:?Missing Phase 5 database password}
+      POSTGRES_DB: ${P5_POSTGRES_DB:?Missing Phase 5 database name}
+    ports:
+      - "127.0.0.1:${P5_POSTGRES_PORT:-55435}:5432"
+    volumes:
+      - phase5-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  phase5-data:

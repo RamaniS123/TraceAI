@@ -1,0 +1,93 @@
+{
+  "profile_version": "1.0.0",
+  "name": "phase5-capacity-performance",
+  "status": "planned_not_executed",
+  "requirements": ["REQ-13"],
+  "acceptance_criteria": ["AC-10"],
+  "source": {
+    "document": "Phase 2 submission_429565243.pdf",
+    "requirements_page": 12,
+    "acceptance_criteria_page": 20,
+    "phase5_milestone_page": 34,
+    "project_contract_version": "0.4.2"
+  },
+  "required_targets": {
+    "minimum_stored_events": 10000,
+    "minimum_events_in_one_interaction": 100,
+    "measured_requests": 1000,
+    "maximum_concurrent_clients": 10,
+    "maximum_processing_seconds": 1.0,
+    "minimum_fast_success_fraction": 0.95,
+    "minimum_fast_success_count": 950,
+    "maximum_slow_request_count": 50,
+    "network_delay_excluded": true,
+    "record_loss_allowed": false
+  },
+  "dataset": {
+    "total_events": 10000,
+    "interactions": 100,
+    "events_per_interaction": 100,
+    "event_types_per_interaction": {
+      "interaction.started": 1,
+      "model.output_generated": 96,
+      "review.completed": 1,
+      "record.corrected": 1,
+      "interaction.completed": 1
+    },
+    "insertion_order": "start, outputs, review, correction referencing the stored review, completion",
+    "timestamps": "fixed valid UTC timestamps increasing with event index",
+    "identifiers": "run-specific prefix and zero-padded interaction/event indices; all IDs at most 64 characters",
+    "expected_warnings_per_interaction": ["CORRECTED_EVENT"],
+    "expected_status": "completed",
+    "data": "synthetic fixed-size reference/review payloads; no credentials or real interaction content"
+  },
+  "workload": {
+    "status": "proposed_interpretation_pending_pod_confirmation",
+    "definition": "ordinary retrieval requests from AC-10; excludes setup, reset, loading, health and tester control operations",
+    "clients": 10,
+    "total_requests": 1000,
+    "rounds_per_operation_per_interaction": 5,
+    "request_mix": [
+      {"method": "GET", "path": "/api/v1/interactions/{interactionId}", "count": 500, "expected_status": 200},
+      {"method": "GET", "path": "/api/v1/interactions/{interactionId}/report", "count": 500, "expected_status": 200}
+    ],
+    "selection": "fixed queue; five rounds of both operations for every interaction; at most ten in flight; all 1000 scheduled requests remain in the denominator",
+    "warmup": "explicit unscored readiness and dataset verification after loading; retain its observations separately",
+    "timed_request_retries": false,
+    "response_cache": "no application response-cache substitution; ordinary PostgreSQL/OS cache behavior retained and documented"
+  },
+  "measurement": {
+    "status": "not_implemented_in_chunk1",
+    "primary": "monotonic application response-ready duration per timed request",
+    "planned_metric": "Server-Timing: traceai_app;dur=<milliseconds>",
+    "boundary": "ASGI HTTP application entry to response-start, after a buffered route has produced/serialized its response",
+    "includes": ["authentication", "routing and thread-pool wait", "database-pool wait", "required PostgreSQL access including dependency I/O", "timeline and report assembly", "JSON serialization"],
+    "excludes": ["client-to-service network transfer", "TLS handshake", "edge-proxy queue before ASGI entry", "response-body network transfer"],
+    "secondary": "separate client end-to-end monotonic duration, including external network delay",
+    "missing_invalid_or_negative_server_metric": "measurement_incomplete; never estimate network delay or claim network-excluded acceptance",
+    "percentiles": "nearest-rank over all timed requests with valid measurements; report p50, p95, p99 and max plus exact fast-success count",
+    "correctness": "zero lost/changed seed records and zero unexpected HTTP/schema/content errors; at least 950 of the 1000 requests both correct and at most 1.0 second",
+    "current_baseline_has_server_metric": false
+  },
+  "isolation": {
+    "default_environment": "dedicated disposable local PostgreSQL database and separate app process",
+    "database_name_suffix": "_test",
+    "independent_database_required": true,
+    "id_prefix_is_sufficient_isolation": false,
+    "parallel_suites_on_one_dataset": false,
+    "public_shared_reset_or_load_in_chunk1": false,
+    "deployed_run_gate": "arrange a separate benchmark database/deployment or an explicitly approved exclusive test window with a recovery/export plan; retain baseline and target revision before/after",
+    "peer_load_gate": "agree workload/timing semantics and obtain explicit owner authorization for load/reset; prior functional cross-tests do not authorize new load tests"
+  },
+  "required_evidence": [
+    "profile version/hash and code/deployment revisions",
+    "database/deployment resources, pool settings and topology without secrets",
+    "warmup observations and whether dataset starts empty",
+    "verified seed manifest and counts before/after",
+    "all 1000 request outcomes and both timing series",
+    "unexpected responses, timeouts and missing metrics without raw tokens/payloads",
+    "fast-success numerator/denominator, latency summaries and correctness results",
+    "separate capacity verdict, timing-measurement completeness and performance verdict"
+  ],
+  "not_claimed": ["capacity or performance acceptance", "current database expiration", "peer approval of the proposed request mix", "a production load run", "source-code coverage", "a hard maximum supported capacity"]
+}

@@ -1,5 +1,10 @@
 # Phase 4 chunk 6 — cross-team preparation and delivery
 
+> Historical delivery snapshot at `e558c96`. Subsequent November 1 functional runs
+> passed in both directions; see [confirmed results](phase-4-confirmed-results.json)
+> and the [current Phase 5 plan](phase-5-plan.md). Pending statements below describe
+> what was known at original delivery.
+
 ## Completion status
 
 Chunks 1–5 are implemented: warnings, review/correction validation, deterministic

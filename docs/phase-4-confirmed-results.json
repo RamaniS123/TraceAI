@@ -1,0 +1,49 @@
+{
+  "baseline_contract": "0.4.2",
+  "status": "functional_alignment_verified_in_both_directions",
+  "scope": "historical Phase 4 functional results; no capacity/performance evidence",
+  "runs": [
+    {
+      "direction": "own_deployment",
+      "target_url": "https://traceai-zm1t.onrender.com",
+      "started_at": "2026-11-01T22:00:24.012855+00:00",
+      "finished_at": "2026-11-01T22:00:31.359970+00:00",
+      "counts": {
+        "error": 0,
+        "fail": 0,
+        "pass": 126,
+        "skip": 0
+      },
+      "source": "phase4-render-full-suite-evidence.json",
+      "source_sha256": "bfaf3adf479922850ac4394a74f2a85cc80be6b884f524e2b39867279523edb1"
+    },
+    {
+      "direction": "team106_tests_team103",
+      "target_url": "http://3.134.49.218:8000",
+      "started_at": "2026-11-01T17:19:57.161023-05:00",
+      "finished_at": "2026-11-01T17:20:15.150747-05:00",
+      "counts": {
+        "pass": 126,
+        "fail": 0,
+        "error": 0,
+        "skip": 0
+      },
+      "source": "team106-tests-team103-evidence.json",
+      "source_sha256": "dffa339077b78093476d99f348812e5eaea4cec1526e91f810c8e8894484280b"
+    },
+    {
+      "direction": "team103_tests_team106",
+      "target_url": "https://traceai-zm1t.onrender.com",
+      "started_at": "2026-11-01T22:44:30.068921+00:00",
+      "finished_at": "2026-11-01T22:44:47.969948+00:00",
+      "counts": {
+        "pass": 130,
+        "fail": 0,
+        "error": 0,
+        "skip": 0
+      },
+      "source": "Pasted text.txt",
+      "source_sha256": "ed0b12642d1711a21b50e9df4f8a218302049ef77fcf2589734d9fc8acf3894f"
+    }
+  ]
+}

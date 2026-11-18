@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-11-18T20:32:42.782939+00:00",
+  "base_url": "https://traceai-zm1t.onrender.com",
+  "scope": "read-only readiness; no capacity run or dataset reset",
+  "observations": [
+    {
+      "path": "/health",
+      "status": 200,
+      "client_elapsed_seconds": 26.2937,
+      "body": {
+        "status": "healthy",
+        "api": "available",
+        "storage": "available"
+      },
+      "revision": "e558c96010e76f12882607e9958a82087ed3c437",
+      "contract": "0.4.2"
+    },
+    {
+      "path": "/tester",
+      "status": 200,
+      "client_elapsed_seconds": 0.3719,
+      "tester": {
+        "service": "TraceAI hosted tester",
+        "profile": "phase4-reports",
+        "planned_checks": 126,
+        "message": "Use the POST setup/run endpoints and GET report endpoint; this base URL describes the tester.",
+        "resets_target_data": true,
+        "check_budget_seconds": 240,
+        "documentation": "https://github.com/RamaniS123/TraceAI/blob/main/docs/testing-interface.md"
+      }
+    },
+    {
+      "path": "/openapi.json",
+      "status": 200,
+      "client_elapsed_seconds": 0.1127,
+      "contract_version": "0.4.2"
+    }
+  ],
+  "database_expiration": "not exposed by the public service; provider dashboard confirmation required",
+  "checked_at_local": "2026-11-18T15:32:42.782939-05:00",
+  "code_baseline": "e558c96010e76f12882607e9958a82087ed3c437",
+  "database_expiration_status": "unverified; owner could not locate the expiration date",
+  "performance_acceptance": "not assessed; the readiness calls are not AC-10 measurements",
+  "local_isolation": {
+    "scope": "dedicated local benchmark environment; no shared data changed",
+    "database_name": "traceai_p5_caf44c8d7014_test",
+    "local_host": "127.0.0.1",
+    "local_port": 40453,
+    "compose_project": "traceai-p5-caf44c8d7014",
+    "private_env_file": ".env.phase5",
+    "migration": "0001_events",
+    "event_count": 0,
+    "health": {
+      "status": "healthy",
+      "api": "available",
+      "storage": "available"
+    },
+    "schema_check": "passed",
+    "capacity_or_performance_assessed": false
+  }
+}
