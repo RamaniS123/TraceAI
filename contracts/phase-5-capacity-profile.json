@@ -2,14 +2,21 @@
   "profile_version": "1.0.0",
   "name": "phase5-capacity-performance",
   "status": "planned_not_executed",
-  "requirements": ["REQ-13"],
-  "acceptance_criteria": ["AC-10"],
+  "requirements": [
+    "REQ-13"
+  ],
+  "acceptance_criteria": [
+    "AC-10"
+  ],
   "source": {
     "document": "Phase 2 submission_429565243.pdf",
     "requirements_page": 12,
-    "acceptance_criteria_page": 20,
     "phase5_milestone_page": 34,
-    "project_contract_version": "0.4.2"
+    "project_contract_version": "0.4.2",
+    "acceptance_criteria_pages": [
+      20,
+      21
+    ]
   },
   "required_targets": {
     "minimum_stored_events": 10000,
@@ -37,7 +44,9 @@
     "insertion_order": "start, outputs, review, correction referencing the stored review, completion",
     "timestamps": "fixed valid UTC timestamps increasing with event index",
     "identifiers": "run-specific prefix and zero-padded interaction/event indices; all IDs at most 64 characters",
-    "expected_warnings_per_interaction": ["CORRECTED_EVENT"],
+    "expected_warnings_per_interaction": [
+      "CORRECTED_EVENT"
+    ],
     "expected_status": "completed",
     "data": "synthetic fixed-size reference/review payloads; no credentials or real interaction content"
   },
@@ -48,8 +57,18 @@
     "total_requests": 1000,
     "rounds_per_operation_per_interaction": 5,
     "request_mix": [
-      {"method": "GET", "path": "/api/v1/interactions/{interactionId}", "count": 500, "expected_status": 200},
-      {"method": "GET", "path": "/api/v1/interactions/{interactionId}/report", "count": 500, "expected_status": 200}
+      {
+        "method": "GET",
+        "path": "/api/v1/interactions/{interactionId}",
+        "count": 500,
+        "expected_status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/interactions/{interactionId}/report",
+        "count": 500,
+        "expected_status": 200
+      }
     ],
     "selection": "fixed queue; five rounds of both operations for every interaction; at most ten in flight; all 1000 scheduled requests remain in the denominator",
     "warmup": "explicit unscored readiness and dataset verification after loading; retain its observations separately",
@@ -61,8 +80,20 @@
     "primary": "monotonic application response-ready duration per timed request",
     "planned_metric": "Server-Timing: traceai_app;dur=<milliseconds>",
     "boundary": "ASGI HTTP application entry to response-start, after a buffered route has produced/serialized its response",
-    "includes": ["authentication", "routing and thread-pool wait", "database-pool wait", "required PostgreSQL access including dependency I/O", "timeline and report assembly", "JSON serialization"],
-    "excludes": ["client-to-service network transfer", "TLS handshake", "edge-proxy queue before ASGI entry", "response-body network transfer"],
+    "includes": [
+      "authentication",
+      "routing and thread-pool wait",
+      "database-pool wait",
+      "required PostgreSQL access including dependency I/O",
+      "timeline and report assembly",
+      "JSON serialization"
+    ],
+    "excludes": [
+      "client-to-service network transfer",
+      "TLS handshake",
+      "edge-proxy queue before ASGI entry",
+      "response-body network transfer"
+    ],
     "secondary": "separate client end-to-end monotonic duration, including external network delay",
     "missing_invalid_or_negative_server_metric": "measurement_incomplete; never estimate network delay or claim network-excluded acceptance",
     "percentiles": "nearest-rank over all timed requests with valid measurements; report p50, p95, p99 and max plus exact fast-success count",
@@ -89,5 +120,12 @@
     "fast-success numerator/denominator, latency summaries and correctness results",
     "separate capacity verdict, timing-measurement completeness and performance verdict"
   ],
-  "not_claimed": ["capacity or performance acceptance", "current database expiration", "peer approval of the proposed request mix", "a production load run", "source-code coverage", "a hard maximum supported capacity"]
+  "not_claimed": [
+    "capacity or performance acceptance",
+    "current database expiration",
+    "peer approval of the proposed request mix",
+    "a production load run",
+    "source-code coverage",
+    "a hard maximum supported capacity"
+  ]
 }

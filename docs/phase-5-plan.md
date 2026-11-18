@@ -3,7 +3,7 @@
 ## Baseline and scope
 
 The Phase 2 submission is the authority for the hard REQ-13 / AC-10 targets:
-PDF page 12 defines capacity/latency, page 20 defines the evaluation, and page 34
+PDF page 12 defines capacity/latency, pages 20–21 define the evaluation, and page 34
 specifies hardening, threat/security review, regression, cross-team validation,
 documentation and known limitations. This chunk establishes the plan; it does
 not load 10,000 records, execute a benchmark, reset shared data or claim AC-10 passes.
@@ -166,3 +166,10 @@ before relying on a long-term benchmark deployment; keep existing records intact
 
 Chunk 1 is complete as a planning/baseline increment. AC-10 remains incomplete;
 no performance or capacity acceptance is asserted.
+
+## Chunk 1 validation
+
+All 198 existing regression cases passed against the new isolated local database.
+Contract/fixture and Phase 5 plan-invariant validation passed, as did dependency
+compatibility. No new capacity or latency result is claimed. The database is still
+empty after baseline regression cleanup, ready for the later controlled loader.
