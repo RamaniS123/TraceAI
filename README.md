@@ -4,8 +4,12 @@ TraceAI records synthetic AI-interaction events through a shared HTTP API.
 It supports event history and audit evidence; it does not generate AI outputs or
 certify legal compliance.
 
-## Current progress: Phase 5 chunk 5 — regression passed; fresh reverse cross-test blocked
+## Current progress: Phase 5 chunk 6 — technical handoff and demo prepared
 
+- [Phase 5 delivery status and known limitations](docs/phase-5-delivery.md)
+- [Repeatable Phase 5 demo](docs/phase-5-demo.md)
+- [Updated engineering models and Phase 2 reconciliation](docs/phase-5-models.md)
+- [Architecture, deployment and dependency models](docs/architecture.md)
 - [Phase 5 regression and cross-team status](docs/phase-5-regression.md)
 - [Phase 5 timing, benchmark and measured results](docs/phase-5-performance.md)
 - [Phase 5 capacity loader, verification and results](docs/phase-5-capacity.md)
@@ -20,17 +24,18 @@ certify legal compliance.
 - [Correction links and human-review records](docs/phase-4-records.md)
 - [Timeline warnings and provisional Phase 4 rules](docs/phase-4-timeline.md)
 - [Frontend demonstration instructions](docs/frontend.md)
-- [Proposed OpenAPI 3.1 contract](contracts/openapi.json)
+- [Shared OpenAPI 3.1 contract, project version 0.4.2](contracts/openapi.json)
 - [Standalone event JSON Schema](contracts/event.schema.json)
 - [Scope, assumptions, and fixture instructions](docs/phase-3-contract.md)
 - [Synthetic fixtures and ordered API scenario](tests/fixtures)
 - [Independent API test runner](tools/run_phase3_api_tests.py)
 - [GitHub Actions workflow](.github/workflows/ci.yml)
 - [Testing commands, coverage, and reports](docs/testing.md)
-- [Render deployment and remaining launch step](docs/deployment.md)
+- [Render deployment and operations](docs/deployment.md)
 
-These artifacts follow Sections 5–6 of the Phase 2 submission. Provisional
-choices are documented for pod review.
+The project API follows the adopted 0.4.2 functional baseline. Proposed Phase 5
+workload/timing interpretation, hosted performance and fresh reciprocal validation
+remain separate outstanding items, documented in the delivery status.
 
 The homepage provides event submission, interaction history, service health,
 timeline warnings, and downloadable audit reports.

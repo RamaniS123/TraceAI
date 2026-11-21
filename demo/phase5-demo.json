@@ -1,0 +1,152 @@
+{
+  "description": "Synthetic append-only demo. Runner replaces all IDs with a unique run prefix; no reset.",
+  "cases": [
+    {
+      "name": "main",
+      "events": [
+        {
+          "modelVersion": "demo-model-v1",
+          "applicationVersion": "demo-app-v1",
+          "eventId": "demo-start",
+          "interactionId": "demo-main",
+          "eventType": "interaction.started",
+          "occurredAt": "2026-11-21T12:00:00Z",
+          "data": {}
+        },
+        {
+          "modelVersion": "demo-model-v1",
+          "applicationVersion": "demo-app-v1",
+          "eventId": "demo-output",
+          "interactionId": "demo-main",
+          "eventType": "model.output_generated",
+          "occurredAt": "2026-11-21T12:00:01Z",
+          "data": {
+            "outputReference": "synthetic-output"
+          }
+        },
+        {
+          "modelVersion": "demo-model-v1",
+          "applicationVersion": "demo-app-v1",
+          "eventId": "demo-review",
+          "interactionId": "demo-main",
+          "eventType": "review.completed",
+          "occurredAt": "2026-11-21T12:00:02Z",
+          "data": {
+            "reviewerId": "synthetic-reviewer",
+            "action": "override",
+            "reason": "Synthetic review for demonstration."
+          }
+        },
+        {
+          "modelVersion": "demo-model-v1",
+          "applicationVersion": "demo-app-v1",
+          "eventId": "demo-correction",
+          "interactionId": "demo-main",
+          "eventType": "record.corrected",
+          "occurredAt": "2026-11-21T12:00:03Z",
+          "data": {
+            "correctsEventId": "demo-review",
+            "reason": "Synthetic clarification; retain original review."
+          }
+        },
+        {
+          "modelVersion": "demo-model-v1",
+          "applicationVersion": "demo-app-v1",
+          "eventId": "demo-complete",
+          "interactionId": "demo-main",
+          "eventType": "interaction.completed",
+          "occurredAt": "2026-11-21T12:00:04Z",
+          "data": {}
+        }
+      ],
+      "warnings": [
+        "CORRECTED_EVENT"
+      ]
+    },
+    {
+      "name": "late",
+      "events": [
+        {
+          "modelVersion": "demo-model-v1",
+          "applicationVersion": "demo-app-v1",
+          "eventId": "demo-late-start",
+          "interactionId": "demo-late",
+          "eventType": "interaction.started",
+          "occurredAt": "2026-11-21T12:00:10Z",
+          "data": {}
+        },
+        {
+          "modelVersion": "demo-model-v1",
+          "applicationVersion": "demo-app-v1",
+          "eventId": "demo-late-end",
+          "interactionId": "demo-late",
+          "eventType": "interaction.completed",
+          "occurredAt": "2026-11-21T12:00:14Z",
+          "data": {}
+        }
+      ],
+      "warnings": [
+        "MISSING_EVENT"
+      ]
+    },
+    {
+      "name": "order",
+      "events": [
+        {
+          "modelVersion": "demo-model-v1",
+          "applicationVersion": "demo-app-v1",
+          "eventId": "demo-order-start",
+          "interactionId": "demo-order",
+          "eventType": "interaction.started",
+          "occurredAt": "2026-11-21T12:00:21Z",
+          "data": {}
+        },
+        {
+          "modelVersion": "demo-model-v1",
+          "applicationVersion": "demo-app-v1",
+          "eventId": "demo-order-output",
+          "interactionId": "demo-order",
+          "eventType": "model.output_generated",
+          "occurredAt": "2026-11-21T12:00:20Z",
+          "data": {}
+        },
+        {
+          "modelVersion": "demo-model-v1",
+          "applicationVersion": "demo-app-v1",
+          "eventId": "demo-order-review",
+          "interactionId": "demo-order",
+          "eventType": "review.completed",
+          "occurredAt": "2026-11-21T12:00:22Z",
+          "data": {
+            "reviewerId": "synthetic-reviewer",
+            "action": "accept",
+            "reason": "Synthetic ordering example."
+          }
+        },
+        {
+          "modelVersion": "demo-model-v1",
+          "applicationVersion": "demo-app-v1",
+          "eventId": "demo-order-end",
+          "interactionId": "demo-order",
+          "eventType": "interaction.completed",
+          "occurredAt": "2026-11-21T12:00:23Z",
+          "data": {}
+        }
+      ],
+      "warnings": [
+        "OUT_OF_ORDER_EVENT"
+      ]
+    }
+  ],
+  "late_event": {
+    "modelVersion": "demo-model-v1",
+    "applicationVersion": "demo-app-v1",
+    "eventId": "demo-late-output",
+    "interactionId": "demo-late",
+    "eventType": "model.output_generated",
+    "occurredAt": "2026-11-21T12:00:11Z",
+    "data": {
+      "outputReference": "synthetic-late-output"
+    }
+  }
+}

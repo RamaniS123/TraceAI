@@ -1,0 +1,153 @@
+{
+  "date": "2026-11-21",
+  "recorded_at": "2026-11-21T18:12:52.629093+00:00",
+  "scope": "technical documentation, models and local append-only demonstration; no course report",
+  "demo_fixture_sha256": "1220117baa7c4ae33dd7dfdb0f7905b894a354ca5650a7a9829aeb48bac28a0e",
+  "demo_tool_sha256": "58722dca668edd16a97efd882fc4e5b8b7f956e82c0ce5f2528115a83333b5aa",
+  "fixture_schema_events_validated": 12,
+  "rehearsal": {
+    "status": "passed",
+    "reset_performed": false,
+    "problems": [],
+    "started_at": "2026-11-21T18:11:31.797099+00:00",
+    "run_prefix": "demo-e5a0304ac9e2",
+    "cases": {
+      "main": {
+        "interaction_id": "demo-e5a0304ac9e2-main",
+        "history_sha256": "eb43a035d20f525ae4a14c554e51b1da44ee213ddc4f5688544f8278b792c72b",
+        "report_sha256": "7ae1bc93f086fec242c5cbd137ce1296dfc23e28aac4279aed8328132777cff5",
+        "event_count": 5,
+        "warnings": [
+          "CORRECTED_EVENT"
+        ],
+        "downloadable_report": "reports/phase5-chunk6-demo-rehearsal-main-report.json"
+      },
+      "late": {
+        "interaction_id": "demo-e5a0304ac9e2-late",
+        "history_sha256": "de33e595f9c8ea5cc4c62c3fea65d0fb9bbb68150b6307ccb734dc9fd7aebd89",
+        "report_sha256": "4e128dae5acf984b43b6edbe0185067e7589c2280224ed7ec56e517fb549645b",
+        "event_count": 2,
+        "warnings": [
+          "MISSING_EVENT"
+        ],
+        "downloadable_report": "reports/phase5-chunk6-demo-rehearsal-late-report.json"
+      },
+      "order": {
+        "interaction_id": "demo-e5a0304ac9e2-order",
+        "history_sha256": "d2f2d5dfd7eab37e5fca4d6aa543f05fd1e749c8c8305c35f898cdebc09ac633",
+        "report_sha256": "390a19779913bf966f1013e7b300b0c5cf489af98f59ef2c9ed3040e7bca214f",
+        "event_count": 4,
+        "warnings": [
+          "OUT_OF_ORDER_EVENT"
+        ],
+        "downloadable_report": "reports/phase5-chunk6-demo-rehearsal-order-report.json"
+      }
+    },
+    "late_event": {
+      "modelVersion": "demo-model-v1",
+      "applicationVersion": "demo-app-v1",
+      "eventId": "demo-e5a0304ac9e2-late-output",
+      "interactionId": "demo-e5a0304ac9e2-late",
+      "eventType": "model.output_generated",
+      "occurredAt": "2026-11-21T12:00:11Z",
+      "data": {
+        "outputReference": "synthetic-late-output"
+      }
+    },
+    "posted_events": 12,
+    "duplicate_status": 200,
+    "conflict_status": 409,
+    "late_arrival": {
+      "history_sha256": "43f7c51fb1e34db80372902ec994d4d26bc636b79f6d39bcd471d98dcf17b7c7",
+      "report_sha256": "e3885a79bfcf63cea9b7635d5b5b46c594334eb16edd18bc79e2d0bb145a593a",
+      "event_count": 3,
+      "warnings": [],
+      "downloadable_report": "reports/phase5-chunk6-demo-rehearsal-after-late-report.json"
+    },
+    "finished_at": "2026-11-21T18:11:31.936855+00:00"
+  },
+  "classroom_preparation": {
+    "status": "passed",
+    "reset_performed": false,
+    "problems": [],
+    "started_at": "2026-11-21T18:11:32.116265+00:00",
+    "run_prefix": "demo-d39ae443359d",
+    "cases": {
+      "main": {
+        "interaction_id": "demo-d39ae443359d-main",
+        "history_sha256": "58dd68193f1894ec93640e8b6e1c5d415fe69ebad7242a5ea8c5ea0e6bd96e84",
+        "report_sha256": "cd29d9cf2d0c2d70567368ef4acf6a4f5c3711fc390d3434aad9753bd2152d32",
+        "event_count": 5,
+        "warnings": [
+          "CORRECTED_EVENT"
+        ],
+        "downloadable_report": "reports/phase5-chunk6-demo-classroom-main-report.json"
+      },
+      "late": {
+        "interaction_id": "demo-d39ae443359d-late",
+        "history_sha256": "3fdbe5107c2eaa91a1a0b57ff24a239655306f8e69b1ea2af127142c83059f1e",
+        "report_sha256": "32e8f137fa0a4837d70e2da1d55f69f5d8a1e6cd3d86762fdc770dc45a474508",
+        "event_count": 2,
+        "warnings": [
+          "MISSING_EVENT"
+        ],
+        "downloadable_report": "reports/phase5-chunk6-demo-classroom-late-report.json"
+      },
+      "order": {
+        "interaction_id": "demo-d39ae443359d-order",
+        "history_sha256": "47616faa21d03465ab4a2a7b158c3df49d20481f6d619d0d0715563ae23a1371",
+        "report_sha256": "43b86afa4b3b29e847dfb9eabb744b4712ec5a20b14e5c8a3942d5d46c412233",
+        "event_count": 4,
+        "warnings": [
+          "OUT_OF_ORDER_EVENT"
+        ],
+        "downloadable_report": "reports/phase5-chunk6-demo-classroom-order-report.json"
+      }
+    },
+    "late_event": {
+      "modelVersion": "demo-model-v1",
+      "applicationVersion": "demo-app-v1",
+      "eventId": "demo-d39ae443359d-late-output",
+      "interactionId": "demo-d39ae443359d-late",
+      "eventType": "model.output_generated",
+      "occurredAt": "2026-11-21T12:00:11Z",
+      "data": {
+        "outputReference": "synthetic-late-output"
+      }
+    },
+    "posted_events": 11,
+    "duplicate_status": 200,
+    "conflict_status": 409,
+    "finished_at": "2026-11-21T18:11:32.220386+00:00"
+  },
+  "remote_guard": {
+    "status": "blocked",
+    "problems": [
+      "Capacity tool requires an explicit loopback HTTP URL and port."
+    ]
+  },
+  "resets_performed": false,
+  "public_or_peer_writes": false,
+  "retained_benchmark_events_after": 10000,
+  "existing_regression_baseline": {
+    "date": "2026-11-21",
+    "pytest_passed": 262,
+    "fresh_runtime_regression_in_chunk6": false,
+    "reason": "runtime code unchanged; new demo was validated through actual HTTP requests"
+  },
+  "pending": [
+    "fresh reverse cross-team exchange and independent peer system report",
+    "hosted/peer performance and shared profile agreement"
+  ],
+  "artifacts_sha256": {
+    "reports/phase5-chunk6-demo-rehearsal.json": "d3e9779bb7f586f30f96d183dcfa43c8051a17b5dc679986be7ad3183eb8da6c",
+    "reports/phase5-chunk6-demo-classroom.json": "eddbdbdca5a5e76ced74927f1bd7127533d0c09d60e2cece7ab6c17f455e62de",
+    "reports/phase5-chunk6-demo-remote-guard.json": "093636f2a8a97d4637564e9c2ad524383f2e65655d1bbd4ee644db031ff99e04"
+  },
+  "validation": {
+    "contract_schema_fixture_profile_checks": "passed",
+    "targeted_existing_checks_passed": 15,
+    "local_markdown_file_links": "passed",
+    "demo_fixture_and_tool_hashes": "verified"
+  }
+}

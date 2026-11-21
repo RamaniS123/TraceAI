@@ -60,7 +60,7 @@ unmigrated, or mismatched database yields HTTP 503 and the same safe shape with
 status unhealthy and storage unavailable. This does not yet test write access
 or certify that future writes will succeed. See [Phase 4 reliability checks](phase-4-reliability.md).
 
-All four Phase 3 operations are available. `/docs` and `/openapi.json` serve the
+All five shared operations are available: health, submission, history, audit report and test reset. `/docs` and `/openapi.json` serve the
 authored contract in `contracts/openapi.json`; warning analysis and audit reports
 are implemented under the provisional Phase 4 profile.
 

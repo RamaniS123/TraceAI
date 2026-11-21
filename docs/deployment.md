@@ -1,12 +1,14 @@
-# Render deployment — Phase 3, chunk 5
+# Render deployment — Phase 5
 
 ## Current status
 
 The system is deployed at https://traceai-zm1t.onrender.com with a browser frontend,
-project API and hosted tester at `/tester`. Read-only health/route checks establish
-reachability; a separate destructive suite is required to establish deployed test
-results. Current Phase 4 delivery, exact local results and cross-team blockers are
-in [phase-4-delivery.md](phase-4-delivery.md).
+project API and hosted tester at `/tester`. On November 21 the deployed self-test
+passed 126/126 with a complete setup/run/report exchange. Fresh forward peer checks
+passed 126/126, while the independent peer system report and reverse run remain
+blocked by workspace network policy. See [current regression evidence](phase-5-regression.md)
+and [delivery status](phase-5-delivery.md). Local workload measurements do not
+establish hosted performance.
 
 `render.yaml` enables the 126-check Phase 4 hosted profile. After a Blueprint sync,
 read `GET /tester` to confirm the actual profile/count and `GET /health` headers to
@@ -28,8 +30,9 @@ in the endpoint registry do not change.
 4. Wait for the database and web service to become available. The Docker startup
    script applies migrations before starting Uvicorn; Render checks `/health`.
 5. Record the actual service origin shown by Render, typically an HTTPS
-   `onrender.com` address. The final name is assigned by Render; no public URL is
-   claimed in this repository until that deployment exists.
+   `onrender.com` address. For a newly created service use its assigned origin;
+   this project already uses
+   `https://traceai-zm1t.onrender.com`.
 
 No local database password needs to be reused. Render injects its database
 connection string and generates two distinct API credentials. The database is
@@ -57,8 +60,8 @@ dataset. Disable reset for any separate non-test deployment.
 
 ## Deployment implementation
 
-- Docker uses Python 3.12 and pinned runtime/build dependencies, without pytest or
-  the API evaluator dependencies in its installed runtime dependency set.
+- Docker uses Python 3.12 and pinned runtime/build dependencies. HTTPX/jsonschema
+  support the hosted evaluator; pytest and Playwright are development-only.
 - The application runs as the unprivileged `traceai` user.
 - `.dockerignore` allows only build/runtime inputs, excluding local credentials,
   reports, the Git checkout, and development caches.
@@ -87,14 +90,15 @@ paste them into chat. Use a file containing only the selected service's tokens:
 
 ```sh
 .venv/bin/python tools/run_phase3_api_tests.py \
-  --base-url https://YOUR-ACTUAL-SERVICE.onrender.com \
+  --base-url https://traceai-zm1t.onrender.com \
   --env-file .env.render \
   --allow-test-reset \
-  --wait-seconds 60 \
+  --wait-seconds 60 --phase4-reports \
   --report reports/render-api.json
 ```
 
-This explicitly clears synthetic test data. All 42 checks must pass, with zero
+This explicitly clears synthetic test data. All 126 checks in this selected
+profile must pass, with zero
 failed and zero unrun. Free-tier cold starts may take longer than a readiness
 wait; if so, inspect the service status before rerunning. Do not classify the
 service as deployed-and-validated until the real HTTPS request and suite pass.

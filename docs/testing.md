@@ -1,4 +1,4 @@
-# Automated testing — Phase 4 delivery
+# Automated testing — Phase 5
 
 ## CI on GitHub
 
@@ -16,8 +16,11 @@ the evaluator's exit status and stops the server on completion. JUnit and JSON
 results are uploaded as the `phase-3-test-results` artifact even on test failure.
 Reports exclude raw response bodies, request authorization headers, and tokens.
 
-The Phase 4 delivery workspace run has 198 passing pytest cases, plus a separate
-Playwright browser scenario and five process/reliability groups. The independent
+The November 21 Phase 5 regression has 262 passing pytest cases, plus a separate
+Playwright browser scenario, five process/reliability groups and deployment-image
+validation. Exact current results/gaps are in [phase-5-regression.md](phase-5-regression.md).
+The November 18 [capacity/performance results](phase-5-performance.md) remain
+separate local workload evidence. The independent
 evaluator retains 42 baseline checks and offers 68/99/126-check Phase 4 profiles.
 The Render blueprint selects the 126-check profile for the hosted tester.
 A passing pytest count is distinct from a passing deployed-service evaluation.
@@ -58,7 +61,9 @@ Example (replace the illustrative URL and use that team's credential file):
 
 Repeat with the other team's base URL and credentials. The evaluator uses the
 same fixed inputs and expected outputs for both teams. These results validate
-this provisional Phase 3 profile; cross-team equivalence remains blocked pending contract agreement and actual peer runs.
+the selected functional profile. Both directions passed the adopted 0.4.2 baseline
+on November 1. The fresh November 21 forward suite passed; the independent peer
+system report and fresh reverse exchange remain network-blocked.
 
 For a local running service, using its isolated test dataset:
 
@@ -117,7 +122,7 @@ in the Phase 3 contract are listed as not implemented. Update `docs/requirements
 when scope changes; `tests/test_phase_status.py` fails if it names a check the
 evaluator no longer has.
 
-## Validation performed for chunk 4
+## Historical Phase 3 chunk 4 validation
 
 The workflow passed actionlint 1.7.7. Its commands were exercised locally from a
 fresh Python environment and a newly created disposable PostgreSQL database.
@@ -127,7 +132,8 @@ containing only `requirements-api-tests.txt`.
 
 This is local evidence. The GitHub API denied workflow-status access from the
 cloud workspace; a hosted Actions result must be checked separately in GitHub.
-No public deployment or evaluation of the other team's service has occurred yet.
+At that historical checkpoint no public deployment or peer evaluation had yet
+occurred; the current Phase 5 results above supersede that status.
 The Render launch is described in [deployment instructions](deployment.md).
 The existing HTTPX/Starlette TestClient deprecation warning remains non-failing.
 
@@ -164,3 +170,12 @@ See [phase-4-delivery.md](phase-4-delivery.md) for the read-only readiness mode,
 explicit destructive-run flag, exact JSON report artifacts, contract comparison,
 release-identification headers and current Team 103 blockers. Two local instances
 passing tests in both directions is not evidence of a Team 103 run.
+
+## Dataset separation for final delivery
+
+Use `.env.phase5-regression` for resetting regression/recovery/browser/image checks.
+Keep `.env.phase5` and its 10,000-event manifest for read-only verification and
+benchmarks. Do not run suites against both databases interchangeably. The
+[demo helper](phase-5-demo.md) appends unique synthetic records to the regression/
+demo service and never resets. Local validation in a proxied workspace may need
+an explicit local HTTP transport; external targets retain proxy/policy handling.
