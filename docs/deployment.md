@@ -123,3 +123,23 @@ empty PostgreSQL database, respects a custom PORT, preserves a submitted event
 across container restart, and passes the 42-check HTTP evaluator twice. These
 checks are local container evidence, not evidence of an existing Render service.
 GitHub CI also builds and evaluates the deployment image on future runs.
+
+## Deployment readiness and HEAD probes
+
+The November 21 deployment of `3f6aa45` built successfully, migrated and bound
+Uvicorn to Render's assigned port 10000, but timed out after a 405 response.
+Read-only checks confirmed that the previous live app returned 405 to both
+`HEAD /` and `HEAD /health`, while `GET /health` returned 200. The redacted log
+alone does not prove which method/path Render used, but it exposed an unsupported
+probe method that can interfere with readiness detection.
+
+Both endpoints now accept GET and HEAD. HEAD responses have no body and retain
+GET's headers/status; `/health` still queries PostgreSQL and returns 503 when
+storage/migration readiness fails. Keep Render's health-check path `/health`
+and its assigned `PORT`; no artificial always-healthy endpoint or port change was
+introduced. Project JSON schemas and five-operation OpenAPI 0.4.2 stay unchanged.
+
+The fix passed 264 regression cases. A built container is checked on port 10000
+with real HEAD requests and the full 126-check HTTP profile before release.
+Deployment is confirmed separately by the live revision header and healthy HEAD/
+GET responses; a successful Git push or image build alone is not a live release.

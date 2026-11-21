@@ -47,7 +47,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     assets = files("traceai").joinpath("static")
     app.mount("/assets", StaticFiles(directory=str(assets)), name="assets")
 
-    @app.get("/", response_class=HTMLResponse, include_in_schema=False)
+    @app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse, include_in_schema=False)
     def homepage():
         return HTMLResponse(assets.joinpath("index.html").read_text(), headers={
             "Cache-Control": "no-store",
@@ -84,7 +84,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         # Intentionally omit database URLs, statements, parameters, and stack traces.
         return JSONResponse(status_code=503, content=APIError(503, "STORAGE_UNAVAILABLE", "Required storage is unavailable.").body())
 
-    @app.get("/health")
+    @app.api_route("/health", methods=["GET", "HEAD"])
     def health():
         headers = {"X-TraceAI-Contract": app.openapi()['info']['version']}
         revision = os.environ.get('RENDER_GIT_COMMIT', '')

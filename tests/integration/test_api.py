@@ -605,3 +605,15 @@ def test_postgresql_deferred_failure_at_commit_preserves_previous_data(client, o
             connection.execute(text(f'DROP TRIGGER {trigger} ON events'))
             connection.execute(text(f'DROP FUNCTION {function}()'))
     assert submit(client, event(eventId='commit-rejected')).status_code == 201
+
+
+
+def test_head_health_checks_database_and_matches_get_release_headers(client, monkeypatch):
+    monkeypatch.setenv('RENDER_GIT_COMMIT', 'a' * 40)
+    response = client.get('/health')
+    probe = client.head('/health')
+    assert response.status_code == probe.status_code == 200
+    assert probe.content == b''
+    for name in ('content-type', 'content-length', 'x-traceai-contract', 'x-traceai-revision'):
+        assert probe.headers[name] == response.headers[name]
+    assert probe.headers['x-traceai-revision'] == 'a' * 40
