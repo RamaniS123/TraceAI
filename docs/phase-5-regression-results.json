@@ -1,0 +1,285 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-21T17:46:54.794713+00:00",
+  "status": "regression_passed_cross_team_exchange_incomplete",
+  "source_revision": "cb9542ed9f20bbb287f49073d91f39fe12012729",
+  "date_local": "2026-11-21",
+  "regression": {
+    "pytest": {
+      "tests": 262,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "dependency_compatibility": "pip check passed",
+    "migration_schema_check": "alembic check passed",
+    "contract_schema_fixture_profile_validation": "passed",
+    "http_profiles": {
+      "foundation": {
+        "startedAt": "2026-11-21T17:42:05.922373+00:00",
+        "finishedAt": "2026-11-21T17:42:06.053231+00:00",
+        "status": "passed",
+        "total": 42,
+        "passed": 42,
+        "failed": 0,
+        "unrun": 0
+      },
+      "timeline": {
+        "startedAt": "2026-11-21T17:42:06.062789+00:00",
+        "finishedAt": "2026-11-21T17:42:06.273055+00:00",
+        "status": "passed",
+        "total": 68,
+        "passed": 68,
+        "failed": 0,
+        "unrun": 0
+      },
+      "records": {
+        "startedAt": "2026-11-21T17:42:06.278875+00:00",
+        "finishedAt": "2026-11-21T17:42:06.531544+00:00",
+        "status": "passed",
+        "total": 99,
+        "passed": 99,
+        "failed": 0,
+        "unrun": 0
+      },
+      "reports": {
+        "startedAt": "2026-11-21T17:42:06.537316+00:00",
+        "finishedAt": "2026-11-21T17:42:06.863239+00:00",
+        "status": "passed",
+        "total": 126,
+        "passed": 126,
+        "failed": 0,
+        "unrun": 0
+      }
+    },
+    "local_hosted_tester": {
+      "status": "passed",
+      "counts": {
+        "error": 0,
+        "fail": 0,
+        "pass": 126,
+        "skip": 0
+      }
+    },
+    "local_reliability_groups": [
+      {
+        "test_id": "local-safe-client-errors",
+        "outcome": "pass"
+      },
+      {
+        "test_id": "local-process-restart-preserves-history",
+        "outcome": "pass"
+      },
+      {
+        "test_id": "local-storage-unavailable-no-success",
+        "outcome": "pass"
+      },
+      {
+        "test_id": "local-startup-failure-safe-exit",
+        "outcome": "pass"
+      },
+      {
+        "test_id": "local-process-log-canaries",
+        "outcome": "pass"
+      }
+    ],
+    "browser": {
+      "status": "passed",
+      "headless": true,
+      "browser": "system Chromium",
+      "playwright": "1.62.1",
+      "script": "tests/browser/frontend.cjs",
+      "screenshots": "reports/browser",
+      "scope": "isolated local regression database",
+      "local_transport": "explicit HTTPTransport for owned loopback addresses; proxy variables unchanged"
+    },
+    "container": {
+      "status": "passed",
+      "image": "sha256:1e6368a373b4506709c8b77189ff581c784de0723e2d753fb9ca1c07fd4e6525",
+      "user": "traceai",
+      "api_checks": 126,
+      "timing_header_present": true,
+      "scope": "deployment image against separate local regression DB"
+    },
+    "public_deployment": {
+      "status": "passed",
+      "completed": true,
+      "counts": {
+        "error": 0,
+        "fail": 0,
+        "pass": 126,
+        "skip": 0
+      },
+      "started_at": "2026-11-21T17:38:16.660907+00:00",
+      "finished_at": "2026-11-21T17:38:23.460716+00:00",
+      "session_id": "19bbc265-04af-44ce-86a0-ddf02d3e7f55",
+      "coverage": {
+        "code": {
+          "covered": null,
+          "total": null,
+          "basis": "Source lines; coverage instrumentation is not enabled in the deployed service"
+        },
+        "component": {
+          "covered": 5,
+          "total": 5,
+          "basis": "Operations of the pod's common interface (Phase 2 Section 5.1) exercised by at least one executed test"
+        },
+        "system": {
+          "covered": 9,
+          "total": 11,
+          "basis": "Acceptance criteria AC-01 to AC-11 (Phase 2 Section 4.1) exercised by at least one executed test"
+        }
+      },
+      "release": {
+        "checked_at": "2026-11-21T17:44:33.970500+00:00",
+        "health_status": 200,
+        "revision": "cb9542ed9f20bbb287f49073d91f39fe12012729",
+        "contract": "0.4.2",
+        "server_timing": "traceai_app;dur=7.324572",
+        "tester": {
+          "service": "TraceAI hosted tester",
+          "profile": "phase4-reports",
+          "planned_checks": 126,
+          "message": "Use the POST setup/run endpoints and GET report endpoint; this base URL describes the tester.",
+          "resets_target_data": true,
+          "check_budget_seconds": 240,
+          "documentation": "https://github.com/RamaniS123/TraceAI/blob/main/docs/testing-interface.md"
+        }
+      }
+    }
+  },
+  "cross_team": {
+    "coordination": "user confirmed current URLs and coordinated reset-based functional test window in this chat",
+    "team106_tests_team103": {
+      "functional_suite_status": "passed",
+      "counts": {
+        "error": 0,
+        "fail": 0,
+        "pass": 126,
+        "skip": 0
+      },
+      "session_id": "adb4ad76-026c-46f8-9b9a-3802eb3b6709",
+      "target_url": "http://3.134.49.218:8000",
+      "started_at": "2026-11-21T17:39:03.694682+00:00",
+      "finished_at": "2026-11-21T17:39:12.738173+00:00",
+      "started_at_local": "2026-11-21T12:39:03.694682-05:00",
+      "tester_setup_run_report": "completed; run and stored reports match",
+      "full_exchange_status": "incomplete",
+      "full_exchange_completed": false,
+      "stages": [
+        {
+          "name": "tester_setup",
+          "http_status": 201
+        },
+        {
+          "name": "tester_run",
+          "http_status": 200
+        },
+        {
+          "name": "tester_report",
+          "http_status": 200
+        },
+        {
+          "name": "system_report",
+          "http_status": 403
+        }
+      ],
+      "problems": [
+        "System report did not return matching session and valid code coverage."
+      ],
+      "coverage": {
+        "code": {
+          "covered": 506,
+          "total": 767,
+          "basis": "statement coverage of the TraceAI service package (app/*.py) measured by coverage.py during this session; module-level statements executed at import are included"
+        },
+        "component": {
+          "covered": 5,
+          "total": 5,
+          "basis": "Operations of the pod's common interface (Phase 2 Section 5.1) exercised by at least one executed test"
+        },
+        "system": {
+          "covered": 9,
+          "total": 11,
+          "basis": "Acceptance criteria AC-01 to AC-11 (Phase 2 Section 4.1) exercised by at least one executed test"
+        }
+      },
+      "coverage_basis": "peer-reported source counts retrieved by the hosted tester; independent workspace system-report fetch blocked"
+    },
+    "team103_tests_team106": {
+      "status": "not_run_network_blocked",
+      "counts": null,
+      "tester_url": "http://3.134.49.218:8001",
+      "target_url": "https://traceai-zm1t.onrender.com",
+      "preflight": [
+        {
+          "name": "system_health",
+          "http_status": 200
+        },
+        {
+          "name": "system_contract",
+          "http_status": 200
+        },
+        {
+          "name": "system_report_route",
+          "http_status": 404
+        },
+        {
+          "name": "tester_report_route",
+          "http_status": 403
+        }
+      ],
+      "reason": "workspace proxy returns HTTP 403 Domain forbidden; no reverse setup or run requested"
+    },
+    "historical_reverse": {
+      "date": "2026-11-01",
+      "passed": 130,
+      "source": "docs/phase-4-confirmed-results.json",
+      "fresh_phase5_evidence": false
+    },
+    "fresh_equivalence_in_both_directions": "not established"
+  },
+  "benchmark_preservation": {
+    "separate_databases": true,
+    "benchmark_events_before": 10000,
+    "benchmark_events_after": 10000,
+    "complete_content_reverification": "passed",
+    "benchmark_reset_enabled": false
+  },
+  "scope_limits": {
+    "public_functional_resets": "authorized course synthetic dataset only; final cleanup passed",
+    "peer_functional_reset": "authorized coordinated window; forward suite final cleanup passed",
+    "new_capacity_or_performance_load": "not performed; November 18 local evidence remains separately recorded",
+    "source_code_coverage": "own deployed source counts remain unmeasured; peer statement counts are reported, not independently instrumented"
+  },
+  "network_change": {
+    "requested_custom_hosts": [
+      "traceai-zm1t.onrender.com",
+      "3.134.49.218"
+    ],
+    "save_confirmed": false,
+    "tool_error": "draft_not_editable",
+    "active_peer_access": "not granted"
+  },
+  "artifacts_sha256": {
+    "reports/phase5-chunk5-pytest.xml": "e2d7a1f0f1a068b3f2afe9aace19658d296c1c52a2d1a28da2840b42f640a498",
+    "reports/phase5-chunk5-foundation.json": "27e9e4e55b78a47e1159545b0c26a5c67962786929d56b8e3eafd0d1cacfc0d1",
+    "reports/phase5-chunk5-timeline.json": "54721ede70a0064e063517dbd9964df52254fe06436ade7f88a0985ff205dcc3",
+    "reports/phase5-chunk5-records.json": "02f3693668cb843379c372dc77ff56539116953b99677dedcacacf59e3456360",
+    "reports/phase5-chunk5-reports.json": "ccb9fe5e57df7cb4a5b520f43dd2e5490f1707a352681bae1033f3bb3a8acf93",
+    "reports/phase5-chunk5-reliability.json": "1cb0677fadf63b294e83c6c652706aa05f3c0c9a4be7607a815d4caf588e1fed",
+    "reports/phase5-chunk5-local-interface.json": "1c5de322a346c9ec9f04399fd5d1f16d6b0f44271b06b9b88d7a7da4bccbc300",
+    "reports/phase5-chunk5-browser.json": "665689a8e70ad7e44c58821905f5543bedb540effb941fb511a67f0f93fbd53d",
+    "reports/phase5-chunk5-container.json": "85d8e13683b92a22d56a78569918bd57cb92d20e1ba48fee8d53cd78a4c34902",
+    "reports/phase5-chunk5-container-api.json": "e1f068e1cf53c460818623913c99df66cc482ee9876ca20f125a1e511055f8ac",
+    "reports/phase5-chunk5-render-preflight.json": "54f4da70a3fecffd6037bb0fd4840a1113c132ae336ce40a3a670b0d7571120a",
+    "reports/phase5-chunk5-render-functional.json": "fd999904a857c1712a747596480a288e8ae6e43aca6d5f9c75c93bbd024c6cb4",
+    "reports/phase5-chunk5-106-tests-103.json": "a24556e43700d0a171904e2c3d4441b9d1f2702dec61c021c260e6add5d91a40",
+    "reports/phase5-chunk5-peer-tester-preflight.json": "50aeb5e9001d536f15178776f4f88ce29f3d5fb407cf43446a932d309aa1fa4b",
+    "reports/phase5-chunk5-retained-capacity.json": "5c02f90969d61639dfb0ac208f88ba431d9152cc896ea25e688749719bd6c5dd",
+    "reports/phase5-chunk5-isolation.json": "446d33cf617e320fbcdf4ed45761e46f91447cd480c428d60896616ebb8d6511",
+    "reports/phase5-chunk5-release.json": "b6d3f9b03db30f9b4ad7b97749859fd143ae7ea934715ce3343270cf6fe1d7f1",
+    "docs/evidence/phase5-regression-public-suite.json": "d81cdbf990cd72395cade5f841b8e4d99409781db62c670a69ba77e971784eb6",
+    "docs/evidence/phase5-regression-team103-suite.json": "e376f2d65c8e6d72bdcc7713bb0f6e3b00ecf2478d2da0da617272118e76d78f"
+  }
+}

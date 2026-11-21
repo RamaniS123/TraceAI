@@ -1,8 +1,25 @@
 {
-  "purpose": "Proposed cloud-workspace HTTP access for Team 103's previously reported host. Not Render configuration; not applied or saved successfully.",
+  "purpose": "Proposed cloud-workspace HTTP access for the user-confirmed Team 103 test window. Not Render configuration. Not applied.",
   "config": {
-    "network": {"allowed_domains": ["traceai-zm1t.onrender.com", "3.134.49.218"]}
+    "network": {
+      "type": "restricted",
+      "allowed_domains": [
+        "traceai-zm1t.onrender.com",
+        "3.134.49.218"
+      ]
+    }
   },
-  "observed_blocker": "draft_not_editable when saving the current environment configuration draft",
-  "credentials": "No Team 103 key is included or configured by this proposal. Confirm their current URLs and approved test access privately."
+  "preservation": "Existing package-manager presets and unrelated settings must be retained. No credentials or repository changes requested.",
+  "required_operations": [
+    "GET http://3.134.49.218:8000/test/report?session_id=<existing session>",
+    "GET/POST http://3.134.49.218:8001/test/setup, /test/run, /test/report against our confirmed synthetic system"
+  ],
+  "observed_blocker": {
+    "date": "2026-11-21",
+    "http_status": 403,
+    "body": "Domain forbidden",
+    "configuration_error": "draft_not_editable",
+    "save_confirmed": false
+  },
+  "credentials": "Existing Render-bound credentials stay scoped to traceai-zm1t.onrender.com; no key is included or required in this proposal."
 }

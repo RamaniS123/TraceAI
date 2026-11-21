@@ -35,7 +35,8 @@
                          "authentication-events-invalid", "authentication-reset-none", "authentication-reset-invalid"]},
     "AC-10": {"name": "Capacity and performance", "requirements": ["REQ-13"], "checks": [],
               "otherEvidence": "Local capacity passed with 10,000 events across 100 interactions of 100 events each, exact HTTP history/report verification before and after application restart; see docs/phase-5-capacity-results.json. The isolated local 1000-request evaluation then passed with 1000 correct responses at most 1 second, ten observed in flight and unchanged records; see docs/phase-5-performance-results.json. Hosted/peer performance and pod agreement on the proposed profile remain unverified."},
-    "AC-11": {"name": "Cross-team conformance", "requirements": ["REQ-14"], "checks": "all"}
+    "AC-11": {"name": "Cross-team conformance", "requirements": ["REQ-14"], "checks": "all",
+              "otherEvidence": "November 21 Phase 5 regression: own deployed and forward peer suites each passed 126/126. The independent peer system-report fetch and fresh reverse run are blocked by workspace HTTP policy; see docs/phase-5-regression-results.json. November 1 reciprocal 130/130 remains historical."}
   },
   "requirements": [
     {"id": "REQ-01", "name": "Validate, store and confirm events", "plannedPhase": 3, "workedOn": true,

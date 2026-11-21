@@ -202,3 +202,13 @@ Full regression now uses a separate `.env.phase5-regression` database so the
 benchmark dataset remains intact. Final cross-team regression and delivery are
 chunks 5 and 6. Earlier planning/pending statements above describe their original
 chunk baselines; the recorded chunk 3/4 results are the current local status.
+
+## Chunk 5 current result
+
+[Final regression](phase-5-regression.md) passed on November 21: 262 pytest cases,
+all four HTTP profiles, five reliability groups, browser flows, deployment image,
+and a complete 126/126 deployed self-test. The new forward peer suite passed
+126/126, but the independent system-report fetch and fresh reverse run remain
+blocked by the workspace network allowlist. Full fresh cross-team validation is
+incomplete; the November 1 reverse report is historical. All 10,000 benchmark
+records and reports still match the seed manifest. No new performance run occurred.
