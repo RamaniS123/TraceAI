@@ -1,0 +1,111 @@
+{
+  "scope": "fresh Phase 5 functional cross-team evidence for peer-reported v0.5.0; no performance comparison",
+  "team106_tests_team103": {
+    "report": "docs/evidence/2026-11-22-team106-tests-team103-v050.json",
+    "functional_passed": 126,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "run": {
+      "target_release": "v0.5.0 (confirmed by peer email)",
+      "started_at": "2026-11-23T00:51:57.466023+00:00",
+      "finished_at": "2026-11-23T00:52:07.068369+00:00",
+      "started_at_local": "2026-11-22T19:51:57.466023-05:00",
+      "finished_at_local": "2026-11-22T19:52:07.068369-05:00",
+      "elapsed_seconds": 9.602346,
+      "counts": {
+        "error": 0,
+        "fail": 0,
+        "pass": 126,
+        "skip": 0
+      },
+      "functional_suite": "passed",
+      "complete_exchange": false,
+      "exchange_status": "incomplete",
+      "exchange_problems": [
+        "System report did not return matching session and valid code coverage."
+      ],
+      "stages": [
+        {
+          "name": "tester_setup",
+          "http_status": 201
+        },
+        {
+          "name": "tester_run",
+          "http_status": 200
+        },
+        {
+          "name": "tester_report",
+          "http_status": 200
+        },
+        {
+          "name": "system_report",
+          "http_status": 403
+        }
+      ],
+      "coverage": {
+        "code": {
+          "covered": 193,
+          "total": 809,
+          "basis": "Executable-line coverage of app/**/*.py, excluding app/__init__.py and app/coverage_session.py; coverage.py records project requests after successful setup in the active serial session. Startup, setup, report and docs requests are excluded. Suite teardown and parent cleanup resets are included (LIM-04). Project requests have no session ID; isolated test traffic and one service worker are required."
+        },
+        "component": {
+          "covered": 5,
+          "total": 5,
+          "basis": "Operations of the pod's common interface (Phase 2 Section 5.1) exercised by at least one executed test"
+        },
+        "system": {
+          "covered": 9,
+          "total": 11,
+          "basis": "Acceptance criteria AC-01 to AC-11 (Phase 2 Section 4.1) exercised by at least one executed test"
+        }
+      },
+      "report": "docs/evidence/2026-11-22-team106-tests-team103-v050.json",
+      "report_sha256": "ad1ad77344dcbda0547fafe1a640981ba2b28e815b0e1233537a30a4c24192a0",
+      "private_envelope_sha256": "6775e0698df579465b8cba28525c9419aeb979e08c1e0f1e1f89a98392436bff"
+    }
+  },
+  "team103_tests_team106": {
+    "report": "docs/evidence/2026-11-22-team103-tests-team106-v050.json",
+    "provenance": "peer-supplied JSON attachment; structure, target, unique IDs and counts validated",
+    "target_url": "https://traceai-zm1t.onrender.com",
+    "session_id": "run-74690a5cde134ebe9db9eef649a67734",
+    "started_at": "2026-11-23T00:39:02.327067+00:00",
+    "finished_at": "2026-11-23T00:39:20.975621+00:00",
+    "started_at_local": "2026-11-22T19:39:02.327067-05:00",
+    "counts": {
+      "total": 130,
+      "pass": 130,
+      "fail": 0,
+      "error": 0,
+      "skip": 0
+    },
+    "coverage": {
+      "code": {
+        "covered": null,
+        "total": null,
+        "basis": "Source lines; coverage instrumentation is not enabled in the deployed service"
+      },
+      "component": {
+        "covered": 5,
+        "total": 5,
+        "basis": "Pinned Team 106 inventory; actual HTTP calls initiated during test call phases, including failed assertions/errors; unexecuted/skipped steps do not count. Exercised scope is not requirement completion."
+      },
+      "system": {
+        "covered": 9,
+        "total": 11,
+        "basis": "Pinned Team 106 inventory; actual HTTP calls initiated during test call phases, including failed assertions/errors; unexecuted/skipped steps do not count. Exercised scope is not requirement completion."
+      }
+    },
+    "target_commit": "not recorded in peer report"
+  },
+  "remaining": [
+    "independent workspace fetch of peer system report blocked by HTTP 403",
+    "separate independent audit export not performed",
+    "hosted/peer performance comparison not performed"
+  ],
+  "artifacts_sha256": {
+    "docs/evidence/2026-11-22-team106-tests-team103-v050.json": "ad1ad77344dcbda0547fafe1a640981ba2b28e815b0e1233537a30a4c24192a0",
+    "docs/evidence/2026-11-22-team103-tests-team106-v050.json": "1a03357aafacdd34a7e3bddbcce94d47f36b7d5f594615e5d809022f7f8da531"
+  }
+}

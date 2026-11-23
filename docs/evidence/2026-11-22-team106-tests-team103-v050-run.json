@@ -1,0 +1,58 @@
+{
+  "target_release": "v0.5.0 (confirmed by peer email)",
+  "started_at": "2026-11-23T00:51:57.466023+00:00",
+  "finished_at": "2026-11-23T00:52:07.068369+00:00",
+  "started_at_local": "2026-11-22T19:51:57.466023-05:00",
+  "finished_at_local": "2026-11-22T19:52:07.068369-05:00",
+  "elapsed_seconds": 9.602346,
+  "counts": {
+    "error": 0,
+    "fail": 0,
+    "pass": 126,
+    "skip": 0
+  },
+  "functional_suite": "passed",
+  "complete_exchange": false,
+  "exchange_status": "incomplete",
+  "exchange_problems": [
+    "System report did not return matching session and valid code coverage."
+  ],
+  "stages": [
+    {
+      "name": "tester_setup",
+      "http_status": 201
+    },
+    {
+      "name": "tester_run",
+      "http_status": 200
+    },
+    {
+      "name": "tester_report",
+      "http_status": 200
+    },
+    {
+      "name": "system_report",
+      "http_status": 403
+    }
+  ],
+  "coverage": {
+    "code": {
+      "covered": 193,
+      "total": 809,
+      "basis": "Executable-line coverage of app/**/*.py, excluding app/__init__.py and app/coverage_session.py; coverage.py records project requests after successful setup in the active serial session. Startup, setup, report and docs requests are excluded. Suite teardown and parent cleanup resets are included (LIM-04). Project requests have no session ID; isolated test traffic and one service worker are required."
+    },
+    "component": {
+      "covered": 5,
+      "total": 5,
+      "basis": "Operations of the pod's common interface (Phase 2 Section 5.1) exercised by at least one executed test"
+    },
+    "system": {
+      "covered": 9,
+      "total": 11,
+      "basis": "Acceptance criteria AC-01 to AC-11 (Phase 2 Section 4.1) exercised by at least one executed test"
+    }
+  },
+  "report": "docs/evidence/2026-11-22-team106-tests-team103-v050.json",
+  "report_sha256": "ad1ad77344dcbda0547fafe1a640981ba2b28e815b0e1233537a30a4c24192a0",
+  "private_envelope_sha256": "6775e0698df579465b8cba28525c9419aeb979e08c1e0f1e1f89a98392436bff"
+}

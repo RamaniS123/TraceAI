@@ -1,0 +1,653 @@
+{
+  "session_id": "aa8cfb48-dc57-41fc-a4bb-e34af5952a99",
+  "target_url": "http://3.134.49.218:8000",
+  "results": [
+    {
+      "test_id": "scenario-01",
+      "outcome": "pass",
+      "message": "GET /health: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "scenario-02",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "scenario-03",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "scenario-04",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "scenario-05",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "scenario-06",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "scenario-07",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/int-a: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "scenario-08",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/int-b: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "scenario-09",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "scenario-10",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 409; received HTTP 409 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-11",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 400; received HTTP 400 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-12",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-13",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-14",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-15",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-16",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-17",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-18",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-19",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-20",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-21",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-22",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-23",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/int-a: expected HTTP 401; received HTTP 401 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-24",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/int-a: expected HTTP 401; received HTTP 401 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-25",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 403; received HTTP 403 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-26",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 400; received HTTP 400 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-27",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/not-found: expected HTTP 404; received HTTP 404 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-28",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/int-a: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "scenario-29",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "scenario-30",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/int-a: expected HTTP 404; received HTTP 404 with a contract-conforming body."
+    },
+    {
+      "test_id": "scenario-31",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "authentication-events-none",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 401; received HTTP 401 with a contract-conforming body."
+    },
+    {
+      "test_id": "authentication-events-invalid",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 401; received HTTP 401 with a contract-conforming body."
+    },
+    {
+      "test_id": "authentication-reset-none",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 401; received HTTP 401 with a contract-conforming body."
+    },
+    {
+      "test_id": "authentication-reset-invalid",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 401; received HTTP 401 with a contract-conforming body."
+    },
+    {
+      "test_id": "boundary-65536-reset",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "boundary-65536-submit",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 with a contract-conforming body."
+    },
+    {
+      "test_id": "boundary-65536-storage",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/int-size: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "boundary-65537-reset",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "boundary-65537-submit",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 413; received HTTP 413 with a contract-conforming body."
+    },
+    {
+      "test_id": "boundary-65537-storage",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/int-size: expected HTTP 404; received HTTP 404 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-timeline-01",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-02",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-03",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-late: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-04",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-05",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-other: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-06",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-late: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-07",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-08",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-late: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-09",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-10",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-late: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-11",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-late: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-12",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-13",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-late: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-14",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-15",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-16",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-17",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-order: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-18",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-19",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-20",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-stop: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-21",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-22",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-23",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-24",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-multi: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-25",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-late: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-timeline-26",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-01",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-02",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-03",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-records: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-04",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-records-05",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-records-06",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-records-07",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-records-08",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-records-09",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-records: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-10",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-11",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-records: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-12",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-13",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-records: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-14",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 409; received HTTP 409 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-records-15",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-16",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-records-17",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-records-18",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-records-19",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-records-invalid: expected HTTP 404; received HTTP 404 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-records-20",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-records-21",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-records: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-22",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-23",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-24",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-records: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-25",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-26",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-records: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-27",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-28",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-29",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-records: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-30",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/p4-records-other: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-records-31",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-01",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-02",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/absent/report: expected HTTP 404; received HTTP 404 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-reports-03",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/absent/report: expected HTTP 401; received HTTP 401 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-reports-04",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/absent/report: expected HTTP 401; received HTTP 401 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-reports-05",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-06",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-07",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-08",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-09",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-10",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/audit-demo/report: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-11",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/audit-demo/report: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-12",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-13",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/audit-demo/report: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-14",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-15",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/audit-demo/report: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-16",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/audit-foreign/report: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-17",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-18",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/audit-late/report: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-19",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-20",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-21",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/audit-late/report: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-22",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 422; received HTTP 422 with a contract-conforming body."
+    },
+    {
+      "test_id": "phase4-reports-23",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/audit-demo/report: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-24",
+      "outcome": "pass",
+      "message": "POST /api/v1/events: expected HTTP 201; received HTTP 201 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-25",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/audit-demo/report: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-26",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    },
+    {
+      "test_id": "phase4-reports-27",
+      "outcome": "pass",
+      "message": "GET /api/v1/interactions/audit-demo/report: expected HTTP 404; received HTTP 404 with a contract-conforming body."
+    },
+    {
+      "test_id": "final-cleanup",
+      "outcome": "pass",
+      "message": "POST /api/v1/test/reset: expected HTTP 200; received HTTP 200 and the expected body."
+    }
+  ],
+  "coverage": {
+    "code": {
+      "covered": 193,
+      "total": 809,
+      "basis": "Executable-line coverage of app/**/*.py, excluding app/__init__.py and app/coverage_session.py; coverage.py records project requests after successful setup in the active serial session. Startup, setup, report and docs requests are excluded. Suite teardown and parent cleanup resets are included (LIM-04). Project requests have no session ID; isolated test traffic and one service worker are required."
+    },
+    "component": {
+      "covered": 5,
+      "total": 5,
+      "basis": "Operations of the pod's common interface (Phase 2 Section 5.1) exercised by at least one executed test"
+    },
+    "system": {
+      "covered": 9,
+      "total": 11,
+      "basis": "Acceptance criteria AC-01 to AC-11 (Phase 2 Section 4.1) exercised by at least one executed test"
+    }
+  }
+}

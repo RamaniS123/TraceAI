@@ -1,5 +1,14 @@
 # Phase 5 chunk 5: regression and cross-team validation
 
+## November 22 follow-up
+
+The [latest evidence](phase-5-cross-team-latest.json) now includes a new 126/126
+forward suite against the peer-confirmed v0.5.0 system and a validated peer-supplied
+130/130 reverse JSON report. The run below remains the historical November 21
+record. Fresh reverse evidence is no longer missing. The independent workspace
+system-report fetch is still blocked by HTTP 403, and no separate independent
+audit export or hosted performance comparison was performed.
+
 ## Current result — November 21, 2026
 
 Regression passed at source revision
